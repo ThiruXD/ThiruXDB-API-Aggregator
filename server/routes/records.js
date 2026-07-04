@@ -3,7 +3,19 @@ import { ObjectId } from 'mongodb';
 import { getDb } from '../db.js';
 
 const router = Router();
-const COL = 'data_records';
+
+// Helper to get dynamic collection names
+async function getTargetCollections(db) {
+  const endpoints = await db.collection('api_endpoints').find({}).toArray();
+  const cols = new Set();
+  for (const ep of endpoints) {
+    if (ep.collection_name) {
+      cols.add(ep.collection_name);
+    }
+  }
+  cols.add('data_records'); // Fallback for uncategorized
+  return Array.from(cols);
+}
 
 // GET /api/records — paginated list with filters
 router.get('/', async (req, res) => {
@@ -16,11 +28,13 @@ router.get('/', async (req, res) => {
     const filter = {};
     if (req.query.endpoint_id && req.query.endpoint_id !== 'all') {
       filter.endpoint_id = new ObjectId(req.query.endpoint_id);
-    } else if (req.query.collection_name && req.query.collection_name !== 'all') {
+    } else if (req.query.collection_name && req.query.collection_name !== 'all' && req.query.collection_name !== 'uncategorized') {
+      // Just a safety filter, the pipeline will already target the single collection
       const endpoints = await db.collection('api_endpoints').find({ collection_name: req.query.collection_name }).toArray();
       const endpointIds = endpoints.map(e => e._id);
       filter.endpoint_id = { $in: endpointIds };
     }
+
     if (req.query.date_from) {
       filter.fetched_at = { ...filter.fetched_at, $gte: new Date(req.query.date_from) };
     }
@@ -30,10 +44,54 @@ router.get('/', async (req, res) => {
       filter.fetched_at = { ...filter.fetched_at, $lte: to };
     }
 
-    const [docs, total] = await Promise.all([
-      db.collection(COL).find(filter).sort({ fetched_at: -1 }).skip(skip).limit(pageSize).toArray(),
-      db.collection(COL).countDocuments(filter),
-    ]);
+    let targetCols = [];
+    if (req.query.collection_name && req.query.collection_name !== 'all') {
+       if (req.query.collection_name === 'uncategorized') {
+         targetCols = ['data_records'];
+       } else {
+         targetCols = [req.query.collection_name];
+       }
+    } else {
+       targetCols = await getTargetCollections(db);
+    }
+
+    let docs = [];
+    let total = 0;
+
+    if (targetCols.length === 1) {
+      const col = targetCols[0];
+      [docs, total] = await Promise.all([
+        db.collection(col).find(filter).sort({ fetched_at: -1 }).skip(skip).limit(pageSize).toArray(),
+        db.collection(col).countDocuments(filter),
+      ]);
+    } else {
+      const baseCol = targetCols[0];
+      const unionPipeline = [];
+      for (let i = 1; i < targetCols.length; i++) {
+        unionPipeline.push({ $unionWith: { coll: targetCols[i] } });
+      }
+      
+      const fullPipeline = [
+        ...unionPipeline,
+        ...(Object.keys(filter).length > 0 ? [{ $match: filter }] : []),
+        { $sort: { fetched_at: -1 } }
+      ];
+
+      const countPipeline = [...fullPipeline, { $count: 'total' }];
+      
+      const dataPipeline = [
+        ...fullPipeline,
+        { $skip: skip },
+        { $limit: pageSize }
+      ];
+
+      const [dataRes, countRes] = await Promise.all([
+        db.collection(baseCol).aggregate(dataPipeline).toArray(),
+        db.collection(baseCol).aggregate(countPipeline).toArray(),
+      ]);
+      docs = dataRes;
+      total = countRes[0] ? countRes[0].total : 0;
+    }
 
     res.json({ data: docs.map(toClient), count: total });
   } catch (err) {
@@ -52,25 +110,56 @@ router.get('/search', async (req, res) => {
 
     if (!q) return res.json({ data: [], count: 0 });
 
-    const filter = { $text: { $search: q } };
+    let targetCols = [];
+    if (req.query.collection_name && req.query.collection_name !== 'all') {
+       if (req.query.collection_name === 'uncategorized') targetCols = ['data_records'];
+       else targetCols = [req.query.collection_name];
+    } else {
+       targetCols = await getTargetCollections(db);
+    }
+
+    const filter = {};
     if (req.query.endpoint_id && req.query.endpoint_id !== 'all') {
       filter.endpoint_id = new ObjectId(req.query.endpoint_id);
-    } else if (req.query.collection_name && req.query.collection_name !== 'all') {
+    } else if (req.query.collection_name && req.query.collection_name !== 'all' && req.query.collection_name !== 'uncategorized') {
       const endpoints = await db.collection('api_endpoints').find({ collection_name: req.query.collection_name }).toArray();
       const endpointIds = endpoints.map(e => e._id);
       filter.endpoint_id = { $in: endpointIds };
     }
 
-    const [docs, total] = await Promise.all([
-      db.collection(COL).find(filter, { score: { $meta: 'textScore' } })
-        .sort({ score: { $meta: 'textScore' } })
-        .skip(skip).limit(pageSize).toArray(),
-      db.collection(COL).countDocuments(filter),
-    ]);
+    let docs = [];
+    let total = 0;
+
+    // Use a regex fallback because text index might not exist on dynamically created collections
+    const regexFilter = { _search_text: { $regex: q, $options: 'i' } };
+    if (filter.endpoint_id) regexFilter.endpoint_id = filter.endpoint_id;
+
+    if (targetCols.length === 1) {
+      const col = targetCols[0];
+      [docs, total] = await Promise.all([
+        db.collection(col).find(regexFilter).sort({ fetched_at: -1 }).skip(skip).limit(pageSize).toArray(),
+        db.collection(col).countDocuments(regexFilter),
+      ]);
+    } else {
+      const baseCol = targetCols[0];
+      const fullPipeline = [];
+      for (let i = 1; i < targetCols.length; i++) fullPipeline.push({ $unionWith: { coll: targetCols[i] } });
+      fullPipeline.push({ $match: regexFilter });
+      fullPipeline.push({ $sort: { fetched_at: -1 } });
+
+      const countPipeline = [...fullPipeline, { $count: 'total' }];
+      const dataPipeline = [...fullPipeline, { $skip: skip }, { $limit: pageSize }];
+
+      const [dataRes, countRes] = await Promise.all([
+        db.collection(baseCol).aggregate(dataPipeline).toArray(),
+        db.collection(baseCol).aggregate(countPipeline).toArray(),
+      ]);
+      docs = dataRes;
+      total = countRes[0] ? countRes[0].total : 0;
+    }
 
     res.json({ data: docs.map(toClient), count: total });
   } catch (err) {
-    // If text index doesn't exist yet, fall back to empty results
     res.json({ data: [], count: 0 });
   }
 });
@@ -79,15 +168,21 @@ router.get('/search', async (req, res) => {
 router.get('/counts', async (req, res) => {
   try {
     const db = getDb();
-    const pipeline = [
-      {
-        $group: {
-          _id: '$endpoint_id',
-          count: { $sum: 1 },
-        },
+    const targetCols = await getTargetCollections(db);
+    
+    if (targetCols.length === 0) return res.json({ total: 0, perEndpoint: {} });
+
+    const baseCol = targetCols[0];
+    const fullPipeline = [];
+    for (let i = 1; i < targetCols.length; i++) fullPipeline.push({ $unionWith: { coll: targetCols[i] } });
+    fullPipeline.push({
+      $group: {
+        _id: '$endpoint_id',
+        count: { $sum: 1 },
       },
-    ];
-    const results = await db.collection(COL).aggregate(pipeline).toArray();
+    });
+
+    const results = await db.collection(baseCol).aggregate(fullPipeline).toArray();
     const total = results.reduce((sum, r) => sum + r.count, 0);
     const perEndpoint = {};
     for (const r of results) {
@@ -107,15 +202,14 @@ router.post('/', async (req, res) => {
     const endpointId = new ObjectId(req.body.endpoint_id);
     const externalId = req.body.external_id || null;
 
-    // Build search text from raw_data for full-text index
     const searchText = JSON.stringify(req.body.raw_data);
+    const targetCol = req.body.collection_name || 'data_records';
 
     if (externalId) {
-      // Upsert by (endpoint_id, external_id)
       const filter = { endpoint_id: endpointId, external_id: externalId };
-      const existing = await db.collection(COL).findOne(filter);
+      const existing = await db.collection(targetCol).findOne(filter);
       if (existing) {
-        await db.collection(COL).updateOne(filter, {
+        await db.collection(targetCol).updateOne(filter, {
           $set: {
             raw_data: req.body.raw_data,
             mapped_data: req.body.mapped_data || {},
@@ -124,15 +218,6 @@ router.post('/', async (req, res) => {
             _search_text: searchText,
           },
         });
-        
-        if (req.body.collection_name) {
-          await db.collection(req.body.collection_name).updateOne(
-            { external_id: externalId },
-            { $set: { raw_data: req.body.raw_data, mapped_data: req.body.mapped_data || {}, updated_at: now, fetched_at: now, endpoint_id: endpointId } },
-            { upsert: true }
-          );
-        }
-        
         return res.json({ action: 'updated' });
       }
     }
@@ -147,19 +232,7 @@ router.post('/', async (req, res) => {
       created_at: now,
       updated_at: now,
     };
-    await db.collection(COL).insertOne(doc);
-
-    if (req.body.collection_name) {
-      await db.collection(req.body.collection_name).insertOne({
-        endpoint_id: endpointId,
-        external_id: externalId,
-        raw_data: req.body.raw_data,
-        mapped_data: req.body.mapped_data || {},
-        fetched_at: now,
-        created_at: now,
-        updated_at: now,
-      });
-    }
+    await db.collection(targetCol).insertOne(doc);
 
     res.status(201).json({ action: 'created' });
   } catch (err) {
@@ -172,11 +245,18 @@ router.put('/:id', async (req, res) => {
   try {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
-    const result = await db.collection(COL).findOneAndUpdate(
-      { _id },
-      { $set: { mapped_data: req.body.mapped_data, updated_at: new Date() } },
-      { returnDocument: 'after' }
-    );
+    const targetCols = await getTargetCollections(db);
+    
+    let result = null;
+    for (const col of targetCols) {
+      result = await db.collection(col).findOneAndUpdate(
+        { _id },
+        { $set: { mapped_data: req.body.mapped_data, updated_at: new Date() } },
+        { returnDocument: 'after' }
+      );
+      if (result) break;
+    }
+
     if (!result) return res.status(404).json({ error: 'Not found' });
     res.json(toClient(result));
   } catch (err) {
@@ -189,7 +269,13 @@ router.delete('/:id', async (req, res) => {
   try {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
-    await db.collection(COL).deleteOne({ _id });
+    const targetCols = await getTargetCollections(db);
+    
+    for (const col of targetCols) {
+      const resDb = await db.collection(col).deleteOne({ _id });
+      if (resDb.deletedCount > 0) break;
+    }
+    
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -201,8 +287,15 @@ router.post('/bulk-delete', async (req, res) => {
   try {
     const db = getDb();
     const ids = req.body.ids.map(id => new ObjectId(id));
-    await db.collection(COL).deleteMany({ _id: { $in: ids } });
-    res.json({ success: true, deletedCount: ids.length });
+    const targetCols = await getTargetCollections(db);
+    
+    let deletedCount = 0;
+    for (const col of targetCols) {
+      const resDb = await db.collection(col).deleteMany({ _id: { $in: ids } });
+      deletedCount += resDb.deletedCount;
+    }
+
+    res.json({ success: true, deletedCount });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
