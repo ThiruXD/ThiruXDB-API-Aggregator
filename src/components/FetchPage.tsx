@@ -180,51 +180,61 @@ export function FetchPage() {
               const isFetching = fetchingIds.has(endpoint.id);
               const progress = fetchProgress[endpoint.id];
               return (
-                <div key={endpoint.id} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex gap-4 items-center">
-                  <div className="pt-1">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(endpoint.id)}
-                      onChange={(e) => handleSelectOne(endpoint.id, e.target.checked)}
-                      className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${endpoint.last_error ? 'bg-yellow-500/20' : endpoint.last_fetched_at ? 'bg-green-500/20' : 'bg-slate-700'}`}>
-                      {endpoint.last_error ? <AlertCircle className="w-5 h-5 text-yellow-400" /> : endpoint.last_fetched_at ? <CheckCircle className="w-5 h-5 text-green-400" /> : <Database className="w-5 h-5 text-slate-500" />}
+                <div key={endpoint.id} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+                  <div className="flex items-start gap-4">
+                    <div className="pt-1 shrink-0">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(endpoint.id)}
+                        onChange={(e) => handleSelectOne(endpoint.id, e.target.checked)}
+                        className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                      />
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">{endpoint.name}</h3>
-                      <p className="text-sm text-slate-500 font-mono truncate max-w-md">{endpoint.base_url}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-4">
-                    {isFetching && progress && (
-                      <div className="flex items-center gap-2 text-sm text-blue-400 font-medium">
-                        <span>{progress.current} / {progress.total}</span>
-                        <div className="w-24 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                          <div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${Math.min(100, (progress.current / (progress.total || 1)) * 100)}%` }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${endpoint.last_error ? 'bg-yellow-500/20' : endpoint.last_fetched_at ? 'bg-green-500/20' : 'bg-slate-700'}`}>
+                            {endpoint.last_error ? <AlertCircle className="w-5 h-5 text-yellow-400" /> : endpoint.last_fetched_at ? <CheckCircle className="w-5 h-5 text-green-400" /> : <Database className="w-5 h-5 text-slate-500" />}
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="text-lg font-semibold text-white truncate">{endpoint.name}</h3>
+                            <p className="text-sm text-slate-500 font-mono truncate">{endpoint.base_url}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 shrink-0">
+                          {isFetching && progress && (
+                            <div className="flex items-center gap-2 text-sm text-blue-400 font-medium">
+                              <span>{progress.current} / {progress.total}</span>
+                              <div className="w-24 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${Math.min(100, (progress.current / (progress.total || 1)) * 100)}%` }} />
+                              </div>
+                            </div>
+                          )}
+                          {!isFetching && endpoint.last_fetched_at && <span className="text-sm text-slate-500 flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span>}
+                          {isFetching ? (
+                            <button onClick={() => handleCancelFetch(endpoint.id)} className="flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition shadow-lg shadow-red-500/20">
+                              <XCircle className="w-5 h-5" />
+                              Cancel
+                            </button>
+                          ) : (
+                            <button onClick={() => fetchFromEndpoint(endpoint)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-500/20">
+                              <Play className="w-5 h-5" />
+                              Fetch
+                            </button>
+                          )}
                         </div>
                       </div>
-                    )}
-                    {!isFetching && endpoint.last_fetched_at && <span className="text-sm text-slate-500 flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span>}
-                    {isFetching ? (
-                      <button onClick={() => handleCancelFetch(endpoint.id)} className="flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition shadow-lg shadow-red-500/20">
-                        <XCircle className="w-5 h-5" />
-                        Cancel
-                      </button>
-                    ) : (
-                      <button onClick={() => fetchFromEndpoint(endpoint)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-500/20">
-                        <Play className="w-5 h-5" />
-                        Fetch
-                      </button>
-                    )}
+                      
+                      {endpoint.last_error && (
+                        <div className="mt-3 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">
+                          <AlertCircle className="w-4 h-4 shrink-0" />
+                          <span className="truncate">{endpoint.last_error}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-                {endpoint.last_error && <div className="mt-3 ml-12 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2"><AlertCircle className="w-4 h-4 shrink-0" /><span className="truncate">{endpoint.last_error}</span></div>}
-              </div>
             );
           })}
         </div>
