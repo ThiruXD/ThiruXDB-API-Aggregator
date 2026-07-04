@@ -47,14 +47,14 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-slate-700">
+          <div className="p-6 pl-16 lg:pl-6 border-b border-slate-700">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shrink-0">
                 <Database className="w-5 h-5 text-white" />
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-white">API Manager</h1>
-                <p className="text-xs text-slate-400">Data Dashboard</p>
+              <div className="min-w-0">
+                <h1 className="text-lg font-bold text-white truncate">API Manager</h1>
+                <p className="text-xs text-slate-400 truncate">Data Dashboard</p>
               </div>
             </div>
           </div>
