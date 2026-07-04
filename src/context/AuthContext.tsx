@@ -15,8 +15,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const ADMIN_CREDENTIALS = {
-  username: 'admin',
-  password: 'admin123',
+  username: process.env.ADMIN_USERNAME,
+  password: process.env.ADMIN_PASS,
 };
 
 const SESSION_KEY = 'api_dashboard_admin_session';
