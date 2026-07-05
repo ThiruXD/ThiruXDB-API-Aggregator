@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Lock, User, AlertCircle, Database } from 'lucide-react';
+import { Lock, User, AlertCircle, Database, Github } from 'lucide-react';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -90,6 +90,15 @@ export function LoginPage() {
           <p className="text-center text-gray-400 dark:text-gray-500 text-sm mt-6">
             Lets Make Fun with ThiruXDB!
           </p>
+        </div>
+        
+        {/* Copyright Strip */}
+        <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400 flex flex-col items-center gap-2">
+          <p>&copy; {new Date().getFullYear()} ThiruXD. All rights reserved.</p>
+          <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-white transition">
+            <Github className="w-4 h-4" />
+            <span>ThiruXDB on GitHub</span>
+          </a>
         </div>
       </div>
     </div>

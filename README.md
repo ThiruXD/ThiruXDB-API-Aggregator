@@ -216,6 +216,21 @@ bun run lint         # ESLint
 
 ---
 
+## Contributing
+
+Contributions are highly encouraged and always welcome! We believe in the power of open-source and community collaboration. Whether you are fixing a bug, adding a new feature, or improving the documentation, your help is appreciated.
+
+**How to contribute:**
+1. Fork the repository.
+2. Create your feature branch: `git checkout -b feature/my-new-feature`
+3. Commit your changes: `git commit -m 'feat: Add some amazing feature'`
+4. Push to the branch: `git push origin feature/my-new-feature`
+5. Open a Pull Request!
+
+If you're not a developer, you can still contribute by opening issues for bugs or suggesting new features.
+
+---
+
 ## Credits
 
 - **Author**: [ThiruXD](https://github.com/ThiruXD)
