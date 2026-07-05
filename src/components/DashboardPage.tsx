@@ -96,17 +96,18 @@ export function DashboardPage() {
               setIsSyncingStats(false);
             }}
             disabled={isSyncingStats}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition disabled:opacity-50 border border-slate-700"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition disabled:opacity-50 border border-slate-700 text-sm sm:text-base"
           >
             <RefreshCw className={`w-4 h-4 ${isSyncingStats ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">{isSyncingStats ? 'Syncing...' : 'Sync Stats'}</span>
+            <span>{isSyncingStats ? 'Syncing...' : 'Sync Stats'}</span>
           </button>
           <button
             onClick={loadDashboardData}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition border border-transparent hover:border-slate-700"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition disabled:opacity-50 border border-slate-700 text-sm sm:text-base"
             title="Refresh Dashboard"
           >
-            <RefreshCw className="w-5 h-5" />
+            <RefreshCw className="w-4 h-4" />
+            <span>Refresh</span>
           </button>
         </div>
       </div>
@@ -299,7 +300,7 @@ export function DashboardPage() {
             No data to display
           </p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="flex flex-col gap-3">
             {endpoints.map((endpoint) => {
               const recordCount = perEndpoint[endpoint.id] || 0;
               const percentageOfTotal =
@@ -308,15 +309,15 @@ export function DashboardPage() {
                   : 0;
 
               return (
-                <div key={endpoint.id} className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4 flex flex-col justify-between">
-                  <span className="text-sm font-medium text-slate-300 truncate mb-2" title={endpoint.name}>
+                <div key={endpoint.id} className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4 flex items-center justify-between gap-4">
+                  <span className="text-sm font-medium text-slate-300 truncate" title={endpoint.name}>
                     {endpoint.name}
                   </span>
-                  <div className="flex items-end justify-between">
-                    <span className="text-2xl font-bold text-white">
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className="text-lg font-bold text-white">
                       {recordCount.toLocaleString()}
                     </span>
-                    <span className="text-xs font-medium px-2 py-1 bg-blue-500/10 text-blue-400 rounded-md">
+                    <span className="text-xs font-medium px-2 py-1 bg-blue-500/10 text-blue-400 rounded-md whitespace-nowrap hidden sm:inline-block">
                       {percentageOfTotal}% of total db
                     </span>
                   </div>
