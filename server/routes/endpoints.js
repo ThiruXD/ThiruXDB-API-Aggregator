@@ -357,6 +357,9 @@ async function runSyncJob(endpointIdStr, skipOffset) {
         recordsCreated++;
       } // end if externalId
 
+      if (!isMultiUrl && i % 10 === 0) {
+        job.current = i;
+      }
     } // end for items
 
     urlIndex++;
@@ -419,6 +422,14 @@ router.post('/:id/sync', async (req, res) => {
   runSyncJob(endpointId, skipOffset).catch(err => console.error('Background job error:', err));
 });
 
+router.get('/active-syncs', (req, res) => {
+  const activeIds = Array.from(activeSyncJobs.keys()).filter(id => {
+    const job = activeSyncJobs.get(id);
+    return job && job.status === 'running' && !job.cancelled;
+  });
+  res.json({ activeIds });
+});
+
 router.get('/:id/sync-status', (req, res) => {
   const job = activeSyncJobs.get(req.params.id);
   if (!job) return res.json({ status: 'idle', current: 0, total: 0 });
@@ -433,14 +444,6 @@ router.post('/:id/cancel-sync', (req, res) => {
   } else {
     res.json({ message: 'No active job to cancel' });
   }
-});
-
-router.get('/active-syncs', (req, res) => {
-  const activeIds = Array.from(activeSyncJobs.keys()).filter(id => {
-    const job = activeSyncJobs.get(id);
-    return job && job.status === 'running' && !job.cancelled;
-  });
-  res.json({ activeIds });
 });
 
 router.post('/sync-stats', async (req, res) => {
