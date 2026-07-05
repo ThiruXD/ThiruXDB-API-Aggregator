@@ -10,10 +10,7 @@ Check out the live deployment of ThiruXDB here:
 - **Username:** `demo`
 - **Password:** `demo@123`
 
-<video src="https://github.com/ThiruXD/ThiruXDB/raw/main/public/ThiruXDB-Screen-Recording.webm" controls="controls" autoplay="autoplay" muted="muted" loop="loop" playsinline="playsinline" width="100%">
-  Your browser does not support the video tag.
-</video>
-
+![ThiruXDB Featured Image](public/demo.webp)
 
 ---
 
