@@ -259,14 +259,47 @@ async function runSyncJob(endpointIdStr, skipOffset) {
 
       let items = [];
       try {
+        job.status = 'downloading';
+        job.download_loaded = 0;
+        job.download_total = 0;
+
         const response = await fetch(url, { headers });
         if (!response.ok) {
            console.error(`Failed to fetch ${url}: HTTP ${response.status}`);
            urlIndex++;
            if (isMultiUrl) job.current = urlIndex;
+           job.status = 'running';
            continue; 
         }
-        const jsonData = await response.json();
+
+        const contentLength = response.headers.get('content-length');
+        if (contentLength) {
+          job.download_total = parseInt(contentLength, 10);
+        }
+
+        const reader = response.body.getReader();
+        const chunks = [];
+        let loaded = 0;
+
+        while (true) {
+          if (job.cancelled) break;
+          const { done, value } = await reader.read();
+          if (done) break;
+          chunks.push(value);
+          loaded += value.length;
+          job.download_loaded = loaded;
+        }
+
+        if (job.cancelled) {
+          job.status = 'partial';
+          errorMessage = 'Cancelled by user';
+          break;
+        }
+
+        job.status = 'running';
+
+        const bodyStr = Buffer.concat(chunks).toString('utf-8');
+        const jsonData = JSON.parse(bodyStr);
         let data = jsonData;
         if (endpoint.response_path) {
           for (const path of endpoint.response_path.split('.')) data = data?.[path];

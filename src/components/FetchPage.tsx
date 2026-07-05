@@ -6,6 +6,7 @@ import { useFetchStore } from '../store/fetchStore';
 import {
   RefreshCw, Play, CheckCircle, XCircle, Clock, AlertCircle, Loader2, Database,
 } from 'lucide-react';
+import { formatBytes } from '../lib/utils';
 
 export function FetchPage() {
   const [endpoints, setEndpoints] = useState<ApiEndpoint[]>([]);
@@ -185,17 +186,32 @@ export function FetchPage() {
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto shrink-0 border-t border-gray-100 dark:border-gray-700/50 sm:border-0 pt-3 sm:pt-0 mt-2 sm:mt-0">
                           {isFetching && progress && (
                             <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium justify-between sm:justify-start">
-                              <span className="w-24 shrink-0 text-left">
-                                {progress.total === 1 && progress.current === 0 ? (
+                              <span className="w-32 shrink-0 text-left">
+                                {progress.status === 'downloading' ? (
                                   <span className="flex items-center gap-1.5 text-blue-500">
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Fetching
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+                                    {progress.download_total ? 
+                                      `${formatBytes(progress.download_loaded || 0)} / ${formatBytes(progress.download_total)}` : 
+                                      `${formatBytes(progress.download_loaded || 0)}`
+                                    }
+                                  </span>
+                                ) : progress.total === 1 && progress.current === 0 ? (
+                                  <span className="flex items-center gap-1.5 text-blue-500">
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" /> Fetching
                                   </span>
                                 ) : (
                                   `${progress.current} / ${progress.total}`
                                 )}
                               </span>
                               <div className="w-24 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden shrink-0">
-                                <div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${Math.min(100, (progress.current / (progress.total || 1)) * 100)}%` }} />
+                                <div className="h-full bg-blue-500 transition-all duration-300" 
+                                  style={{ 
+                                    width: `${progress.status === 'downloading' && progress.download_total ? 
+                                      Math.min(100, ((progress.download_loaded || 0) / progress.download_total) * 100) : 
+                                      progress.status === 'downloading' ? 100 : 
+                                      Math.min(100, (progress.current / (progress.total || 1)) * 100)}%` 
+                                  }} 
+                                />
                               </div>
                             </div>
                           )}

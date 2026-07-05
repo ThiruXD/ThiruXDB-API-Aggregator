@@ -159,7 +159,7 @@ export const api = {
   startSync: (id: string, skipOffset: number = 0): Promise<{ message: string }> =>
     request(`/endpoints/${id}/sync`, { method: 'POST', body: JSON.stringify({ skipOffset }) }),
 
-  getSyncStatus: (id: string): Promise<{ status: 'idle' | 'running' | 'completed' | 'partial' | 'error'; current: number; total: number; error: string | null; cancelled: boolean }> =>
+  getSyncStatus: (id: string): Promise<{ status: 'idle' | 'downloading' | 'running' | 'completed' | 'partial' | 'error'; current: number; total: number; download_loaded?: number; download_total?: number; error: string | null; cancelled: boolean }> =>
     request(`/endpoints/${id}/sync-status`),
 
   getActiveSyncs: (): Promise<{ activeIds: string[] }> =>
