@@ -19,6 +19,11 @@ export interface ApiEndpoint {
   response_path: string;
   pagination_type: 'none' | 'offset' | 'cursor' | 'page';
   pagination_config: Json;
+  path_variables?: {
+    variable: string;
+    source_collection: string;
+    source_field: string;
+  }[];
   is_active: boolean;
   last_fetched_at: string | null;
   last_error: string | null;
@@ -55,6 +60,12 @@ export interface FieldMapping {
   transform?: 'string' | 'number' | 'boolean' | 'date';
 }
 
+export interface PathVariable {
+  variable: string;
+  source_collection: string;
+  source_field: string;
+}
+
 export interface EndpointFormData {
   name: string;
   description: string;
@@ -78,5 +89,6 @@ export interface EndpointFormData {
     cursor_param?: string;
     default_limit?: number;
   };
+  path_variables: PathVariable[];
   is_active: boolean;
 }

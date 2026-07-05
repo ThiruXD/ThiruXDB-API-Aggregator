@@ -11,7 +11,7 @@ interface EndpointFormProps {
 
 const defaultFormData: EndpointFormData = {
   name: '', description: '', collection_name: '', id_field: '', base_url: '', auth_type: 'none', auth_config: {},
-  field_mappings: [], response_path: '', pagination_type: 'none', pagination_config: {}, is_active: true,
+  field_mappings: [], response_path: '', pagination_type: 'none', pagination_config: {}, path_variables: [], is_active: true,
 };
 
 export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) {
@@ -20,6 +20,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string; sampleData?: unknown } | null>(null);
   const [newMapping, setNewMapping] = useState<FieldMapping>({ sourceField: '', targetField: '', transform: 'string' });
+  const [newPathVariable, setNewPathVariable] = useState({ variable: '', source_collection: '', source_field: '' });
 
   useEffect(() => {
     if (endpoint) {
@@ -35,6 +36,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
         response_path: endpoint.response_path,
         pagination_type: endpoint.pagination_type,
         pagination_config: (endpoint.pagination_config as EndpointFormData['pagination_config']) || {},
+        path_variables: endpoint.path_variables || [],
         is_active: endpoint.is_active,
       });
     } else {
@@ -95,6 +97,17 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
 
   const removeMapping = (index: number) => {
     setFormData((prev) => ({ ...prev, field_mappings: prev.field_mappings.filter((_, i) => i !== index) }));
+  };
+
+  const addPathVariable = () => {
+    if (newPathVariable.variable && newPathVariable.source_collection && newPathVariable.source_field) {
+      setFormData((prev) => ({ ...prev, path_variables: [...prev.path_variables, newPathVariable] }));
+      setNewPathVariable({ variable: '', source_collection: '', source_field: '' });
+    }
+  };
+
+  const removePathVariable = (index: number) => {
+    setFormData((prev) => ({ ...prev, path_variables: prev.path_variables.filter((_, i) => i !== index) }));
   };
 
   const inputCls = "w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -207,6 +220,84 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
               {formData.pagination_type === 'cursor' && (
                 <input type="text" placeholder="Cursor param (e.g., cursor)" value={formData.pagination_config.cursor_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, cursor_param: e.target.value } })} className={inputCls} />
               )}
+            </div>
+
+            {/* Path Variables */}
+            <div className="border border-slate-700 rounded-lg p-4 mt-6 mb-6">
+              <h3 className="text-sm font-semibold text-white mb-4">Dynamic Path Variables</h3>
+              <p className="text-xs text-slate-400 mb-4">Replace parts of the URL dynamically (e.g. {`{studentID}`}) using data from another collection.</p>
+              
+              <div className="space-y-4">
+                {formData.path_variables.map((pv, idx) => (
+                  <div key={idx} className="flex items-center gap-3 bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+                    <div className="flex-1 grid grid-cols-3 gap-3">
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">Variable in URL</p>
+                        <p className="text-sm text-white font-mono">{pv.variable}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">Source Collection</p>
+                        <p className="text-sm text-white font-mono">{pv.source_collection}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">Source Field</p>
+                        <p className="text-sm text-white font-mono">{pv.source_field}</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removePathVariable(idx)}
+                      className="p-2 text-red-400 hover:bg-slate-600 rounded-lg transition"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+
+                <div className="flex flex-wrap items-end gap-3 bg-slate-700/30 p-4 rounded-lg border border-slate-600 border-dashed">
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Variable (e.g. {`{id}`})</label>
+                      <input
+                        type="text"
+                        value={newPathVariable.variable}
+                        onChange={(e) => setNewPathVariable({ ...newPathVariable, variable: e.target.value })}
+                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="{studentID}"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Collection</label>
+                      <input
+                        type="text"
+                        value={newPathVariable.source_collection}
+                        onChange={(e) => setNewPathVariable({ ...newPathVariable, source_collection: e.target.value })}
+                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="Students"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Field path</label>
+                      <input
+                        type="text"
+                        value={newPathVariable.source_field}
+                        onChange={(e) => setNewPathVariable({ ...newPathVariable, source_field: e.target.value })}
+                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="mapped_data.id"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addPathVariable}
+                    disabled={!newPathVariable.variable || !newPathVariable.source_collection || !newPathVariable.source_field}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="hidden sm:inline">Add</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Field Mappings */}

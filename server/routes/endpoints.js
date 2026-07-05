@@ -37,6 +37,7 @@ router.post('/', async (req, res) => {
       field_mappings: req.body.field_mappings || [],
       response_path: req.body.response_path || '',
       pagination_config: req.body.pagination_config || {},
+      path_variables: Array.isArray(req.body.path_variables) ? req.body.path_variables : [],
       is_active: req.body.is_active !== undefined ? req.body.is_active : true,
       record_count: 0,
       last_fetched_at: null,
@@ -69,6 +70,7 @@ router.put('/:id', async (req, res) => {
         response_path: req.body.response_path || '',
         pagination_type: req.body.pagination_type,
         pagination_config: req.body.pagination_config || {},
+        path_variables: Array.isArray(req.body.path_variables) ? req.body.path_variables : [],
         is_active: req.body.is_active,
         updated_at: new Date(),
       },
@@ -180,30 +182,81 @@ async function runSyncJob(endpointIdStr, skipOffset) {
       if (username && password) headers['Authorization'] = `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`;
     }
 
-    const response = await fetch(endpoint.base_url, { headers });
-    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    let urls = [endpoint.base_url];
 
-    const jsonData = await response.json();
-    let data = jsonData;
-    if (endpoint.response_path) {
-      for (const path of endpoint.response_path.split('.')) data = data?.[path];
+    // Generate URLs from path variables
+    if (endpoint.path_variables && endpoint.path_variables.length > 0) {
+      for (const pv of endpoint.path_variables) {
+        if (!pv.variable || !pv.source_collection || !pv.source_field) continue;
+        const values = await db.collection(pv.source_collection).distinct(pv.source_field);
+        const newUrls = [];
+        for (const url of urls) {
+          for (const val of values) {
+            if (val !== undefined && val !== null) {
+              newUrls.push(url.replace(pv.variable, encodeURIComponent(String(val))));
+            }
+          }
+        }
+        urls = newUrls;
+      }
     }
-
-    let items = Array.isArray(data) ? data : [data].filter(Boolean);
-    if (skipOffset > 0) items = items.slice(skipOffset);
-
-    recordsFetched = items.length;
-    job.total = items.length;
 
     const mappings = endpoint.field_mappings || [];
     const targetCol = endpoint.collection_name || 'data_records';
 
-    for (let i = 0; i < items.length; i++) {
+    const isMultiUrl = urls.length > 1;
+    if (isMultiUrl) {
+      if (skipOffset > 0) urls = urls.slice(skipOffset);
+      job.total = urls.length;
+    } else {
+      job.total = 1; // placeholder, updated after fetch
+    }
+
+    let urlIndex = 0;
+    for (const url of urls) {
       if (job.cancelled) {
         errorMessage = 'Cancelled by user';
         status = 'partial';
         break;
       }
+
+      let items = [];
+      try {
+        const response = await fetch(url, { headers });
+        if (!response.ok) {
+           console.error(`Failed to fetch ${url}: HTTP ${response.status}`);
+           urlIndex++;
+           if (isMultiUrl) job.current = urlIndex;
+           continue; 
+        }
+        const jsonData = await response.json();
+        let data = jsonData;
+        if (endpoint.response_path) {
+          for (const path of endpoint.response_path.split('.')) data = data?.[path];
+        }
+        items = Array.isArray(data) ? data : [data].filter(Boolean);
+        
+        if (!isMultiUrl && skipOffset > 0) {
+           items = items.slice(skipOffset);
+        }
+        if (!isMultiUrl) {
+           job.total = items.length;
+        }
+      } catch (err) {
+        console.error(`Error fetching ${url}: ${err.message}`);
+        urlIndex++;
+        if (isMultiUrl) job.current = urlIndex;
+        continue;
+      }
+
+      recordsFetched += items.length;
+
+      for (let i = 0; i < items.length; i++) {
+        if (job.cancelled) {
+          errorMessage = 'Cancelled by user';
+          status = 'partial';
+          break;
+        }
 
       const item = items[i];
       let externalId = null;
@@ -265,10 +318,18 @@ async function runSyncJob(endpointIdStr, skipOffset) {
           updated_at: now,
         });
         recordsCreated++;
-      }
+      } // end if externalId
 
-      job.current = i + 1;
+    } // end for items
+
+    urlIndex++;
+    if (isMultiUrl) {
+      job.current = urlIndex;
+    } else {
+      job.current = items.length;
     }
+
+  } // end for urls
 
     await db.collection(COL).updateOne({ _id: endpointId }, { 
       $set: { last_fetched_at: new Date(), last_error: null, updated_at: new Date() },
