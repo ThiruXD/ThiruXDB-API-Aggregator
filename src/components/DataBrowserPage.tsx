@@ -162,7 +162,7 @@ export function DataBrowserPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-4">
           {activeCollection !== null && (
             <button onClick={() => { setActiveCollection(null); setRecords([]); setTotalCount(0); }} className="p-2 bg-slate-800 text-slate-400 hover:text-white rounded-lg border border-slate-700 transition" title="Back to Collections">
@@ -177,7 +177,7 @@ export function DataBrowserPage() {
           </div>
         </div>
         {activeCollection !== null && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button onClick={loadRecords} className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition" title="Refresh"><RefreshCw className="w-5 h-5" /></button>
             <button onClick={() => setViewMode(viewMode === 'table' ? 'grid' : 'table')} className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition">{viewMode === 'table' ? <Grid className="w-5 h-5" /> : <Table className="w-5 h-5" />}</button>
             <button onClick={() => handleExport('csv')} className="flex items-center gap-2 px-3 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition"><Download className="w-4 h-4" />CSV</button>
@@ -259,7 +259,7 @@ export function DataBrowserPage() {
       </div>
 
       {selectedIds.size > 0 && (
-        <div className="flex items-center gap-4 bg-blue-900/30 border border-blue-500/30 rounded-xl p-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-blue-900/30 border border-blue-500/30 rounded-xl p-3">
           <span className="text-sm text-blue-400 font-medium">{selectedIds.size} records selected</span>
           <button
             onClick={handleBulkDelete}
@@ -366,7 +366,7 @@ export function DataBrowserPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4">
           <div className="flex items-center gap-2">
             <span className="text-sm text-slate-400">Per page:</span>
             <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="bg-slate-700 border border-slate-600 rounded px-3 py-1 text-white text-sm">
@@ -447,12 +447,12 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted }: { recor
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
-          <div className="flex gap-2 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div className="flex gap-2">
               <button onClick={() => setView('mapped')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'mapped' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>Mapped Data</button>
               <button onClick={() => setView('raw')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'raw' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>Raw JSON</button>
             </div>
-            <div className="flex gap-2 ml-auto">
+            <div className="flex gap-2">
               <button onClick={handleCopyJSON} className="flex items-center gap-2 px-3 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition text-sm">
                 <Copy className="w-4 h-4" /> Copy
               </button>
@@ -474,13 +474,13 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted }: { recor
             <pre className="bg-slate-900 rounded-lg p-4 overflow-x-auto font-mono text-sm text-slate-300">{JSON.stringify(view === 'mapped' ? record.mapped_data : record.raw_data, null, 2)}</pre>
           )}
 
-          <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div><span className="text-slate-500">Fetched at:</span><span className="ml-2 text-white">{new Date(record.fetched_at).toLocaleString()}</span></div>
             <div><span className="text-slate-500">Created at:</span><span className="ml-2 text-white">{new Date(record.created_at).toLocaleString()}</span></div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between p-6 border-t border-slate-700">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between p-6 border-t border-slate-700">
           <button onClick={handleDelete} disabled={isDeleting} className="flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"><Trash2 className="w-4 h-4" />{isDeleting ? 'Deleting...' : 'Delete'}</button>
           <div className="flex gap-2">
             {view === 'mapped' && <button onClick={() => setIsEditing(!isEditing)} className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition"><Edit className="w-4 h-4" />Edit</button>}

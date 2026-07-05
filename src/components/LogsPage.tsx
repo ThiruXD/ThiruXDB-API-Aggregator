@@ -38,7 +38,7 @@ export function LogsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Fetch Logs</h1>
           <p className="text-slate-400 mt-1">
@@ -65,7 +65,8 @@ export function LogsPage() {
         </div>
       ) : (
         <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+            <table className="w-full">
             <thead className="bg-slate-700/50">
               <tr>
                 <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">
@@ -140,6 +141,7 @@ export function LogsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

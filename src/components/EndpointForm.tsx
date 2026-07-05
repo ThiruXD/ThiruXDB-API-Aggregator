@@ -254,12 +254,12 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-700">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mt-6 pt-6 border-t border-slate-700">
             <button type="button" onClick={handleTest} disabled={isTesting || !formData.base_url} className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition disabled:opacity-50">
               {isTesting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
               Test Connection
             </button>
-            <div className="flex gap-3">
+            <div className="flex w-full sm:w-auto gap-3 justify-end">
               <button type="button" onClick={onCancel} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
               <button type="submit" disabled={isLoading || !formData.name || !formData.base_url} className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50">
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}

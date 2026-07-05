@@ -64,7 +64,7 @@ export function FetchPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Fetch Data</h1>
           <p className="text-slate-400 mt-1">Pull data from configured API endpoints</p>
@@ -116,7 +116,7 @@ export function FetchPage() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${endpoint.last_error ? 'bg-yellow-500/20' : endpoint.last_fetched_at ? 'bg-green-500/20' : 'bg-slate-700'}`}>
                             {endpoint.last_error ? <AlertCircle className="w-5 h-5 text-yellow-400" /> : endpoint.last_fetched_at ? <CheckCircle className="w-5 h-5 text-green-400" /> : <Database className="w-5 h-5 text-slate-500" />}
@@ -127,7 +127,7 @@ export function FetchPage() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-4 shrink-0">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 shrink-0">
                           {isFetching && progress && (
                             <div className="flex items-center gap-2 text-sm text-blue-400 font-medium">
                               <span>{progress.current} / {progress.total}</span>
@@ -177,6 +177,7 @@ export function FetchPage() {
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-white mb-4">Recent Fetch History</h2>
         <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
           {recentLogs.length === 0 ? <p className="text-slate-500 text-center py-8">No fetch history yet</p> : (
             <table className="w-full">
               <thead className="bg-slate-700/50">
@@ -199,6 +200,7 @@ export function FetchPage() {
               </tbody>
             </table>
           )}
+          </div>
         </div>
       </div>
     </div>

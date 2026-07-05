@@ -110,7 +110,7 @@ export function EndpointsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">API Endpoints</h1>
           <p className="text-slate-400 mt-1">
@@ -149,7 +149,7 @@ export function EndpointsPage() {
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"

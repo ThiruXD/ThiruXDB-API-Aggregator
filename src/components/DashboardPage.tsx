@@ -77,7 +77,7 @@ export function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
           <p className="text-slate-400 mt-1">Overview of your API data sources</p>
@@ -93,7 +93,7 @@ export function DashboardPage() {
       {/* System Status Banner */}
       {system && (
         <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className={`p-2 rounded-lg ${system.mongoStatus === 'Connected' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
               <Server className="w-6 h-6" />
             </div>
