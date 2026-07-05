@@ -42,7 +42,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-50 flex items-center px-4 justify-between transition-colors duration-200">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded-lg flex items-center justify-center shadow-lg shrink-0">
-            <Database className="w-4 h-4 text-white" />
+            <Database className="w-4 h-4 text-white dark:text-gray-900" />
           </div>
           <h1 className="text-base font-bold text-gray-900 dark:text-white">ThiruXDB</h1>
         </div>
@@ -72,7 +72,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
           <div className="hidden lg:block p-6 border-b border-gray-200 dark:border-gray-800 transition-colors">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center shadow-lg shrink-0">
-                <Database className="w-5 h-5 text-white" />
+                <Database className="w-5 h-5 text-white dark:text-gray-900" />
               </div>
               <div className="min-w-0">
                 <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">ThiruXDB</h1>

@@ -193,11 +193,11 @@ export function FetchPage() {
                   {['Endpoint','Status','Fetched','Created','Updated','Duration','Time'].map(h => <th key={h} className={`px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 ${h==='Endpoint'||h==='Status'||h==='Time' ? 'text-left' : 'text-right'}`}>{h}</th>)}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                 {recentLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/30">
                     <td className="px-4 py-3 text-gray-900 dark:text-white">{log.endpoint_name}</td>
-                    <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 text-sm ${log.status==='success'?'text-green-400':log.status==='partial'?'text-yellow-400':'text-red-400'}`}>{log.status==='success'?<CheckCircle className="w-4 h-4"/>:log.status==='partial'?<AlertCircle className="w-4 h-4"/>:<XCircle className="w-4 h-4"/>}{log.status}</span></td>
+                    <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-md ${log.status==='success'?'bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400':log.status==='partial'?'bg-yellow-50 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400':'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400'}`}>{log.status==='success'?<CheckCircle className="w-3.5 h-3.5"/>:log.status==='partial'?<AlertCircle className="w-3.5 h-3.5"/>:<XCircle className="w-3.5 h-3.5"/>}{log.status}</span></td>
                     <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{log.records_fetched}</td>
                     <td className="px-4 py-3 text-right text-green-400">{log.records_created}</td>
                     <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{log.records_updated}</td>

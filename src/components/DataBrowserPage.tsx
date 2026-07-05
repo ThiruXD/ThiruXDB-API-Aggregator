@@ -306,7 +306,7 @@ export function DataBrowserPage() {
                   <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                 {records.map((record) => (
                   <tr key={record.id} className="hover:bg-gray-50 dark:bg-gray-700/30 cursor-pointer" onClick={() => setSelectedRecord(record)}>
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>

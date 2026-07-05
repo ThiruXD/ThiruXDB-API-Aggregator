@@ -219,6 +219,9 @@ export function UsersPage() {
                     <td className="px-6 py-4 font-mono text-xs">
                       <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
                         <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
+                        <a href={`https://ipinfo.io/${log.ip_address}`} target="_blank" rel="noopener noreferrer" className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
+                          <Search className="w-3 h-3" />
+                        </a>
                       </div>
                       {log.location_data && (
                         <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
@@ -402,6 +405,9 @@ function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
                         <td className="px-6 py-4 font-mono text-xs">
                           <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
                             <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
+                            <a href={`https://ipinfo.io/${log.ip_address}`} target="_blank" rel="noopener noreferrer" className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
+                              <Search className="w-3 h-3" />
+                            </a>
                           </div>
                           {log.location_data && (
                             <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
