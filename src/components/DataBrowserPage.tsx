@@ -14,6 +14,7 @@ export function DataBrowserPage() {
   const [endpoints, setEndpoints] = useState<ApiEndpoint[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEndpointsLoading, setIsEndpointsLoading] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEndpoint, setSelectedEndpoint] = useState<string>('all');
@@ -40,12 +41,14 @@ export function DataBrowserPage() {
   useEffect(() => { if (activeCollection !== null) loadRecords(); }, [page, pageSize, selectedEndpoint, dateFrom, dateTo, activeCollection]);
 
   const loadEndpoints = async () => {
+    setIsEndpointsLoading(true);
     try {
       const data = await api.getEndpoints();
       setEndpoints(data);
     } catch (err) {
       console.error('Failed to load endpoints:', err);
     }
+    setIsEndpointsLoading(false);
   };
 
   const loadRecords = async () => {
@@ -196,8 +199,19 @@ export function DataBrowserPage() {
       </div>
 
       {activeCollection === null ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div onClick={() => setActiveCollection('all')} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-gray-900 dark:hover:border-white transition group flex flex-col items-center justify-center text-center gap-3">
+        isEndpointsLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 flex flex-col items-center justify-center text-center gap-3 h-40">
+                 <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700"></div>
+                 <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                 <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div onClick={() => setActiveCollection('all')} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-gray-900 dark:hover:border-white transition group flex flex-col items-center justify-center text-center gap-3">
              <Database className="w-10 h-10 text-gray-400 dark:text-gray-500 group-hover:text-gray-700 dark:text-gray-300 transition" />
              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">All Records</h3>
              <p className="text-sm text-gray-500 dark:text-gray-400">View all endpoints</p>
@@ -217,6 +231,7 @@ export function DataBrowserPage() {
             </div>
           )}
         </div>
+        )
       ) : (
         <>
 
