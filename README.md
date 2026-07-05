@@ -7,12 +7,15 @@
 ## Features
 
 - **Endpoint Manager** — Add, edit, activate/deactivate, and delete API endpoints with support for `None`, `Bearer`, `API Key`, and `Basic` authentication
+- **Dynamic Path Variables** — Automatically orchestrate mass API fetching by injecting variables (like `{id}`) into URLs from another MongoDB collection's fields.
+- **Custom Collections** — Store fetched data in a central `data_records` collection or automatically route it to dedicated custom collections.
 - **Field Mappings** — Map and transform response fields (`string`, `number`, `boolean`, `date`) to a unified schema
-- **One-click Fetch** — Pull data from a single endpoint or all active endpoints at once
-- **Data Browser** — Paginated table/grid view with date range filters and full-text search (via MongoDB `$text` index)
+- **One-click Fetch** — Pull data from a single endpoint or all active endpoints at once, with robust background fault tolerance and error skipping.
+- **Data Browser** — Paginated table/grid view with date range filters, endpoint filtering, and full-text search.
 - **Fetch Logs** — Complete history of every fetch operation with status, record counts, duration, and errors
-- **Dashboard** — Live stats: total records, active endpoints, last sync time, and per-endpoint record distribution
+- **High-Performance Dashboard** — Live stats cached directly on endpoint documents for instantaneous rendering of total records, active endpoints, and distributions.
 - **Export** — Download current view as JSON or CSV
+- **Mobile Responsive** — Fully optimized UI with sidebar overlays and responsive grids for managing data on the go.
 - **Local Auth** — Simple session-based admin login (no external auth service required)
 
 ---
@@ -130,13 +133,16 @@ Stores configured API sources.
 |---|---|---|
 | `_id` | ObjectId | Auto-generated |
 | `name` | string | Display name |
+| `collection_name` | string | Optional custom target collection (defaults to `data_records`) |
 | `base_url` | string | The API URL to fetch |
+| `path_variables` | array | Dynamic variables for URL injection (`variable`, `source_collection`, `source_field`) |
 | `auth_type` | string | `none` \| `api_key` \| `bearer` \| `basic` |
 | `auth_config` | object | Auth credentials (headers, token, etc.) |
 | `field_mappings` | array | Source → target field transform rules |
 | `response_path` | string | Dot-path to array in response (e.g. `data.results`) |
 | `pagination_type` | string | `none` \| `offset` \| `cursor` \| `page` |
 | `is_active` | boolean | Whether endpoint is enabled |
+| `record_count` | number | Cached total of records belonging to this endpoint |
 | `last_fetched_at` | Date | Timestamp of last successful fetch |
 | `last_error` | string | Last error message, if any |
 
@@ -177,6 +183,7 @@ All routes are prefixed with `/api`.
 | `GET` | `/api/dashboard` | All dashboard stats in one call |
 | `GET` | `/api/endpoints` | List all endpoints |
 | `POST` | `/api/endpoints` | Create endpoint |
+| `POST` | `/api/endpoints/sync-stats` | Re-calculates and repairs the `record_count` cache across all endpoints |
 | `PUT` | `/api/endpoints/:id` | Update endpoint |
 | `PATCH` | `/api/endpoints/:id/toggle` | Toggle active state |
 | `PATCH` | `/api/endpoints/:id/status` | Update last_fetched_at / last_error |
