@@ -4,6 +4,16 @@
 
 ---
 
+## Live Demo
+Check out the live deployment of ThiruXDB here:
+- **URL:** [https://demo-thiruxdb.netlify.app/](https://demo-thiruxdb.netlify.app/)
+- **Username:** `demo`
+- **Password:** `demo@123`
+
+![Demo Login Flow](public/demo.webp)
+
+---
+
 ## Features
 
 - **Endpoint Manager** — Add, edit, activate/deactivate, and delete API endpoints with support for `None`, `Bearer`, `API Key`, and `Basic` authentication

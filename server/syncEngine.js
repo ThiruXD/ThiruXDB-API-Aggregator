@@ -37,7 +37,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
         updated_at: new Date()
       };
       
-      db.collection('sync_jobs').findOneAndUpdate(
+      db.collection('thiruxdb_sync_jobs').findOneAndUpdate(
         { endpoint_id: endpointIdStr },
         { $set: updatePayload },
         { returnDocument: 'after' }
@@ -55,7 +55,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
   let recordsFetched = 0, recordsCreated = 0, recordsUpdated = 0;
 
   try {
-    const endpoint = await db.collection('api_endpoints').findOne({ _id: endpointId });
+    const endpoint = await db.collection('thiruxdb_api_endpoints').findOne({ _id: endpointId });
     if (!endpoint) throw new Error('Endpoint not found');
 
     const headers = { 'Content-Type': 'application/json' };
@@ -89,7 +89,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     }
 
     const mappings = endpoint.field_mappings || [];
-    const targetCol = endpoint.collection_name || 'data_records';
+    const targetCol = endpoint.collection_name || 'thiruxdb_data_records';
 
     const isMultiUrl = urls.length > 1;
     if (isMultiUrl) {
@@ -314,7 +314,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
   }
 
   try {
-    await db.collection('api_endpoints').updateOne(
+    await db.collection('thiruxdb_api_endpoints').updateOne(
       { _id: endpointId },
       { $set: { last_fetched_at: new Date(), last_error: errorMessage } }
     );
@@ -324,7 +324,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
 
   setTimeout(async () => {
     try {
-      await db.collection('sync_jobs').deleteOne({ endpoint_id: endpointIdStr });
+      await db.collection('thiruxdb_sync_jobs').deleteOne({ endpoint_id: endpointIdStr });
     } catch (e) { }
   }, 10000);
 }

@@ -33,12 +33,12 @@ export function getDb() {
 
 async function ensureIndexes(db) {
   // api_endpoints indexes
-  const endpoints = db.collection('api_endpoints');
+  const endpoints = db.collection('thiruxdb_api_endpoints');
   await endpoints.createIndex({ is_active: 1 });
   await endpoints.createIndex({ created_at: -1 });
 
   // data_records indexes
-  const records = db.collection('data_records');
+  const records = db.collection('thiruxdb_data_records');
   await records.createIndex({ endpoint_id: 1 });
   await records.createIndex({ fetched_at: -1 });
   await records.createIndex({ endpoint_id: 1, external_id: 1 }, { unique: true, sparse: true });
@@ -50,16 +50,16 @@ async function ensureIndexes(db) {
   }
 
   // fetch_logs indexes
-  const logs = db.collection('fetch_logs');
+  const logs = db.collection('thiruxdb_fetch_logs');
   await logs.createIndex({ endpoint_id: 1, created_at: -1 });
   await logs.createIndex({ created_at: -1 });
 
   // Users indexes
-  const users = db.collection('users');
+  const users = db.collection('thiruxdb_users');
   await users.createIndex({ username: 1 }, { unique: true });
 
   // Activity logs indexes
-  const activityLogs = db.collection('user_activity_logs');
+  const activityLogs = db.collection('thiruxdb_user_activity_logs');
   await activityLogs.createIndex({ user_id: 1, created_at: -1 });
   await activityLogs.createIndex({ created_at: -1 });
 

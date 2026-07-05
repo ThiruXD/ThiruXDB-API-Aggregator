@@ -9,7 +9,7 @@ import { ObjectId } from 'mongodb';
 import { getDb } from '../db.js';
 
 const router = Router();
-const COL = 'api_endpoints';
+const COL = 'thiruxdb_api_endpoints';
 
 
 // GET /api/endpoints — list all, newest first
@@ -175,8 +175,8 @@ router.delete('/:id', async (req, res) => {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
     await db.collection(COL).deleteOne({ _id });
-    await db.collection('data_records').deleteMany({ endpoint_id: _id });
-    await db.collection('fetch_logs').deleteMany({ endpoint_id: _id });
+    await db.collection('thiruxdb_data_records').deleteMany({ endpoint_id: _id });
+    await db.collection('thiruxdb_fetch_logs').deleteMany({ endpoint_id: _id });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -189,8 +189,8 @@ router.post('/bulk-delete', async (req, res) => {
     const db = getDb();
     const ids = req.body.ids.map(id => new ObjectId(id));
     await db.collection(COL).deleteMany({ _id: { $in: ids } });
-    await db.collection('data_records').deleteMany({ endpoint_id: { $in: ids } });
-    await db.collection('fetch_logs').deleteMany({ endpoint_id: { $in: ids } });
+    await db.collection('thiruxdb_data_records').deleteMany({ endpoint_id: { $in: ids } });
+    await db.collection('thiruxdb_fetch_logs').deleteMany({ endpoint_id: { $in: ids } });
     res.json({ success: true, deletedCount: ids.length });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -205,7 +205,7 @@ router.post('/:id/sync', async (req, res) => {
 
   try {
     const db = require('../db.js').getDb();
-    const existing = await db.collection('sync_jobs').findOne({ endpoint_id: endpointId });
+    const existing = await db.collection('thiruxdb_sync_jobs').findOne({ endpoint_id: endpointId });
     if (existing && existing.status !== 'completed' && existing.status !== 'error' && existing.status !== 'partial') {
       const lastUpdate = existing.updated_at ? new Date(existing.updated_at) : new Date(0);
       const isStale = (new Date() - lastUpdate) / 1000 > 30;
@@ -214,7 +214,7 @@ router.post('/:id/sync', async (req, res) => {
       }
     }
 
-    await db.collection('sync_jobs').updateOne(
+    await db.collection('thiruxdb_sync_jobs').updateOne(
       { endpoint_id: endpointId },
       {
         $set: {
@@ -258,7 +258,7 @@ router.post('/:id/sync', async (req, res) => {
 router.get('/active-syncs', async (req, res) => {
   try {
     const db = require('../db.js').getDb();
-    const activeJobs = await db.collection('sync_jobs').find({
+    const activeJobs = await db.collection('thiruxdb_sync_jobs').find({
       status: { $in: ['running', 'downloading'] },
       cancelled: { $ne: true }
     }).toArray();
@@ -273,7 +273,7 @@ router.get('/active-syncs', async (req, res) => {
 router.get('/:id/sync-status', async (req, res) => {
   try {
     const db = require('../db.js').getDb();
-    const job = await db.collection('sync_jobs').findOne({ endpoint_id: req.params.id });
+    const job = await db.collection('thiruxdb_sync_jobs').findOne({ endpoint_id: req.params.id });
     if (!job) return res.json({ status: 'idle', current: 0, total: 0 });
     res.json(job);
   } catch (e) {
@@ -284,7 +284,7 @@ router.get('/:id/sync-status', async (req, res) => {
 router.post('/:id/cancel-sync', async (req, res) => {
   try {
     const db = require('../db.js').getDb();
-    const result = await db.collection('sync_jobs').findOneAndUpdate(
+    const result = await db.collection('thiruxdb_sync_jobs').findOneAndUpdate(
       { endpoint_id: req.params.id },
       { $set: { cancelled: true, updated_at: new Date() } },
       { returnDocument: 'after' }
@@ -302,15 +302,15 @@ router.post('/:id/cancel-sync', async (req, res) => {
 router.post('/sync-stats', async (req, res) => {
   try {
     const db = require('../db.js').getDb();
-    const endpoints = await db.collection('api_endpoints').find({}).toArray();
+    const endpoints = await db.collection('thiruxdb_api_endpoints').find({}).toArray();
     for (const ep of endpoints) {
       let count = 0;
       if (ep.collection_name) {
         count = await db.collection(ep.collection_name).countDocuments({});
       } else {
-        count = await db.collection('data_records').countDocuments({ endpoint_id: ep._id.toString() });
+        count = await db.collection('thiruxdb_data_records').countDocuments({ endpoint_id: ep._id.toString() });
       }
-      await db.collection('api_endpoints').updateOne({ _id: ep._id }, { $set: { record_count: count } });
+      await db.collection('thiruxdb_api_endpoints').updateOne({ _id: ep._id }, { $set: { record_count: count } });
     }
     res.json({ success: true, message: 'Stats synced successfully' });
   } catch (err) {

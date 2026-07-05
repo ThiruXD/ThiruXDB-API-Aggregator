@@ -20,7 +20,7 @@ router.use(requireRole(['admin']));
 router.get('/', async (req, res) => {
   try {
     const db = getDb();
-    const users = await db.collection('users').find({}).project({ password_hash: 0 }).toArray();
+    const users = await db.collection('thiruxdb_users').find({}).project({ password_hash: 0 }).toArray();
     res.json(users.map(u => ({ ...u, id: u._id.toString(), _id: undefined })));
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -37,13 +37,13 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const existing = await db.collection('users').findOne({ username });
+    const existing = await db.collection('thiruxdb_users').findOne({ username });
     if (existing) {
       return res.status(400).json({ error: 'Username already exists' });
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-    const result = await db.collection('users').insertOne({
+    const result = await db.collection('thiruxdb_users').insertOne({
       username,
       password_hash,
       role,
@@ -71,16 +71,16 @@ router.put('/:id', async (req, res) => {
 
     // Prevent removing last admin
     if (role !== 'admin' || is_active === false) {
-      const user = await db.collection('users').findOne({ _id });
+      const user = await db.collection('thiruxdb_users').findOne({ _id });
       if (user && user.role === 'admin') {
-        const adminCount = await db.collection('users').countDocuments({ role: 'admin', is_active: true });
+        const adminCount = await db.collection('thiruxdb_users').countDocuments({ role: 'admin', is_active: true });
         if (adminCount <= 1) {
           return res.status(400).json({ error: 'Cannot disable or demote the last active admin' });
         }
       }
     }
 
-    const result = await db.collection('users').findOneAndUpdate(
+    const result = await db.collection('thiruxdb_users').findOneAndUpdate(
       { _id },
       update,
       { returnDocument: 'after' }
@@ -101,15 +101,15 @@ router.delete('/:id', async (req, res) => {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
 
-    const user = await db.collection('users').findOne({ _id });
+    const user = await db.collection('thiruxdb_users').findOne({ _id });
     if (user && user.role === 'admin') {
-      const adminCount = await db.collection('users').countDocuments({ role: 'admin' });
+      const adminCount = await db.collection('thiruxdb_users').countDocuments({ role: 'admin' });
       if (adminCount <= 1) {
         return res.status(400).json({ error: 'Cannot delete the last admin' });
       }
     }
 
-    await db.collection('users').deleteOne({ _id });
+    await db.collection('thiruxdb_users').deleteOne({ _id });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -135,7 +135,7 @@ router.get('/activity', async (req, res) => {
       { $limit: limit },
       {
         $lookup: {
-          from: 'users',
+          from: 'thiruxdb_users',
           localField: 'user_id',
           foreignField: '_id',
           as: 'user'
@@ -144,9 +144,9 @@ router.get('/activity', async (req, res) => {
       { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } }
     );
 
-    const logs = await db.collection('user_activity_logs').aggregate(pipeline).toArray();
+    const logs = await db.collection('thiruxdb_user_activity_logs').aggregate(pipeline).toArray();
     const totalQuery = req.query.user_id ? { user_id: new ObjectId(req.query.user_id) } : {};
-    const total = await db.collection('user_activity_logs').countDocuments(totalQuery);
+    const total = await db.collection('thiruxdb_user_activity_logs').countDocuments(totalQuery);
 
     res.json({
       logs: logs.map(l => ({

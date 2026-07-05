@@ -24,25 +24,25 @@ router.get('/', async (req, res) => {
       recentLogs,
     ] = await Promise.all([
       // All endpoints
-      db.collection('api_endpoints').find({}).sort({ created_at: -1 }).toArray(),
+      db.collection('thiruxdb_api_endpoints').find({}).sort({ created_at: -1 }).toArray(),
 
       // Records this week from fetch_logs
-      db.collection('fetch_logs').aggregate([
+      db.collection('thiruxdb_fetch_logs').aggregate([
         { $match: { created_at: { $gte: weekAgo } } },
         { $group: { _id: null, count: { $sum: '$records_created' } } }
       ]).toArray(),
 
       // 5 most recent records
       // Note: we fetch recent logs for the dashboard instead of scanning across all collections for recent records
-      db.collection('fetch_logs').find({}).sort({ created_at: -1 }).limit(5).toArray(),
+      db.collection('thiruxdb_fetch_logs').find({}).sort({ created_at: -1 }).limit(5).toArray(),
 
       // 5 most recent logs with endpoint names (via lookup)
-      db.collection('fetch_logs').aggregate([
+      db.collection('thiruxdb_fetch_logs').aggregate([
         { $sort: { created_at: -1 } },
         { $limit: 5 },
         {
           $lookup: {
-            from: 'api_endpoints',
+            from: 'thiruxdb_api_endpoints',
             localField: 'endpoint_id',
             foreignField: '_id',
             as: 'endpoint',

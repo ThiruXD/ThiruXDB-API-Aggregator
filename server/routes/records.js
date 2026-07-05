@@ -11,14 +11,14 @@ const router = Router();
 
 // Helper to get dynamic collection names
 async function getTargetCollections(db) {
-  const endpoints = await db.collection('api_endpoints').find({}).toArray();
+  const endpoints = await db.collection('thiruxdb_api_endpoints').find({}).toArray();
   const cols = new Set();
   for (const ep of endpoints) {
     if (ep.collection_name) {
       cols.add(ep.collection_name);
     }
   }
-  cols.add('data_records'); // Fallback for uncategorized
+  cols.add('thiruxdb_data_records'); // Fallback for uncategorized
   return Array.from(cols);
 }
 
@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
     let targetCols = [];
     if (req.query.collection_name && req.query.collection_name !== 'all') {
       if (req.query.collection_name === 'uncategorized') {
-        targetCols = ['data_records'];
+        targetCols = ['thiruxdb_data_records'];
       } else {
         targetCols = [req.query.collection_name];
       }
@@ -112,7 +112,7 @@ router.get('/search', async (req, res) => {
 
     let targetCols = [];
     if (req.query.collection_name && req.query.collection_name !== 'all') {
-      if (req.query.collection_name === 'uncategorized') targetCols = ['data_records'];
+      if (req.query.collection_name === 'uncategorized') targetCols = ['thiruxdb_data_records'];
       else targetCols = [req.query.collection_name];
     } else {
       targetCols = await getTargetCollections(db);
@@ -122,7 +122,7 @@ router.get('/search', async (req, res) => {
     if (req.query.endpoint_id && req.query.endpoint_id !== 'all') {
       filter.endpoint_id = new ObjectId(req.query.endpoint_id);
     } else if (req.query.collection_name && req.query.collection_name !== 'all' && req.query.collection_name !== 'uncategorized') {
-      const endpoints = await db.collection('api_endpoints').find({ collection_name: req.query.collection_name }).toArray();
+      const endpoints = await db.collection('thiruxdb_api_endpoints').find({ collection_name: req.query.collection_name }).toArray();
       const endpointIds = endpoints.map(e => e._id);
       filter.endpoint_id = { $in: endpointIds };
     }
@@ -203,7 +203,7 @@ router.post('/', async (req, res) => {
     const externalId = req.body.external_id || null;
 
     const searchText = JSON.stringify(req.body.raw_data);
-    const targetCol = req.body.collection_name || 'data_records';
+    const targetCol = req.body.collection_name || 'thiruxdb_data_records';
 
     if (externalId) {
       const filter = { endpoint_id: endpointId, external_id: externalId };
@@ -233,7 +233,7 @@ router.post('/', async (req, res) => {
       updated_at: now,
     };
     await db.collection(targetCol).insertOne(doc);
-    await db.collection('api_endpoints').updateOne({ _id: endpointId }, { $inc: { record_count: 1 } });
+    await db.collection('thiruxdb_api_endpoints').updateOne({ _id: endpointId }, { $inc: { record_count: 1 } });
 
     res.status(201).json({ action: 'created' });
   } catch (err) {
@@ -276,11 +276,11 @@ router.delete('/:id', async (req, res) => {
       const deletedDoc = await db.collection(col).findOneAndDelete({ _id });
       if (deletedDoc) {
         if (deletedDoc.endpoint_id) {
-          await db.collection('api_endpoints').updateOne({ _id: deletedDoc.endpoint_id }, { $inc: { record_count: -1 } });
-        } else if (col !== 'data_records') {
+          await db.collection('thiruxdb_api_endpoints').updateOne({ _id: deletedDoc.endpoint_id }, { $inc: { record_count: -1 } });
+        } else if (col !== 'thiruxdb_data_records') {
           // If no endpoint_id but it's in a dedicated collection, find the endpoint that owns this collection
-          const ep = await db.collection('api_endpoints').findOne({ collection_name: col });
-          if (ep) await db.collection('api_endpoints').updateOne({ _id: ep._id }, { $inc: { record_count: -1 } });
+          const ep = await db.collection('thiruxdb_api_endpoints').findOne({ collection_name: col });
+          if (ep) await db.collection('thiruxdb_api_endpoints').updateOne({ _id: ep._id }, { $inc: { record_count: -1 } });
         }
         break;
       }
@@ -308,8 +308,8 @@ router.post('/bulk-delete', async (req, res) => {
           if (doc.endpoint_id) {
             const epIdStr = doc.endpoint_id.toString();
             endpointCounts[epIdStr] = (endpointCounts[epIdStr] || 0) + 1;
-          } else if (col !== 'data_records') {
-            const ep = await db.collection('api_endpoints').findOne({ collection_name: col });
+          } else if (col !== 'thiruxdb_data_records') {
+            const ep = await db.collection('thiruxdb_api_endpoints').findOne({ collection_name: col });
             if (ep) {
               const epIdStr = ep._id.toString();
               endpointCounts[epIdStr] = (endpointCounts[epIdStr] || 0) + 1;
@@ -321,7 +321,7 @@ router.post('/bulk-delete', async (req, res) => {
         deletedCount += resDb.deletedCount;
 
         for (const [epIdStr, count] of Object.entries(endpointCounts)) {
-          await db.collection('api_endpoints').updateOne({ _id: new ObjectId(epIdStr) }, { $inc: { record_count: -count } });
+          await db.collection('thiruxdb_api_endpoints').updateOne({ _id: new ObjectId(epIdStr) }, { $inc: { record_count: -count } });
         }
       }
     }

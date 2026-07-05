@@ -8,7 +8,7 @@ import { ObjectId } from 'mongodb';
 import { getDb } from '../db.js';
 
 const router = Router();
-const COL = 'fetch_logs';
+const COL = 'thiruxdb_fetch_logs';
 
 // GET /api/logs — list with optional endpoint filter
 router.get('/', async (req, res) => {
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
     const endpointIds = [...new Set(logs.map((l) => l.endpoint_id?.toString()).filter(Boolean))];
     let endpointNames = {};
     if (endpointIds.length > 0) {
-      const endpoints = await db.collection('api_endpoints')
+      const endpoints = await db.collection('thiruxdb_api_endpoints')
         .find({ _id: { $in: endpointIds.map((id) => new ObjectId(id)) } })
         .project({ name: 1 })
         .toArray();

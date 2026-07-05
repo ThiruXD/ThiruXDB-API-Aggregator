@@ -44,7 +44,7 @@ export async function logUserActivity(userId, action, req, extraData = {}) {
       console.error('IP lookup failed', e.message);
     }
 
-    await db.collection('user_activity_logs').insertOne({
+    await db.collection('thiruxdb_user_activity_logs').insertOne({
       user_id: userId,
       action,
       ip_address: clientIp,
@@ -57,7 +57,7 @@ export async function logUserActivity(userId, action, req, extraData = {}) {
 
     // Update last seen on user document
     if (userId) {
-      await db.collection('users').updateOne(
+      await db.collection('thiruxdb_users').updateOne(
         { _id: userId },
         {
           $set: {
@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
     if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
 
     const db = getDb();
-    const user = await db.collection('users').findOne({ username });
+    const user = await db.collection('thiruxdb_users').findOne({ username });
     if (!user) return res.status(401).json({ error: 'Invalid username or password' });
 
     const isValid = await bcrypt.compare(password, user.password_hash);
@@ -118,7 +118,7 @@ router.post('/login', async (req, res) => {
 router.get('/me', authenticateToken, async (req, res) => {
   try {
     const db = getDb();
-    const user = await db.collection('users').findOne({ username: req.user.username });
+    const user = await db.collection('thiruxdb_users').findOne({ username: req.user.username });
     if (!user || !user.is_active) return res.status(401).json({ error: 'User not found or disabled' });
 
     res.json({
