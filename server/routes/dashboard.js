@@ -14,11 +14,9 @@ router.get('/', async (req, res) => {
 
     const [
       endpoints,
-      totalRecords,
       recordsThisWeek,
       recentRecords,
       recentLogs,
-      recordCounts,
     ] = await Promise.all([
       // All endpoints
       db.collection('api_endpoints').find({}).sort({ created_at: -1 }).toArray(),
