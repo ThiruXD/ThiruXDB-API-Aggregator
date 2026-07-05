@@ -101,185 +101,199 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     flushState(true);
 
     let urlIndex = 0;
-    for (const url of urls) {
-      flushState();
-      if (jobState.cancelled) {
-        errorMessage = 'Cancelled by user';
-        status = 'partial';
-        break;
+    
+    function createBulkOp(item) {
+      let externalId = null;
+      if (endpoint.id_field) externalId = item?.[endpoint.id_field]?.toString() || null;
+      else externalId = item?.id?.toString() || item?._id?.toString() || null;
+
+      let mappedData = {};
+      for (const mapping of mappings) {
+        const value = item?.[mapping.sourceField];
+        if (value !== undefined) {
+          let tv = value;
+          if (mapping.transform === 'number') tv = Number(value);
+          else if (mapping.transform === 'boolean') tv = Boolean(value);
+          else if (mapping.transform === 'date') tv = new Date(value).toISOString();
+          else tv = String(value);
+          mappedData[mapping.targetField] = tv;
+        }
       }
 
-      let items = [];
-      try {
-        jobState.status = 'downloading';
-        jobState.download_loaded = 0;
-        jobState.download_total = 0;
-        jobState.download_speed = 0;
-        flushState(true);
+      const now = new Date();
+      const searchText = JSON.stringify(item);
 
-        const response = await fetch(url, { headers });
-        if (!response.ok) {
-          console.error(`Failed to fetch ${url}: HTTP ${response.status}`);
-          urlIndex++;
-          if (isMultiUrl) jobState.current = urlIndex;
-          jobState.status = 'running';
-          flushState(true);
-          continue;
-        }
-
-        const contentLength = response.headers.get('content-length');
-        if (contentLength) {
-          jobState.download_total = parseInt(contentLength, 10);
-        }
-
-        const reader = response.body.getReader();
-        const chunks = [];
-        let loaded = 0;
-        let lastSpeedTime = Date.now();
-        let lastLoaded = 0;
-
-        while (true) {
-          flushState();
-          if (jobState.cancelled) break;
-          const { done, value } = await reader.read();
-          if (done) break;
-          chunks.push(value);
-          loaded += value.length;
-          jobState.download_loaded = loaded;
-
-          const nowTime = Date.now();
-          if (nowTime - lastSpeedTime > 500) {
-            const timeDiff = (nowTime - lastSpeedTime) / 1000;
-            const bytesDiff = loaded - lastLoaded;
-            jobState.download_speed = bytesDiff / timeDiff;
-            lastSpeedTime = nowTime;
-            lastLoaded = loaded;
+      if (externalId) {
+        return {
+          updateOne: {
+            filter: { endpoint_id: endpointIdStr, external_id: externalId },
+            update: {
+              $set: { raw_data: item, mapped_data: mappedData, _search_text: searchText, updated_at: now, fetched_at: now },
+              $setOnInsert: { created_at: now }
+            },
+            upsert: true
           }
-        }
-
-        if (jobState.cancelled) {
-          jobState.status = 'partial';
-          errorMessage = 'Cancelled by user';
-          break;
-        }
-
-        jobState.status = 'running';
-        flushState(true);
-
-        const bodyStr = Buffer.concat(chunks).toString('utf-8');
-        const jsonData = JSON.parse(bodyStr);
-        let data = jsonData;
-        if (endpoint.response_path) {
-          for (const path of endpoint.response_path.split('.')) data = data?.[path];
-        }
-        items = Array.isArray(data) ? data : [data].filter(Boolean);
-
-        if (!isMultiUrl && skipOffset > 0) {
-          items = items.slice(skipOffset);
-        }
-        if (!isMultiUrl) {
-          jobState.total = items.length;
-          flushState(true);
-        }
-      } catch (err) {
-        console.error(`Error fetching ${url}: ${err.message}`);
-        urlIndex++;
-        if (isMultiUrl) jobState.current = urlIndex;
-        flushState(true);
-        continue;
+        };
+      } else {
+        return {
+          insertOne: {
+            document: { endpoint_id: endpointIdStr, external_id: null, raw_data: item, mapped_data: mappedData, _search_text: searchText, fetched_at: now, created_at: now, updated_at: now }
+          }
+        };
       }
+    }
 
-      recordsFetched += items.length;
+    if (isMultiUrl) {
+      jobState.status = 'running';
+      flushState(true);
+      const CONCURRENCY = 15;
 
-      const bulkOps = [];
-      for (let i = 0; i < items.length; i++) {
-        flushState();
+      for (let i = 0; i < urls.length; i += CONCURRENCY) {
         if (jobState.cancelled) {
           errorMessage = 'Cancelled by user';
           status = 'partial';
           break;
         }
 
-        const item = items[i];
-        let externalId = null;
-        if (endpoint.id_field) externalId = item?.[endpoint.id_field]?.toString() || null;
-        else externalId = item?.id?.toString() || item?._id?.toString() || null;
+        const batchUrls = urls.slice(i, i + CONCURRENCY);
+        const batchPromises = batchUrls.map(async (url) => {
+          try {
+            const response = await fetch(url, { headers });
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data;
+          } catch (err) {
+            console.error(`Error fetching ${url}: ${err.message}`);
+            return null;
+          }
+        });
 
-        let mappedData = {};
-        for (const mapping of mappings) {
-          const value = item?.[mapping.sourceField];
-          if (value !== undefined) {
-            let tv = value;
-            if (mapping.transform === 'number') tv = Number(value);
-            else if (mapping.transform === 'boolean') tv = Boolean(value);
-            else if (mapping.transform === 'date') tv = new Date(value).toISOString();
-            else tv = String(value);
-            mappedData[mapping.targetField] = tv;
+        const results = await Promise.all(batchPromises);
+        let bulkOps = [];
+
+        for (const resData of results) {
+          if (!resData) continue;
+          let data = resData;
+          if (endpoint.response_path) {
+            for (const path of endpoint.response_path.split('.')) data = data?.[path];
+          }
+          const items = Array.isArray(data) ? data : [data].filter(Boolean);
+          recordsFetched += items.length;
+
+          for (const item of items) {
+            bulkOps.push(createBulkOp(item));
           }
         }
 
-        const now = new Date();
-        const searchText = JSON.stringify(item);
-
-        if (externalId) {
-          bulkOps.push({
-            updateOne: {
-              filter: { endpoint_id: endpointIdStr, external_id: externalId },
-              update: {
-                $set: {
-                  raw_data: item,
-                  mapped_data: mappedData,
-                  _search_text: searchText,
-                  updated_at: now,
-                  fetched_at: now
-                },
-                $setOnInsert: {
-                  created_at: now
-                }
-              },
-              upsert: true
-            }
-          });
-        } else {
-          bulkOps.push({
-            insertOne: {
-              document: {
-                endpoint_id: endpointIdStr,
-                external_id: null,
-                raw_data: item,
-                mapped_data: mappedData,
-                _search_text: searchText,
-                fetched_at: now,
-                created_at: now,
-                updated_at: now,
-              }
-            }
-          });
-        }
-
-        if (bulkOps.length >= 1000) {
+        if (bulkOps.length > 0 && !jobState.cancelled) {
           const result = await db.collection(targetCol).bulkWrite(bulkOps, { ordered: false });
           recordsUpdated += result.modifiedCount || 0;
           recordsCreated += (result.upsertedCount || 0) + (result.insertedCount || 0);
-          bulkOps.length = 0;
-          if (!isMultiUrl) jobState.current = i;
+        }
+
+        urlIndex += batchUrls.length;
+        jobState.current = urlIndex;
+        flushState(true);
+      }
+    } else {
+      // Single URL Streaming Logic
+      const url = urls[0];
+      flushState();
+      if (!jobState.cancelled) {
+        let items = [];
+        try {
+          jobState.status = 'downloading';
+          jobState.download_loaded = 0;
+          jobState.download_total = 0;
+          jobState.download_speed = 0;
+          flushState(true);
+
+          const response = await fetch(url, { headers });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const contentLength = response.headers.get('content-length');
+          if (contentLength) jobState.download_total = parseInt(contentLength, 10);
+
+          const reader = response.body.getReader();
+          const chunks = [];
+          let loaded = 0;
+          let lastSpeedTime = Date.now();
+          let lastLoaded = 0;
+
+          while (true) {
+            flushState();
+            if (jobState.cancelled) break;
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            loaded += value.length;
+            jobState.download_loaded = loaded;
+
+            const nowTime = Date.now();
+            if (nowTime - lastSpeedTime > 500) {
+              const timeDiff = (nowTime - lastSpeedTime) / 1000;
+              jobState.download_speed = (loaded - lastLoaded) / timeDiff;
+              lastSpeedTime = nowTime;
+              lastLoaded = loaded;
+            }
+          }
+
+          if (jobState.cancelled) {
+            jobState.status = 'partial';
+            errorMessage = 'Cancelled by user';
+          } else {
+            jobState.status = 'running';
+            flushState(true);
+
+            const bodyStr = Buffer.concat(chunks).toString('utf-8');
+            let data = JSON.parse(bodyStr);
+            if (endpoint.response_path) {
+              for (const path of endpoint.response_path.split('.')) data = data?.[path];
+            }
+            items = Array.isArray(data) ? data : [data].filter(Boolean);
+
+            if (skipOffset > 0) items = items.slice(skipOffset);
+            jobState.total = items.length;
+            flushState(true);
+          }
+        } catch (err) {
+          console.error(`Error fetching ${url}: ${err.message}`);
+          status = 'error';
+          errorMessage = err.message;
+        }
+
+        if (status !== 'error' && status !== 'partial') {
+          recordsFetched += items.length;
+          const bulkOps = [];
+          for (let i = 0; i < items.length; i++) {
+            flushState();
+            if (jobState.cancelled) {
+              errorMessage = 'Cancelled by user';
+              status = 'partial';
+              break;
+            }
+
+            bulkOps.push(createBulkOp(items[i]));
+
+            if (bulkOps.length >= 1000) {
+              const result = await db.collection(targetCol).bulkWrite(bulkOps, { ordered: false });
+              recordsUpdated += result.modifiedCount || 0;
+              recordsCreated += (result.upsertedCount || 0) + (result.insertedCount || 0);
+              bulkOps.length = 0;
+              jobState.current = i;
+            }
+          }
+
+          if (bulkOps.length > 0 && !jobState.cancelled) {
+            const result = await db.collection(targetCol).bulkWrite(bulkOps, { ordered: false });
+            recordsUpdated += result.modifiedCount || 0;
+            recordsCreated += (result.upsertedCount || 0) + (result.insertedCount || 0);
+          }
+
+          jobState.current = items.length;
+          flushState(true);
         }
       }
-
-      if (bulkOps.length > 0 && !jobState.cancelled) {
-        const result = await db.collection(targetCol).bulkWrite(bulkOps, { ordered: false });
-        recordsUpdated += result.modifiedCount || 0;
-        recordsCreated += (result.upsertedCount || 0) + (result.insertedCount || 0);
-      }
-
-      urlIndex++;
-      if (isMultiUrl) {
-        jobState.current = urlIndex;
-      } else {
-        jobState.current = items.length;
-      }
-      flushState(true);
-
     }
 
   } catch (err) {
