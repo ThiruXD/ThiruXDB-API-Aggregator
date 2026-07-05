@@ -65,32 +65,17 @@ router.get('/', async (req, res) => {
         db.collection(col).countDocuments(filter),
       ]);
     } else {
-      const baseCol = targetCols[0];
-      const unionPipeline = [];
-      for (let i = 1; i < targetCols.length; i++) {
-        unionPipeline.push({ $unionWith: { coll: targetCols[i] } });
-      }
+      const counts = await Promise.all(targetCols.map(col => db.collection(col).countDocuments(filter)));
+      total = counts.reduce((sum, c) => sum + c, 0);
 
-      const fullPipeline = [
-        ...unionPipeline,
-        ...(Object.keys(filter).length > 0 ? [{ $match: filter }] : []),
-        { $sort: { fetched_at: -1 } }
-      ];
-
-      const countPipeline = [...fullPipeline, { $count: 'total' }];
-
-      const dataPipeline = [
-        ...fullPipeline,
-        { $skip: skip },
-        { $limit: pageSize }
-      ];
-
-      const [dataRes, countRes] = await Promise.all([
-        db.collection(baseCol).aggregate(dataPipeline, { allowDiskUse: true }).toArray(),
-        db.collection(baseCol).aggregate(countPipeline, { allowDiskUse: true }).toArray(),
-      ]);
-      docs = dataRes;
-      total = countRes[0] ? countRes[0].total : 0;
+      const fetchLimit = skip + pageSize;
+      const results = await Promise.all(targetCols.map(col =>
+        db.collection(col).find(filter).sort({ fetched_at: -1 }).limit(fetchLimit).toArray()
+      ));
+      
+      let combined = results.flat();
+      combined.sort((a, b) => new Date(b.fetched_at) - new Date(a.fetched_at));
+      docs = combined.slice(skip, skip + pageSize);
     }
 
     res.json({ data: docs.map(toClient), count: total });
@@ -141,21 +126,17 @@ router.get('/search', async (req, res) => {
         db.collection(col).countDocuments(regexFilter),
       ]);
     } else {
-      const baseCol = targetCols[0];
-      const fullPipeline = [];
-      for (let i = 1; i < targetCols.length; i++) fullPipeline.push({ $unionWith: { coll: targetCols[i] } });
-      fullPipeline.push({ $match: regexFilter });
-      fullPipeline.push({ $sort: { fetched_at: -1 } });
+      const counts = await Promise.all(targetCols.map(col => db.collection(col).countDocuments(regexFilter)));
+      total = counts.reduce((sum, c) => sum + c, 0);
 
-      const countPipeline = [...fullPipeline, { $count: 'total' }];
-      const dataPipeline = [...fullPipeline, { $skip: skip }, { $limit: pageSize }];
-
-      const [dataRes, countRes] = await Promise.all([
-        db.collection(baseCol).aggregate(dataPipeline, { allowDiskUse: true }).toArray(),
-        db.collection(baseCol).aggregate(countPipeline, { allowDiskUse: true }).toArray(),
-      ]);
-      docs = dataRes;
-      total = countRes[0] ? countRes[0].total : 0;
+      const fetchLimit = skip + pageSize;
+      const results = await Promise.all(targetCols.map(col =>
+        db.collection(col).find(regexFilter).sort({ fetched_at: -1 }).limit(fetchLimit).toArray()
+      ));
+      
+      let combined = results.flat();
+      combined.sort((a, b) => new Date(b.fetched_at) - new Date(a.fetched_at));
+      docs = combined.slice(skip, skip + pageSize);
     }
 
     res.json({ data: docs.map(toClient), count: total });
@@ -172,22 +153,24 @@ router.get('/counts', async (req, res) => {
 
     if (targetCols.length === 0) return res.json({ total: 0, perEndpoint: {} });
 
-    const baseCol = targetCols[0];
-    const fullPipeline = [];
-    for (let i = 1; i < targetCols.length; i++) fullPipeline.push({ $unionWith: { coll: targetCols[i] } });
-    fullPipeline.push({
-      $group: {
-        _id: '$endpoint_id',
-        count: { $sum: 1 },
-      },
-    });
+    const aggregatePromises = targetCols.map(col =>
+      db.collection(col).aggregate([
+        { $group: { _id: '$endpoint_id', count: { $sum: 1 } } }
+      ]).toArray()
+    );
 
-    const results = await db.collection(baseCol).aggregate(fullPipeline, { allowDiskUse: true }).toArray();
-    const total = results.reduce((sum, r) => sum + r.count, 0);
+    const allResults = await Promise.all(aggregatePromises);
     const perEndpoint = {};
-    for (const r of results) {
-      perEndpoint[r._id ? r._id.toString() : 'null'] = r.count;
+    let total = 0;
+
+    for (const collectionResults of allResults) {
+      for (const r of collectionResults) {
+        const id = r._id ? r._id.toString() : 'null';
+        perEndpoint[id] = (perEndpoint[id] || 0) + r.count;
+        total += r.count;
+      }
     }
+
     res.json({ total, perEndpoint });
   } catch (err) {
     res.status(500).json({ error: err.message });
