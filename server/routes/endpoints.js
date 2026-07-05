@@ -60,8 +60,23 @@ router.post('/', async (req, res) => {
 // POST /api/endpoints/test — test connection
 router.post('/test', async (req, res) => {
   try {
-    const { base_url, auth_type, auth_config } = req.body;
+    const { base_url, auth_type, auth_config, path_variables } = req.body;
     const headers = { 'Content-Type': 'application/json' };
+    let finalUrl = base_url;
+
+    if (path_variables && path_variables.length > 0) {
+      const db = require('../db.js').getDb();
+      for (const pv of path_variables) {
+        if (pv.path_variable && pv.target_collection && pv.target_field) {
+          const sampleDoc = await db.collection(pv.target_collection).findOne({ [pv.target_field]: { $exists: true, $ne: null } });
+          const val = sampleDoc ? sampleDoc[pv.target_field] : '1';
+          finalUrl = finalUrl.replace(new RegExp(`{${pv.path_variable}}`, 'g'), val);
+        }
+      }
+    }
+
+    // fallback for any remaining untranslated variables so it doesn't cause a 400 Bad Request
+    finalUrl = finalUrl.replace(/\{[^}]+\}/g, '1');
 
     if (auth_type === 'bearer' && auth_config?.token) {
       headers['Authorization'] = `Bearer ${auth_config.token}`;
@@ -75,7 +90,7 @@ router.post('/test', async (req, res) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const response = await fetch(base_url, {
+    const response = await fetch(finalUrl, {
       headers,
       signal: controller.signal
     });
