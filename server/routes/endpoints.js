@@ -78,9 +78,14 @@ router.post('/test', async (req, res) => {
           });
           let val = '1';
           if (sampleDoc) {
-            if (sampleDoc[s] !== undefined && sampleDoc[s] !== null) val = sampleDoc[s];
-            else if (sampleDoc.mapped_data?.[s] !== undefined && sampleDoc.mapped_data?.[s] !== null) val = sampleDoc.mapped_data[s];
-            else if (sampleDoc.raw_data?.[s] !== undefined && sampleDoc.raw_data?.[s] !== null) val = sampleDoc.raw_data[s];
+            const resolveDotPath = (obj, path) => path.split('.').reduce((o, p) => (o ? o[p] : undefined), obj);
+            const rootVal = resolveDotPath(sampleDoc, s);
+            const mappedVal = sampleDoc.mapped_data ? resolveDotPath(sampleDoc.mapped_data, s) : undefined;
+            const rawVal = sampleDoc.raw_data ? resolveDotPath(sampleDoc.raw_data, s) : undefined;
+
+            if (rootVal !== undefined && rootVal !== null) val = rootVal;
+            else if (mappedVal !== undefined && mappedVal !== null) val = mappedVal;
+            else if (rawVal !== undefined && rawVal !== null) val = rawVal;
           }
           finalUrl = finalUrl.replace(new RegExp(pv.variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), encodeURIComponent(String(val)));
         }
