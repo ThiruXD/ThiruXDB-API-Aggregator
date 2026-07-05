@@ -193,7 +193,7 @@ export function EndpointsPage() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
                     <div
                       className={`w-2.5 h-2.5 rounded-full ${
                         endpoint.is_active
@@ -228,11 +228,11 @@ export function EndpointsPage() {
                       {endpoint.description}
                     </p>
                   )}
-                  <div className="flex items-center gap-4 text-sm text-slate-500">
-                    <span className="font-mono truncate max-w-md">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-slate-500 min-w-0">
+                    <span className="font-mono truncate max-w-full sm:max-w-md">
                       {endpoint.base_url}
                     </span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 shrink-0">
                       {endpoint.auth_type === 'none' ? (
                         <XCircle className="w-4 h-4" />
                       ) : (
@@ -241,7 +241,7 @@ export function EndpointsPage() {
                       {endpoint.auth_type === 'none' ? 'No Auth' : 'Protected'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
+                  <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-slate-500">
                     {endpoint.last_fetched_at ? (
                       <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
