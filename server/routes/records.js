@@ -28,11 +28,6 @@ router.get('/', async (req, res) => {
     const filter = {};
     if (req.query.endpoint_id && req.query.endpoint_id !== 'all') {
       filter.endpoint_id = new ObjectId(req.query.endpoint_id);
-    } else if (req.query.collection_name && req.query.collection_name !== 'all' && req.query.collection_name !== 'uncategorized') {
-      // Just a safety filter, the pipeline will already target the single collection
-      const endpoints = await db.collection('api_endpoints').find({ collection_name: req.query.collection_name }).toArray();
-      const endpointIds = endpoints.map(e => e._id);
-      filter.endpoint_id = { $in: endpointIds };
     }
 
     if (req.query.date_from) {
@@ -277,6 +272,10 @@ router.delete('/:id', async (req, res) => {
       if (deletedDoc) {
         if (deletedDoc.endpoint_id) {
           await db.collection('api_endpoints').updateOne({ _id: deletedDoc.endpoint_id }, { $inc: { record_count: -1 } });
+        } else if (col !== 'data_records') {
+          // If no endpoint_id but it's in a dedicated collection, find the endpoint that owns this collection
+          const ep = await db.collection('api_endpoints').findOne({ collection_name: col });
+          if (ep) await db.collection('api_endpoints').updateOne({ _id: ep._id }, { $inc: { record_count: -1 } });
         }
         break;
       }
@@ -304,6 +303,12 @@ router.post('/bulk-delete', async (req, res) => {
           if (doc.endpoint_id) {
             const epIdStr = doc.endpoint_id.toString();
             endpointCounts[epIdStr] = (endpointCounts[epIdStr] || 0) + 1;
+          } else if (col !== 'data_records') {
+            const ep = await db.collection('api_endpoints').findOne({ collection_name: col });
+            if (ep) {
+              const epIdStr = ep._id.toString();
+              endpointCounts[epIdStr] = (endpointCounts[epIdStr] || 0) + 1;
+            }
           }
         }
         

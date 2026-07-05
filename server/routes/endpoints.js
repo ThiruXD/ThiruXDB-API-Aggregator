@@ -342,8 +342,12 @@ router.post('/sync-stats', async (req, res) => {
     const db = getDb();
     const endpoints = await db.collection(COL).find({}).toArray();
     for (const ep of endpoints) {
-      const targetCol = ep.collection_name || 'data_records';
-      const count = await db.collection(targetCol).countDocuments({ endpoint_id: ep._id });
+      let count = 0;
+      if (ep.collection_name) {
+        count = await db.collection(ep.collection_name).countDocuments({});
+      } else {
+        count = await db.collection('data_records').countDocuments({ endpoint_id: ep._id });
+      }
       await db.collection(COL).updateOne({ _id: ep._id }, { $set: { record_count: count } });
     }
     res.json({ success: true, message: 'Stats synced successfully' });
