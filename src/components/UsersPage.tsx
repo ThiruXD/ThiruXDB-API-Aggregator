@@ -61,9 +61,10 @@ export function UsersPage() {
   const handleIpLookup = async (ip: string) => {
     setIpModal({ isOpen: true, ip, data: null, loading: true, error: null, copied: false });
     try {
-      const res = await fetch(`http://ip-api.com/json/${ip}`);
+      const res = await fetch(`https://ipapi.co/${ip}/json/`);
       if (!res.ok) throw new Error('Failed to fetch IP data');
       const data = await res.json();
+      if (data.error) throw new Error(data.reason || 'Failed to fetch IP data');
       setIpModal(prev => ({ ...prev, data, loading: false }));
     } catch (err: any) {
       setIpModal(prev => ({ ...prev, error: err.message, loading: false }));
@@ -361,12 +362,12 @@ export function UsersPage() {
       )}
       {/* User Logs Modal */}
       {viewingLogsForUser && (
-        <UserLogsModal user={viewingLogsForUser} onClose={() => setViewingLogsForUser(null)} />
+        <UserLogsModal user={viewingLogsForUser} onClose={() => setViewingLogsForUser(null)} onIpLookup={handleIpLookup} />
       )}
 
       {/* IP Lookup Modal */}
       {ipModal.isOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
@@ -387,8 +388,8 @@ export function UsersPage() {
               ) : ipModal.data ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div><span className="text-gray-500 block">Location</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.city}, {ipModal.data.country}</span></div>
-                    <div><span className="text-gray-500 block">ISP</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.isp}</span></div>
+                    <div><span className="text-gray-500 block">Location</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.city}, {ipModal.data.country_name}</span></div>
+                    <div><span className="text-gray-500 block">ISP</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.org}</span></div>
                     <div><span className="text-gray-500 block">Organization</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.org || '-'}</span></div>
                     <div><span className="text-gray-500 block">Timezone</span><span className="text-gray-900 dark:text-white font-medium">{ipModal.data.timezone}</span></div>
                   </div>
@@ -412,7 +413,7 @@ export function UsersPage() {
   );
 }
 
-function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
+function UserLogsModal({ user, onClose, onIpLookup }: { user: User; onClose: () => void; onIpLookup: (ip: string) => void }) {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -525,9 +526,9 @@ function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
                         <td className="px-6 py-4 font-mono text-xs">
                           <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
                             <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
-                            <a href={`https://ipinfo.io/${log.ip_address}`} target="_blank" rel="noopener noreferrer" className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
+                            <button onClick={() => onIpLookup(log.ip_address)} className="ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition" title="Lookup IP">
                               <Search className="w-3 h-3" />
-                            </a>
+                            </button>
                           </div>
                           {log.location_data && (
                             <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
