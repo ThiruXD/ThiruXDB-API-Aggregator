@@ -69,12 +69,12 @@ export function FetchPage() {
           <h1 className="text-2xl font-bold text-white">Fetch Data</h1>
           <p className="text-slate-400 mt-1">Pull data from configured API endpoints</p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 shrink-0">
             <span className="text-sm text-slate-400">Skip</span>
             <input type="number" min="0" value={globalSkip} onChange={(e) => setGlobalSkip(parseInt(e.target.value) || 0)} className="w-16 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
           </div>
-          <button onClick={fetchSelectedEndpoints} disabled={fetchingAll || selectedIds.size === 0} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-lg shadow-green-500/20 disabled:opacity-50">
+          <button onClick={fetchSelectedEndpoints} disabled={fetchingAll || selectedIds.size === 0} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-lg shadow-green-500/20 disabled:opacity-50 shrink-0">
             {fetchingAll ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
             Fetch Selected ({selectedIds.size})
           </button>

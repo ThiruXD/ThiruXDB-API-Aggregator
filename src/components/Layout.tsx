@@ -31,13 +31,21 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-slate-900 overflow-x-hidden">
-      {/* Mobile menu button */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-6 left-4 z-50 p-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 transition"
-      >
-        {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
+      {/* Mobile top navbar */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 border-b border-slate-800 z-50 flex items-center px-4 justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg shrink-0">
+            <Database className="w-4 h-4 text-white" />
+          </div>
+          <h1 className="text-base font-bold text-white">API Manager</h1>
+        </div>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 transition"
+        >
+          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
 
       {/* Sidebar */}
       <aside
@@ -107,14 +115,14 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       </aside>
 
       {/* Main content */}
-      <main className="lg:ml-64 min-h-screen">
-        <div className="p-4 lg:p-8 pt-16 lg:pt-8">{children}</div>
+      <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
+        <div className="p-4 lg:p-8">{children}</div>
       </main>
 
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden top-16"
           onClick={() => setSidebarOpen(false)}
         />
       )}
