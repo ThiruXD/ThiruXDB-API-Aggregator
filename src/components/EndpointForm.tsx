@@ -110,14 +110,14 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
     setFormData((prev) => ({ ...prev, path_variables: prev.path_variables.filter((_, i) => i !== index) }));
   };
 
-  const inputCls = "w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const inputCls = "w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden border border-slate-700">
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">{endpoint ? 'Edit Endpoint' : 'Add New Endpoint'}</h2>
-          <button onClick={onCancel} className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition"><X className="w-5 h-5" /></button>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{endpoint ? 'Edit Endpoint' : 'Add New Endpoint'}</h2>
+          <button onClick={onCancel} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition"><X className="w-5 h-5" /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
@@ -125,54 +125,54 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
             {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Name *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name *</label>
                 <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputCls} placeholder="My API" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Collection Name *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Collection Name *</label>
                 <input type="text" value={formData.collection_name} onChange={(e) => setFormData({ ...formData, collection_name: e.target.value })} className={inputCls} placeholder="e.g. Movies, Users" required />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
                 <input type="text" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className={inputCls} placeholder="Optional description" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Status</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                 <label className="flex items-center gap-2 mt-3">
-                  <input type="checkbox" checked={formData.is_active} onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500" />
-                  <span className="text-slate-300">Active</span>
+                  <input type="checkbox" checked={formData.is_active} onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500" />
+                  <span className="text-gray-700 dark:text-gray-300">Active</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Base URL *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Base URL *</label>
               <input type="url" value={formData.base_url} onChange={(e) => setFormData({ ...formData, base_url: e.target.value })} className={`${inputCls} font-mono text-sm`} placeholder="https://api.example.com/data" required />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Response Data Path (JSON path to array)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Response Data Path (JSON path to array)</label>
                 <input type="text" value={formData.response_path} onChange={(e) => setFormData({ ...formData, response_path: e.target.value })} className={`${inputCls} font-mono text-sm`} placeholder="data.items or empty" />
-                <p className="text-xs text-slate-500 mt-1">E.g., "data.results"</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">E.g., "data.results"</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Primary Key Field</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Primary Key Field</label>
                 <input type="text" value={formData.id_field} onChange={(e) => setFormData({ ...formData, id_field: e.target.value })} className={`${inputCls} font-mono text-sm`} placeholder="e.g. id, uuid" />
-                <p className="text-xs text-slate-500 mt-1">Prevents duplicates. Leave empty to auto-detect "id" or "_id"</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Prevents duplicates. Leave empty to auto-detect "id" or "_id"</p>
               </div>
             </div>
 
             {/* Authentication */}
-            <div className="border border-slate-700 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white mb-4">Authentication</h3>
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Authentication</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                 {(['none', 'api_key', 'bearer', 'basic'] as const).map((type) => (
                   <button key={type} type="button" onClick={() => setFormData({ ...formData, auth_type: type, auth_config: {} })}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${formData.auth_type === type ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${formData.auth_type === type ? 'bg-blue-600 text-gray-900 dark:text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>
                     {type.replace('_', ' ').toUpperCase()}
                   </button>
                 ))}
@@ -195,26 +195,26 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
             </div>
 
             {/* Pagination */}
-            <div className="border border-slate-700 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white mb-4">Pagination</h3>
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Pagination</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                 {(['none', 'offset', 'cursor', 'page'] as const).map((type) => (
                   <button key={type} type="button" onClick={() => setFormData({ ...formData, pagination_type: type, pagination_config: {} })}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${formData.pagination_type === type ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${formData.pagination_type === type ? 'bg-blue-600 text-gray-900 dark:text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>
                     {type.toUpperCase()}
                   </button>
                 ))}
               </div>
               {formData.pagination_type === 'offset' && (
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="text" placeholder="Limit param (e.g., limit)" value={formData.pagination_config.limit_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, limit_param: e.target.value } })} className="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Offset param (e.g., offset)" value={formData.pagination_config.offset_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, offset_param: e.target.value } })} className="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="text" placeholder="Limit param (e.g., limit)" value={formData.pagination_config.limit_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, limit_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="text" placeholder="Offset param (e.g., offset)" value={formData.pagination_config.offset_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, offset_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
               )}
               {formData.pagination_type === 'page' && (
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="text" placeholder="Page param (e.g., page)" value={formData.pagination_config.page_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, page_param: e.target.value } })} className="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Limit param (e.g., per_page)" value={formData.pagination_config.limit_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, limit_param: e.target.value } })} className="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="text" placeholder="Page param (e.g., page)" value={formData.pagination_config.page_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, page_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="text" placeholder="Limit param (e.g., per_page)" value={formData.pagination_config.limit_param || ''} onChange={(e) => setFormData({ ...formData, pagination_config: { ...formData.pagination_config, limit_param: e.target.value } })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
               )}
               {formData.pagination_type === 'cursor' && (
@@ -223,25 +223,25 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
             </div>
 
             {/* Path Variables */}
-            <div className="border border-slate-700 rounded-lg p-4 mt-6 mb-6">
-              <h3 className="text-sm font-semibold text-white mb-4">Dynamic Path Variables</h3>
-              <p className="text-xs text-slate-400 mb-4">Replace parts of the URL dynamically (e.g. {`{studentID}`}) using data from another collection.</p>
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 mt-6 mb-6">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Dynamic Path Variables</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Replace parts of the URL dynamically (e.g. {`{studentID}`}) using data from another collection.</p>
               
               <div className="space-y-4">
                 {formData.path_variables.map((pv, idx) => (
-                  <div key={idx} className="flex items-center gap-3 bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+                  <div key={idx} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-300 dark:border-gray-600">
                     <div className="flex-1 grid grid-cols-3 gap-3">
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Variable in URL</p>
-                        <p className="text-sm text-white font-mono">{pv.variable}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Variable in URL</p>
+                        <p className="text-sm text-gray-900 dark:text-white font-mono">{pv.variable}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Source Collection</p>
-                        <p className="text-sm text-white font-mono">{pv.source_collection}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Source Collection</p>
+                        <p className="text-sm text-gray-900 dark:text-white font-mono">{pv.source_collection}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Source Field</p>
-                        <p className="text-sm text-white font-mono">{pv.source_field}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Source Field</p>
+                        <p className="text-sm text-gray-900 dark:text-white font-mono">{pv.source_field}</p>
                       </div>
                     </div>
                     <button
@@ -254,35 +254,35 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                   </div>
                 ))}
 
-                <div className="flex flex-wrap items-end gap-3 bg-slate-700/30 p-4 rounded-lg border border-slate-600 border-dashed">
+                <div className="flex flex-wrap items-end gap-3 bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-300 dark:border-gray-600 border-dashed">
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Variable (e.g. {`{id}`})</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Variable (e.g. {`{id}`})</label>
                       <input
                         type="text"
                         value={newPathVariable.variable}
                         onChange={(e) => setNewPathVariable({ ...newPathVariable, variable: e.target.value })}
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                         placeholder="{studentID}"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Collection</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Collection</label>
                       <input
                         type="text"
                         value={newPathVariable.source_collection}
                         onChange={(e) => setNewPathVariable({ ...newPathVariable, source_collection: e.target.value })}
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                         placeholder="Students"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Field path</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Field path</label>
                       <input
                         type="text"
                         value={newPathVariable.source_field}
                         onChange={(e) => setNewPathVariable({ ...newPathVariable, source_field: e.target.value })}
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                         placeholder="mapped_data.id"
                       />
                     </div>
@@ -291,7 +291,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                     type="button"
                     onClick={addPathVariable}
                     disabled={!newPathVariable.variable || !newPathVariable.source_collection || !newPathVariable.source_field}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
                     <span className="hidden sm:inline">Add</span>
@@ -301,30 +301,30 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
             </div>
 
             {/* Field Mappings */}
-            <div className="border border-slate-700 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white mb-4">Field Mappings</h3>
-              <p className="text-xs text-slate-400 mb-4">Map API response fields to standardized names. Leave empty to store raw data only.</p>
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Field Mappings</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Map API response fields to standardized names. Leave empty to store raw data only.</p>
               <div className="space-y-2 mb-4">
                 {formData.field_mappings.map((mapping, index) => (
-                  <div key={index} className="flex items-center gap-2 bg-slate-700/50 rounded-lg p-2">
+                  <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700/50 rounded-lg p-2">
                     <span className="font-mono text-sm text-blue-400 flex-1">{mapping.sourceField}</span>
-                    <span className="text-slate-500">→</span>
+                    <span className="text-gray-400 dark:text-gray-500">→</span>
                     <span className="font-mono text-sm text-green-400 flex-1">{mapping.targetField}</span>
-                    <span className="text-xs text-slate-500">({mapping.transform})</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">({mapping.transform})</span>
                     <button type="button" onClick={() => removeMapping(index)} className="p-1 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded transition"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 ))}
               </div>
               <div className="flex flex-wrap gap-2">
-                <input type="text" placeholder="Source field" value={newMapping.sourceField} onChange={(e) => setNewMapping({ ...newMapping, sourceField: e.target.value })} className="flex-1 min-w-32 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <input type="text" placeholder="Target field" value={newMapping.targetField} onChange={(e) => setNewMapping({ ...newMapping, targetField: e.target.value })} className="flex-1 min-w-32 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <select value={newMapping.transform} onChange={(e) => setNewMapping({ ...newMapping, transform: e.target.value as FieldMapping['transform'] })} className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" placeholder="Source field" value={newMapping.sourceField} onChange={(e) => setNewMapping({ ...newMapping, sourceField: e.target.value })} className="flex-1 min-w-32 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input type="text" placeholder="Target field" value={newMapping.targetField} onChange={(e) => setNewMapping({ ...newMapping, targetField: e.target.value })} className="flex-1 min-w-32 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <select value={newMapping.transform} onChange={(e) => setNewMapping({ ...newMapping, transform: e.target.value as FieldMapping['transform'] })} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                   <option value="string">String</option>
                   <option value="number">Number</option>
                   <option value="boolean">Boolean</option>
                   <option value="date">Date</option>
                 </select>
-                <button type="button" onClick={addMapping} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1"><Plus className="w-4 h-4" />Add</button>
+                <button type="button" onClick={addMapping} className="px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1"><Plus className="w-4 h-4" />Add</button>
               </div>
             </div>
 
@@ -336,7 +336,7 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
                   <span className={testResult.success ? 'text-green-400' : 'text-red-400'}>{testResult.message}</span>
                 </div>
                 {testResult.sampleData && (
-                  <pre className="text-xs text-slate-300 bg-slate-900/50 rounded p-3 overflow-x-auto max-h-40">
+                  <pre className="text-xs text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/50 rounded p-3 overflow-x-auto max-h-40">
                     {JSON.stringify(testResult.sampleData, null, 2).slice(0, 500)}...
                   </pre>
                 )}
@@ -345,14 +345,14 @@ export function EndpointForm({ endpoint, onSave, onCancel }: EndpointFormProps) 
           </div>
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mt-6 pt-6 border-t border-slate-700">
-            <button type="button" onClick={handleTest} disabled={isTesting || !formData.base_url} className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition disabled:opacity-50">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <button type="button" onClick={handleTest} disabled={isTesting || !formData.base_url} className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition disabled:opacity-50">
               {isTesting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
               Test Connection
             </button>
             <div className="flex w-full sm:w-auto gap-3 justify-end">
-              <button type="button" onClick={onCancel} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
-              <button type="submit" disabled={isLoading || !formData.name || !formData.base_url} className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50">
+              <button type="button" onClick={onCancel} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
+              <button type="submit" disabled={isLoading || !formData.name || !formData.base_url} className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50">
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 Save Endpoint
               </button>

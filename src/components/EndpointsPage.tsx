@@ -115,8 +115,8 @@ export function EndpointsPage() {
     <div>
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">API Endpoints</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">API Endpoints</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
             Configure and manage your data sources
           </p>
         </div>
@@ -126,7 +126,7 @@ export function EndpointsPage() {
               setEditingEndpoint(null);
               setShowForm(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/20"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition shadow-sm shadow-blue-500/20"
           >
             <Plus className="w-5 h-5" />
             Add Endpoint
@@ -135,14 +135,14 @@ export function EndpointsPage() {
       </div>
 
       {endpoints.length === 0 ? (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-12 text-center">
-          <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ExternalLink className="w-8 h-8 text-slate-500" />
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ExternalLink className="w-8 h-8 text-gray-400 dark:text-gray-500" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
             No endpoints configured
           </h3>
-          <p className="text-slate-400 mb-4">
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
             Add your first API endpoint to start fetching data
           </p>
           <button
@@ -154,22 +154,22 @@ export function EndpointsPage() {
         </div>
       ) : (
         <>
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
             {!isViewer && (
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={endpoints.length > 0 && selectedIds.size === endpoints.length}
                   onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500"
+                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500"
                 />
-                <span className="text-slate-300 font-medium">Select All</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Select All</span>
               </label>
             )}
             
             {selectedIds.size > 0 && (
               <div className="flex items-center gap-3">
-                <span className="text-sm text-slate-400">{selectedIds.size} selected</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{selectedIds.size} selected</span>
                 <button
                   onClick={handleBulkDelete}
                   disabled={isBulkDeleting}
@@ -185,10 +185,10 @@ export function EndpointsPage() {
             {endpoints.map((endpoint) => (
               <div
                 key={endpoint.id}
-                className={`bg-slate-800/50 border rounded-xl p-4 transition flex gap-4 items-start ${
+                className={`bg-white dark:bg-gray-800/50 border rounded-lg p-4 transition flex gap-4 items-start ${
                   endpoint.is_active
-                    ? 'border-slate-700 hover:border-slate-600'
-                    : 'border-slate-800 opacity-60'
+                    ? 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600'
+                    : 'border-gray-200 dark:border-gray-800 opacity-60'
                 }`}
               >
                 {!isViewer && (
@@ -197,7 +197,7 @@ export function EndpointsPage() {
                       type="checkbox"
                       checked={selectedIds.has(endpoint.id)}
                       onChange={(e) => handleSelectOne(endpoint.id, e.target.checked)}
-                      className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                      className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
                     />
                   </div>
                 )}
@@ -214,14 +214,14 @@ export function EndpointsPage() {
                           : 'bg-slate-600'
                       }`}
                     />
-                    <h3 className="text-lg font-semibold text-white truncate">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                       {endpoint.name}
                     </h3>
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full ${
                         endpoint.is_active
                           ? 'bg-green-500/20 text-green-400'
-                          : 'bg-slate-700 text-slate-400'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
                       }`}
                     >
                       {endpoint.is_active ? 'Active' : 'Inactive'}
@@ -233,11 +233,11 @@ export function EndpointsPage() {
                     )}
                   </div>
                   {endpoint.description && (
-                    <p className="text-sm text-slate-400 mb-2">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                       {endpoint.description}
                     </p>
                   )}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-slate-500 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-400 dark:text-gray-500 min-w-0">
                     <span className="font-mono truncate max-w-full sm:max-w-md">
                       {endpoint.base_url}
                     </span>
@@ -250,7 +250,7 @@ export function EndpointsPage() {
                       {endpoint.auth_type === 'none' ? 'No Auth' : 'Protected'}
                     </span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-slate-500">
+                  <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-400 dark:text-gray-500">
                     {endpoint.last_fetched_at ? (
                       <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
@@ -258,7 +258,7 @@ export function EndpointsPage() {
                         {new Date(endpoint.last_fetched_at).toLocaleString()}
                       </span>
                     ) : (
-                      <span className="text-slate-600">Never fetched</span>
+                      <span className="text-gray-300 dark:text-gray-600">Never fetched</span>
                     )}
                     {endpoint.field_mappings &&
                       Array.isArray(endpoint.field_mappings) &&
@@ -294,7 +294,7 @@ export function EndpointsPage() {
                         setEditingEndpoint(endpoint);
                         setShowForm(true);
                       }}
-                      className="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition"
+                      className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition"
                       title="Edit"
                     >
                       <Edit className="w-5 h-5" />
@@ -302,7 +302,7 @@ export function EndpointsPage() {
                     <button
                       onClick={() => handleDelete(endpoint.id)}
                       disabled={deletingId === endpoint.id}
-                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"
+                      className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"
                       title="Delete"
                     >
                       {deletingId === endpoint.id ? (

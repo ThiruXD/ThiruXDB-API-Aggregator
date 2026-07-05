@@ -80,8 +80,8 @@ export function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-slate-400 mt-1">Overview of your API data sources</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Overview of your API data sources</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -96,14 +96,14 @@ export function DashboardPage() {
               setIsSyncingStats(false);
             }}
             disabled={isSyncingStats}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition disabled:opacity-50 border border-slate-700 text-sm sm:text-base"
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition disabled:opacity-50 border border-gray-200 dark:border-gray-700 text-sm sm:text-base"
           >
             <RefreshCw className={`w-4 h-4 ${isSyncingStats ? 'animate-spin' : ''}`} />
             <span>{isSyncingStats ? 'Syncing...' : 'Sync Stats'}</span>
           </button>
           <button
             onClick={loadDashboardData}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition disabled:opacity-50 border border-slate-700 text-sm sm:text-base"
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition disabled:opacity-50 border border-gray-200 dark:border-gray-700 text-sm sm:text-base"
             title="Refresh Dashboard"
           >
             <RefreshCw className="w-4 h-4" />
@@ -114,22 +114,22 @@ export function DashboardPage() {
 
       {/* System Status Banner */}
       {system && (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-center justify-between">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className={`p-2 rounded-lg ${system.mongoStatus === 'Connected' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
               <Server className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-white font-medium">Database Status</h2>
+              <h2 className="text-gray-900 dark:text-white font-medium">Database Status</h2>
               <div className="flex items-center gap-2 mt-1">
                 <span className={`w-2 h-2 rounded-full ${system.mongoStatus === 'Connected' ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span className="text-sm text-slate-400">{system.mongoStatus} to <span className="font-mono text-slate-300">{system.databaseName}</span></span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{system.mongoStatus} to <span className="font-mono text-gray-700 dark:text-gray-300">{system.databaseName}</span></span>
               </div>
             </div>
           </div>
           <div className="text-right hidden md:block">
-            <p className="text-xs text-slate-500 mb-1">Connection URI</p>
-            <p className="font-mono text-sm text-slate-300 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">{system.mongoUri}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Connection URI</p>
+            <p className="font-mono text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700">{system.mongoUri}</p>
           </div>
         </div>
       )}
@@ -179,25 +179,25 @@ export function DashboardPage() {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Endpoints Status */}
-        <div className="lg:col-span-1 bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+        <div className="lg:col-span-1 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Endpoints</h2>
-            <span className="text-sm text-slate-400">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Endpoints</h2>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {stats.activeEndpoints} active
             </span>
           </div>
 
           {endpoints.length === 0 ? (
             <div className="text-center py-8">
-              <ExternalLink className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400 text-sm">No endpoints configured</p>
+              <ExternalLink className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+              <p className="text-gray-500 dark:text-gray-400 text-sm">No endpoints configured</p>
             </div>
           ) : (
             <div className="space-y-3">
               {endpoints.slice(0, 5).map((endpoint) => (
                 <div
                   key={endpoint.id}
-                  className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -212,10 +212,10 @@ export function DashboardPage() {
                       }`}
                     />
                     <div>
-                      <p className="text-white text-sm font-medium">
+                      <p className="text-gray-900 dark:text-white text-sm font-medium">
                         {endpoint.name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-gray-400 dark:text-gray-500">
                         {endpoint.is_active ? 'Active' : 'Inactive'}
                       </p>
                     </div>
@@ -226,7 +226,7 @@ export function DashboardPage() {
                 </div>
               ))}
               {endpoints.length > 5 && (
-                <p className="text-xs text-slate-500 text-center pt-2">
+                <p className="text-xs text-gray-400 dark:text-gray-500 text-center pt-2">
                   +{endpoints.length - 5} more
                 </p>
               )}
@@ -235,17 +235,17 @@ export function DashboardPage() {
         </div>
 
         {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+        <div className="lg:col-span-2 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
-            <Activity className="w-5 h-5 text-slate-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h2>
+            <Activity className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </div>
 
           {recentLogs.length === 0 ? (
             <div className="text-center py-8">
-              <TrendingUp className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400 text-sm">No activity yet</p>
-              <p className="text-xs text-slate-500 mt-1">
+              <TrendingUp className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+              <p className="text-gray-500 dark:text-gray-400 text-sm">No activity yet</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 Fetch data from endpoints to see activity
               </p>
             </div>
@@ -254,7 +254,7 @@ export function DashboardPage() {
               {recentLogs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     {log.status === 'success' ? (
@@ -265,20 +265,20 @@ export function DashboardPage() {
                       <XCircle className="w-5 h-5 text-red-400" />
                     )}
                     <div>
-                      <p className="text-white text-sm font-medium">
+                      <p className="text-gray-900 dark:text-white text-sm font-medium">
                         {log.endpoint_name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-gray-400 dark:text-gray-500">
                         {log.records_created + log.records_updated} records
                         processed
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {log.duration_ms}ms
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
                       {new Date(log.created_at).toLocaleString()}
                     </p>
                   </div>
@@ -290,13 +290,13 @@ export function DashboardPage() {
       </div>
 
       {/* Data Distribution Chart */}
-      <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">
+      <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Records by Endpoint
         </h2>
 
         {endpoints.length === 0 ? (
-          <p className="text-slate-400 text-sm text-center py-8">
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-8">
             No data to display
           </p>
         ) : (
@@ -309,12 +309,12 @@ export function DashboardPage() {
                   : 0;
 
               return (
-                <div key={endpoint.id} className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4 flex items-center justify-between gap-4">
-                  <span className="text-sm font-medium text-slate-300 truncate" title={endpoint.name}>
+                <div key={endpoint.id} className="bg-gray-50 dark:bg-gray-700/30 border border-gray-300 dark:border-gray-600/50 rounded-lg p-4 flex items-center justify-between gap-4">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate" title={endpoint.name}>
                     {endpoint.name}
                   </span>
                   <div className="flex items-center gap-4 shrink-0">
-                    <span className="text-lg font-bold text-white">
+                    <span className="text-lg font-bold text-gray-900 dark:text-white">
                       {recordCount.toLocaleString()}
                     </span>
                     <span className="text-xs font-medium px-2 py-1 bg-blue-500/10 text-blue-400 rounded-md whitespace-nowrap hidden sm:inline-block">
@@ -352,17 +352,17 @@ function StatCard({
   };
 
   return (
-    <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+    <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-slate-400">{title}</p>
-          <p className="text-3xl font-bold text-white mt-1">{value}</p>
-          <p className="text-xs text-slate-500 mt-1">{subtitle}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{value}</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{subtitle}</p>
         </div>
         <div
-          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center shadow-lg`}
+          className={`w-12 h-12 rounded-lg bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center shadow-sm`}
         >
-          <Icon className="w-6 h-6 text-white" />
+          <Icon className="w-6 h-6 text-gray-900 dark:text-white" />
         </div>
       </div>
     </div>

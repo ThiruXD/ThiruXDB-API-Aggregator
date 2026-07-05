@@ -169,46 +169,46 @@ export function DataBrowserPage() {
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-4">
           {activeCollection !== null && (
-            <button onClick={() => { setActiveCollection(null); setRecords([]); setTotalCount(0); }} className="p-2 bg-slate-800 text-slate-400 hover:text-white rounded-lg border border-slate-700 transition" title="Back to Collections">
+            <button onClick={() => { setActiveCollection(null); setRecords([]); setTotalCount(0); }} className="p-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 transition" title="Back to Collections">
               <ChevronLeft className="w-5 h-5" />
             </button>
           )}
           <div>
-            <h1 className="text-2xl font-bold text-white">Data Browser</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Data Browser</h1>
             {activeCollection !== null && (
-              <p className="text-slate-400 mt-1">{totalCount.toLocaleString()} records {activeCollection !== 'all' ? `in ${activeCollection}` : ''}</p>
+              <p className="text-gray-500 dark:text-gray-400 mt-1">{totalCount.toLocaleString()} records {activeCollection !== 'all' ? `in ${activeCollection}` : ''}</p>
             )}
           </div>
         </div>
         {activeCollection !== null && (
           <div className="flex flex-wrap items-center gap-2">
-            <button onClick={loadRecords} className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition" title="Refresh"><RefreshCw className="w-5 h-5" /></button>
-            <button onClick={() => setViewMode(viewMode === 'table' ? 'grid' : 'table')} className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition">{viewMode === 'table' ? <Grid className="w-5 h-5" /> : <Table className="w-5 h-5" />}</button>
-            <button onClick={() => handleExport('csv')} className="flex items-center gap-2 px-3 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition"><Download className="w-4 h-4" />CSV</button>
-            <button onClick={() => handleExport('json')} className="flex items-center gap-2 px-3 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition"><FileJson className="w-4 h-4" />JSON</button>
+            <button onClick={loadRecords} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition" title="Refresh"><RefreshCw className="w-5 h-5" /></button>
+            <button onClick={() => setViewMode(viewMode === 'table' ? 'grid' : 'table')} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition">{viewMode === 'table' ? <Grid className="w-5 h-5" /> : <Table className="w-5 h-5" />}</button>
+            <button onClick={() => handleExport('csv')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition"><Download className="w-4 h-4" />CSV</button>
+            <button onClick={() => handleExport('json')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition"><FileJson className="w-4 h-4" />JSON</button>
           </div>
         )}
       </div>
 
       {activeCollection === null ? (
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div onClick={() => setActiveCollection('all')} className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
-             <Database className="w-10 h-10 text-slate-500 group-hover:text-blue-400 transition" />
-             <h3 className="text-lg font-semibold text-white">All Records</h3>
-             <p className="text-sm text-slate-400">View all endpoints</p>
+          <div onClick={() => setActiveCollection('all')} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
+             <Database className="w-10 h-10 text-gray-400 dark:text-gray-500 group-hover:text-blue-400 transition" />
+             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">All Records</h3>
+             <p className="text-sm text-gray-500 dark:text-gray-400">View all endpoints</p>
           </div>
           {Object.keys(endpointsByCollection.grouped).map(col => (
-            <div key={col} onClick={() => setActiveCollection(col)} className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
-               <Database className="w-10 h-10 text-slate-500 group-hover:text-blue-400 transition" />
-               <h3 className="text-lg font-semibold text-white">{col}</h3>
-               <p className="text-sm text-slate-400">{endpointsByCollection.grouped[col].length} Endpoints</p>
+            <div key={col} onClick={() => setActiveCollection(col)} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
+               <Database className="w-10 h-10 text-gray-400 dark:text-gray-500 group-hover:text-blue-400 transition" />
+               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{col}</h3>
+               <p className="text-sm text-gray-500 dark:text-gray-400">{endpointsByCollection.grouped[col].length} Endpoints</p>
             </div>
           ))}
           {endpointsByCollection.others.length > 0 && (
-            <div onClick={() => setActiveCollection('uncategorized')} className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
-               <Database className="w-10 h-10 text-slate-500 group-hover:text-blue-400 transition" />
-               <h3 className="text-lg font-semibold text-white">Uncategorized</h3>
-               <p className="text-sm text-slate-400">{endpointsByCollection.others.length} Endpoints</p>
+            <div onClick={() => setActiveCollection('uncategorized')} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition group flex flex-col items-center justify-center text-center gap-3">
+               <Database className="w-10 h-10 text-gray-400 dark:text-gray-500 group-hover:text-blue-400 transition" />
+               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Uncategorized</h3>
+               <p className="text-sm text-gray-500 dark:text-gray-400">{endpointsByCollection.others.length} Endpoints</p>
             </div>
           )}
         </div>
@@ -216,23 +216,23 @@ export function DataBrowserPage() {
         <>
 
       {/* Search and Filters */}
-      <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+      <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 min-w-64">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()} placeholder="Search records..." className="w-full bg-slate-700 border border-slate-600 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()} placeholder="Search records..." className="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-gray-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
-          <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition ${showFilters ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}><Filter className="w-5 h-5" />Filters</button>
-          <button onClick={handleSearch} className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Search</button>
+          <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition ${showFilters ? 'bg-blue-600 text-gray-900 dark:text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-slate-600'}`}><Filter className="w-5 h-5" />Filters</button>
+          <button onClick={handleSearch} className="px-6 py-2.5 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition">Search</button>
         </div>
 
         {showFilters && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-700">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Source Endpoint</label>
-              <select value={selectedEndpoint} onChange={(e) => { setSelectedEndpoint(e.target.value); setPage(1); }} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <label className="block text-sm text-gray-500 dark:text-gray-400 mb-2">Source Endpoint</label>
+              <select value={selectedEndpoint} onChange={(e) => { setSelectedEndpoint(e.target.value); setPage(1); }} className="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="all">All Endpoints</option>
                 {Object.entries(endpointsByCollection.grouped).map(([collection, eps]) => (
                   <optgroup key={collection} label={`Collection: ${collection}`}>
@@ -247,12 +247,12 @@ export function DataBrowserPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Date From</label>
-              <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm text-gray-500 dark:text-gray-400 mb-2">Date From</label>
+              <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} className="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-2">Date To</label>
-              <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm text-gray-500 dark:text-gray-400 mb-2">Date To</label>
+              <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} className="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
         )}
@@ -263,7 +263,7 @@ export function DataBrowserPage() {
       </div>
 
       {selectedIds.size > 0 && (
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-blue-900/30 border border-blue-500/30 rounded-xl p-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-blue-900/30 border border-blue-500/30 rounded-lg p-3">
           <span className="text-sm text-blue-400 font-medium">{selectedIds.size} records selected</span>
           <button
             onClick={handleBulkDelete}
@@ -280,52 +280,52 @@ export function DataBrowserPage() {
       {isLoading ? (
         <div className="flex items-center justify-center h-64"><RefreshCw className="w-8 h-8 text-blue-500 animate-spin" /></div>
       ) : records.length === 0 ? (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-12 text-center">
-          <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4"><Database className="w-8 h-8 text-slate-500" /></div>
-          <h3 className="text-lg font-semibold text-white mb-2">No records found</h3>
-          <p className="text-slate-400">Fetch data from your endpoints first</p>
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"><Database className="w-8 h-8 text-gray-400 dark:text-gray-500" /></div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No records found</h3>
+          <p className="text-gray-500 dark:text-gray-400">Fetch data from your endpoints first</p>
         </div>
       ) : viewMode === 'table' ? (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-700/50">
+              <thead className="bg-gray-100 dark:bg-gray-700/50">
                 <tr>
                   <th className="w-12 px-4 py-3 text-left">
                     <input
                       type="checkbox"
                       checked={records.length > 0 && selectedIds.size === records.length}
                       onChange={(e) => handleSelectAll(e.target.checked)}
-                      className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                      className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
                     />
                   </th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">Source</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">External ID</th>
-                  {getColumns.map((col) => <th key={col} className="text-left px-4 py-3 text-sm font-medium text-slate-400">{col}</th>)}
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">Fetched</th>
-                  <th className="text-right px-4 py-3 text-sm font-medium text-slate-400">Actions</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Source</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">External ID</th>
+                  {getColumns.map((col) => <th key={col} className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">{col}</th>)}
+                  <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Fetched</th>
+                  <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700">
                 {records.map((record) => (
-                  <tr key={record.id} className="hover:bg-slate-700/30 cursor-pointer" onClick={() => setSelectedRecord(record)}>
+                  <tr key={record.id} className="hover:bg-gray-50 dark:bg-gray-700/30 cursor-pointer" onClick={() => setSelectedRecord(record)}>
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <input
                         type="checkbox"
                         checked={selectedIds.has(record.id)}
                         onChange={(e) => handleSelectOne(record.id, e.target.checked)}
-                        className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                        className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
                       />
                     </td>
-                    <td className="px-4 py-3 text-slate-300">{getEndpointName(record.endpoint_id)}</td>
-                    <td className="px-4 py-3 font-mono text-sm text-white">{record.external_id || '-'}</td>
-                    {getColumns.map((col) => { const mapped = record.mapped_data as Record<string, unknown>; return <td key={col} className="px-4 py-3 text-slate-300">{mapped?.[col] !== undefined ? String(mapped[col]).slice(0, 30) : '-'}</td>; })}
-                    <td className="px-4 py-3 text-slate-500 text-sm whitespace-nowrap">{new Date(record.fetched_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{getEndpointName(record.endpoint_id)}</td>
+                    <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">{record.external_id || '-'}</td>
+                    {getColumns.map((col) => { const mapped = record.mapped_data as Record<string, unknown>; return <td key={col} className="px-4 py-3 text-gray-700 dark:text-gray-300">{mapped?.[col] !== undefined ? String(mapped[col]).slice(0, 30) : '-'}</td>; })}
+                    <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-sm whitespace-nowrap">{new Date(record.fetched_at).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => setSelectedRecord(record)} className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition" title="View"><Eye className="w-4 h-4" /></button>
+                        <button onClick={() => setSelectedRecord(record)} className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition" title="View"><Eye className="w-4 h-4" /></button>
                         {!isViewer && (
-                          <button onClick={() => handleDelete(record.id)} disabled={deletingId === record.id} className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition disabled:opacity-50" title="Delete">{deletingId === record.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}</button>
+                          <button onClick={() => handleDelete(record.id)} disabled={deletingId === record.id} className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition disabled:opacity-50" title="Delete">{deletingId === record.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}</button>
                         )}
                       </div>
                     </td>
@@ -337,33 +337,33 @@ export function DataBrowserPage() {
         </div>
       ) : (
         <>
-        <div className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
+        <div className="flex items-center justify-between bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={records.length > 0 && selectedIds.size === records.length}
               onChange={(e) => handleSelectAll(e.target.checked)}
-              className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500"
+              className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500"
             />
-            <span className="text-slate-300 font-medium">Select All Current Page</span>
+            <span className="text-gray-700 dark:text-gray-300 font-medium">Select All Current Page</span>
           </label>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {records.map((record) => (
-            <div key={record.id} onClick={() => setSelectedRecord(record)} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:border-slate-600 cursor-pointer transition relative">
+            <div key={record.id} onClick={() => setSelectedRecord(record)} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-gray-300 dark:border-gray-600 cursor-pointer transition relative">
               <div className="absolute top-4 right-4 z-10" onClick={(e) => e.stopPropagation()}>
                 <input
                   type="checkbox"
                   checked={selectedIds.has(record.id)}
                   onChange={(e) => handleSelectOne(record.id, e.target.checked)}
-                  className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
                 />
               </div>
               <div className="flex items-center justify-between mb-3 pr-8">
-                <span className="text-xs text-slate-500">{getEndpointName(record.endpoint_id)}</span>
-                <span className="text-xs text-slate-600">{new Date(record.fetched_at).toLocaleDateString()}</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500">{getEndpointName(record.endpoint_id)}</span>
+                <span className="text-xs text-gray-300 dark:text-gray-600">{new Date(record.fetched_at).toLocaleDateString()}</span>
               </div>
-              <pre className="text-sm text-slate-300 overflow-hidden max-h-32 font-mono">{JSON.stringify(viewMode === 'grid' ? record.raw_data : record.mapped_data, null, 2).slice(0, 200)}...</pre>
+              <pre className="text-sm text-gray-700 dark:text-gray-300 overflow-hidden max-h-32 font-mono">{JSON.stringify(viewMode === 'grid' ? record.raw_data : record.mapped_data, null, 2).slice(0, 200)}...</pre>
             </div>
           ))}
         </div>
@@ -372,17 +372,17 @@ export function DataBrowserPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-400">Per page:</span>
-            <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="bg-slate-700 border border-slate-600 rounded px-3 py-1 text-white text-sm">
+            <span className="text-sm text-gray-500 dark:text-gray-400">Per page:</span>
+            <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-gray-900 dark:text-white text-sm">
               {ITEMS_PER_PAGE_OPTIONS.map((size) => <option key={size} value={size}>{size}</option>)}
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition disabled:opacity-50"><ChevronLeft className="w-5 h-5" /></button>
-            <span className="text-sm text-slate-400">Page {page} of {totalPages}</span>
-            <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition disabled:opacity-50"><ChevronRight className="w-5 h-5" /></button>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition disabled:opacity-50"><ChevronLeft className="w-5 h-5" /></button>
+            <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {totalPages}</span>
+            <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition disabled:opacity-50"><ChevronRight className="w-5 h-5" /></button>
           </div>
         </div>
       )}
@@ -444,26 +444,26 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted, isViewer 
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden border border-slate-700">
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div>
-            <h2 className="text-xl font-bold text-white">Record Details</h2>
-            <p className="text-sm text-slate-400 mt-1">{endpointName} • ID: {record.external_id || record.id.slice(0, 8)}</p>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Record Details</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{endpointName} • ID: {record.external_id || record.id.slice(0, 8)}</p>
           </div>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div className="flex gap-2">
-              <button onClick={() => setView('mapped')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'mapped' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>Mapped Data</button>
-              <button onClick={() => setView('raw')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'raw' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'}`}>Raw JSON</button>
+              <button onClick={() => setView('mapped')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'mapped' ? 'bg-blue-600 text-gray-900 dark:text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>Mapped Data</button>
+              <button onClick={() => setView('raw')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'raw' ? 'bg-blue-600 text-gray-900 dark:text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-slate-600'}`}>Raw JSON</button>
             </div>
             <div className="flex gap-2">
-              <button onClick={handleCopyJSON} className="flex items-center gap-2 px-3 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition text-sm">
+              <button onClick={handleCopyJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition text-sm">
                 <Copy className="w-4 h-4" /> Copy
               </button>
-              <button onClick={handleDownloadJSON} className="flex items-center gap-2 px-3 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition text-sm">
+              <button onClick={handleDownloadJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition text-sm">
                 <Download className="w-4 h-4" /> Download
               </button>
             </div>
@@ -471,29 +471,29 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted, isViewer 
 
           {isEditing && view === 'mapped' ? (
             <div className="space-y-4">
-              <textarea value={editedData} onChange={(e) => setEditedData(e.target.value)} className="w-full h-64 bg-slate-900 border border-slate-600 rounded-lg p-4 font-mono text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <textarea value={editedData} onChange={(e) => setEditedData(e.target.value)} className="w-full h-64 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-4 font-mono text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <div className="flex gap-2">
-                <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
-                <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50">{isSaving ? 'Saving...' : 'Save Changes'}</button>
+                <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
+                <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50">{isSaving ? 'Saving...' : 'Save Changes'}</button>
               </div>
             </div>
           ) : (
-            <pre className="bg-slate-900 rounded-lg p-4 overflow-x-auto font-mono text-sm text-slate-300">{JSON.stringify(view === 'mapped' ? record.mapped_data : record.raw_data, null, 2)}</pre>
+            <pre className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 overflow-x-auto font-mono text-sm text-gray-700 dark:text-gray-300">{JSON.stringify(view === 'mapped' ? record.mapped_data : record.raw_data, null, 2)}</pre>
           )}
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            <div><span className="text-slate-500">Fetched at:</span><span className="ml-2 text-white">{new Date(record.fetched_at).toLocaleString()}</span></div>
-            <div><span className="text-slate-500">Created at:</span><span className="ml-2 text-white">{new Date(record.created_at).toLocaleString()}</span></div>
+            <div><span className="text-gray-400 dark:text-gray-500">Fetched at:</span><span className="ml-2 text-gray-900 dark:text-white">{new Date(record.fetched_at).toLocaleString()}</span></div>
+            <div><span className="text-gray-400 dark:text-gray-500">Created at:</span><span className="ml-2 text-gray-900 dark:text-white">{new Date(record.created_at).toLocaleString()}</span></div>
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between p-6 border-t border-slate-700">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700">
           {!isViewer && (
             <button onClick={handleDelete} disabled={isDeleting} className="flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"><Trash2 className="w-4 h-4" />{isDeleting ? 'Deleting...' : 'Delete'}</button>
           )}
           <div className="flex gap-2">
-            {!isViewer && view === 'mapped' && <button onClick={() => setIsEditing(!isEditing)} className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition"><Edit className="w-4 h-4" />Edit</button>}
-            <button onClick={onClose} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Close</button>
+            {!isViewer && view === 'mapped' && <button onClick={() => setIsEditing(!isEditing)} className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition"><Edit className="w-4 h-4" />Edit</button>}
+            <button onClick={onClose} className="px-6 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition">Close</button>
           </div>
         </div>
       </div>

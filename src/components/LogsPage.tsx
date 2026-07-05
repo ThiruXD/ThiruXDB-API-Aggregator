@@ -40,15 +40,15 @@ export function LogsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Fetch Logs</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Fetch Logs</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
             History of data fetch operations
           </p>
         </div>
         <select
           value={selectedEndpoint}
           onChange={(e) => setSelectedEndpoint(e.target.value)}
-          className="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">All Endpoints</option>
           {endpoints.map((ep) => (
@@ -60,44 +60,44 @@ export function LogsPage() {
       </div>
 
       {logs.length === 0 ? (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-12 text-center">
-          <p className="text-slate-400">No fetch logs found</p>
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-400">No fetch logs found</p>
         </div>
       ) : (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-            <thead className="bg-slate-700/50">
+            <thead className="bg-gray-100 dark:bg-gray-700/50">
               <tr>
-                <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Status
                 </th>
-                <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Endpoint
                 </th>
-                <th className="text-right px-4 py-3 text-sm font-medium text-slate-400">
+                <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Records
                 </th>
-                <th className="text-right px-4 py-3 text-sm font-medium text-slate-400">
+                <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Created
                 </th>
-                <th className="text-right px-4 py-3 text-sm font-medium text-slate-400">
+                <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Updated
                 </th>
-                <th className="text-right px-4 py-3 text-sm font-medium text-slate-400">
+                <th className="text-right px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Duration
                 </th>
-                <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Time
                 </th>
-                <th className="text-left px-4 py-3 text-sm font-medium text-slate-400">
+                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Error
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-700/30">
+                <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/30">
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center gap-1 text-sm ${
@@ -118,8 +118,8 @@ export function LogsPage() {
                       {log.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-white">{log.endpoint_name}</td>
-                  <td className="px-4 py-3 text-right text-slate-300">
+                  <td className="px-4 py-3 text-gray-900 dark:text-white">{log.endpoint_name}</td>
+                  <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
                     {log.records_fetched}
                   </td>
                   <td className="px-4 py-3 text-right text-green-400">
@@ -128,10 +128,10 @@ export function LogsPage() {
                   <td className="px-4 py-3 text-right text-blue-400">
                     {log.records_updated}
                   </td>
-                  <td className="px-4 py-3 text-right text-slate-400">
+                  <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-400">
                     {log.duration_ms}ms
                   </td>
-                  <td className="px-4 py-3 text-slate-500 text-sm whitespace-nowrap">
+                  <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-sm whitespace-nowrap">
                     {new Date(log.created_at).toLocaleString()}
                   </td>
                   <td className="px-4 py-3 text-red-400 text-sm max-w-xs truncate">

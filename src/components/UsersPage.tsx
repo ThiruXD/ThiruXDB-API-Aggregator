@@ -115,17 +115,17 @@ export function UsersPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">System Security</h1>
-          <p className="text-slate-400 mt-1">Manage users, roles, and view activity logs</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">System Security</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Manage users, roles, and view activity logs</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-slate-700 pb-px">
+      <div className="flex gap-4 border-b border-gray-200 dark:border-gray-700 pb-px">
         <button
           onClick={() => setActiveTab('users')}
           className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${
-            activeTab === 'users' ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-300'
+            activeTab === 'users' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
           }`}
         >
           <Users className="w-4 h-4" /> Users
@@ -133,7 +133,7 @@ export function UsersPage() {
         <button
           onClick={() => setActiveTab('activity')}
           className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${
-            activeTab === 'activity' ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-300'
+            activeTab === 'activity' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
           }`}
         >
           <Activity className="w-4 h-4" /> Activity Logs
@@ -144,15 +144,15 @@ export function UsersPage() {
       {activeTab === 'users' && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={() => openForm()} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">
+            <button onClick={() => openForm()} className="flex items-center gap-2 bg-blue-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-sm shadow-blue-500/20">
               <UserPlus className="w-4 h-4" /> Add User
             </button>
           </div>
 
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
+          <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-300">
-                <thead className="bg-slate-800 border-b border-slate-700 text-slate-400">
+              <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
+                <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
                   <tr>
                     <th className="px-6 py-4 font-medium">Username</th>
                     <th className="px-6 py-4 font-medium">Role</th>
@@ -161,15 +161,15 @@ export function UsersPage() {
                     <th className="px-6 py-4 font-medium text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700/50">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
                   {users.map(u => (
-                    <tr key={u.id} className="hover:bg-slate-700/20 transition">
-                      <td className="px-6 py-4 font-medium text-white">{u.username}</td>
+                    <tr key={u.id} className="hover:bg-gray-50 dark:bg-gray-700/20 transition">
+                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{u.username}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 rounded-md text-xs font-medium uppercase ${
                           u.role === 'admin' ? 'bg-purple-500/10 text-purple-400' :
                           u.role === 'editor' ? 'bg-blue-500/10 text-blue-400' :
-                          'bg-slate-500/10 text-slate-400'
+                          'bg-slate-500/10 text-gray-500 dark:text-gray-400'
                         }`}>
                           {u.role}
                         </span>
@@ -181,10 +181,10 @@ export function UsersPage() {
                         {u.last_seen ? new Date(u.last_seen).toLocaleString() : 'Never'}
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
-                        <button onClick={() => setViewingLogsForUser(u)} className="p-2 text-slate-400 hover:text-green-400 transition" title="View Logs"><Activity className="w-4 h-4"/></button>
-                        <button onClick={() => openForm(u)} className="p-2 text-slate-400 hover:text-blue-400 transition" title="Edit"><Edit className="w-4 h-4"/></button>
+                        <button onClick={() => setViewingLogsForUser(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-green-400 transition" title="View Logs"><Activity className="w-4 h-4"/></button>
+                        <button onClick={() => openForm(u)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-400 transition" title="Edit"><Edit className="w-4 h-4"/></button>
                         {u.id !== user?.id && (
-                          <button onClick={() => handleDelete(u.id)} className="p-2 text-slate-400 hover:text-red-400 transition" title="Delete"><Trash2 className="w-4 h-4"/></button>
+                          <button onClick={() => handleDelete(u.id)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-400 transition" title="Delete"><Trash2 className="w-4 h-4"/></button>
                         )}
                       </td>
                     </tr>
@@ -198,10 +198,10 @@ export function UsersPage() {
 
       {/* Activity Logs Tab */}
       {activeTab === 'activity' && (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-300">
-              <thead className="bg-slate-800 border-b border-slate-700 text-slate-400">
+            <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
+              <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-4 font-medium">Time</th>
                   <th className="px-6 py-4 font-medium">User</th>
@@ -210,28 +210,28 @@ export function UsersPage() {
                   <th className="px-6 py-4 font-medium">Device Info</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/50">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
                 {logs.map(log => (
-                  <tr key={log.id} className="hover:bg-slate-700/20 transition">
-                    <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-slate-500"/>{new Date(log.created_at).toLocaleString()}</td>
-                    <td className="px-6 py-4 font-medium text-white">{log.username}</td>
+                  <tr key={log.id} className="hover:bg-gray-50 dark:bg-gray-700/20 transition">
+                    <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500"/>{new Date(log.created_at).toLocaleString()}</td>
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{log.username}</td>
                     <td className="px-6 py-4 text-blue-400">{log.action}</td>
                     <td className="px-6 py-4 font-mono text-xs">
-                      <div className="flex items-center gap-1 text-slate-300">
-                        <Globe className="w-3 h-3 text-slate-500" /> {log.ip_address}
+                      <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                        <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
                       </div>
                       {log.location_data && (
-                        <div className="flex items-center gap-1 text-slate-400 mt-1">
+                        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
                           <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-xs text-slate-400">
-                      <div className="flex items-center gap-1 text-slate-300">
-                        <Laptop className="w-3 h-3 text-slate-500"/> {log.device_info}
+                    <td className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                        <Laptop className="w-3 h-3 text-gray-400 dark:text-gray-500"/> {log.device_info}
                       </div>
                       {log.location_data?.isp && (
-                        <div className="text-slate-500 mt-1 pl-4">ISP: {log.location_data.isp}</div>
+                        <div className="text-gray-400 dark:text-gray-500 mt-1 pl-4">ISP: {log.location_data.isp}</div>
                       )}
                     </td>
                   </tr>
@@ -240,11 +240,11 @@ export function UsersPage() {
             </table>
           </div>
           {/* Pagination */}
-          <div className="p-4 border-t border-slate-700 flex justify-between items-center">
-            <span className="text-sm text-slate-400">Page {page} of {totalPages}</span>
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {totalPages}</span>
             <div className="flex gap-2">
-              <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 bg-slate-700 text-white rounded disabled:opacity-50">Prev</button>
-              <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className="px-3 py-1 bg-slate-700 text-white rounded disabled:opacity-50">Next</button>
+              <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Prev</button>
+              <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded disabled:opacity-50">Next</button>
             </div>
           </div>
         </div>
@@ -253,23 +253,23 @@ export function UsersPage() {
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="flex items-center justify-between p-6 border-b border-slate-700">
-              <h3 className="text-lg font-semibold text-white">{editingUser ? 'Edit User' : 'New User'}</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{editingUser ? 'Edit User' : 'New User'}</h3>
+              <button onClick={() => setShowForm(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Username</label>
-                <input required type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} disabled={!!editingUser} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+                <input required type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} disabled={!!editingUser} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">{editingUser ? 'New Password (leave blank to keep)' : 'Password'}</label>
-                <input required={!editingUser} type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{editingUser ? 'New Password (leave blank to keep)' : 'Password'}</label>
+                <input required={!editingUser} type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Role</label>
-                <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value as UserRole})} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
+                <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value as UserRole})} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                   <option value="admin">Admin (Full Access)</option>
                   <option value="editor">Editor (Can't manage users)</option>
                   <option value="viewer">Viewer (Read Only)</option>
@@ -277,13 +277,13 @@ export function UsersPage() {
               </div>
               {editingUser && editingUser.id !== user?.id && (
                 <div className="flex items-center gap-2 pt-2">
-                  <input type="checkbox" id="active" checked={formData.is_active} onChange={e => setFormData({...formData, is_active: e.target.checked})} className="w-4 h-4 bg-slate-900 border-slate-700 rounded" />
-                  <label htmlFor="active" className="text-sm text-slate-300">Account Active</label>
+                  <input type="checkbox" id="active" checked={formData.is_active} onChange={e => setFormData({...formData, is_active: e.target.checked})} className="w-4 h-4 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded" />
+                  <label htmlFor="active" className="text-sm text-gray-700 dark:text-gray-300">Account Active</label>
                 </div>
               )}
               <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
-                <button type="submit" className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-slate-600 transition">Cancel</button>
+                <button type="submit" className="flex-1 px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
                   <Save className="w-4 h-4"/> Save User
                 </button>
               </div>
@@ -358,35 +358,35 @@ function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-slate-700 gap-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 gap-4">
           <div>
-            <h3 className="text-xl font-bold text-white flex items-center gap-2"><Activity className="w-5 h-5 text-blue-400" /> Activity Logs: {user.username}</h3>
-            <p className="text-sm text-slate-400 mt-1">Detailed history of this user's actions</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><Activity className="w-5 h-5 text-blue-400" /> Activity Logs: {user.username}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed history of this user's actions</p>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button 
               onClick={handleExport}
               disabled={isExporting}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-gray-900 dark:text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
             >
               {isExporting ? <span className="animate-spin">⌛</span> : <Download className="w-4 h-4" />}
               Export CSV
             </button>
-            <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-700 rounded-lg transition"><X className="w-5 h-5" /></button>
+            <button onClick={onClose} className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition"><X className="w-5 h-5" /></button>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
           {isLoading && logs.length === 0 ? (
-            <div className="text-center py-12 text-slate-400">Loading logs...</div>
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">Loading logs...</div>
           ) : logs.length === 0 ? (
-            <div className="text-center py-12 text-slate-400">No activity logs found for this user.</div>
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">No activity logs found for this user.</div>
           ) : (
-            <div className="bg-slate-900 border border-slate-700 rounded-xl overflow-hidden">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-300">
-                  <thead className="bg-slate-800 border-b border-slate-700 text-slate-400">
+                <table className="w-full text-left text-sm text-gray-700 dark:text-gray-300">
+                  <thead className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
                     <tr>
                       <th className="px-6 py-4 font-medium">Time</th>
                       <th className="px-6 py-4 font-medium">Action</th>
@@ -394,27 +394,27 @@ function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
                       <th className="px-6 py-4 font-medium">Device & Network Info</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-700/50">
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
                     {logs.map(log => (
-                      <tr key={log.id} className="hover:bg-slate-800/50 transition">
-                        <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-slate-500"/>{new Date(log.created_at).toLocaleString()}</td>
+                      <tr key={log.id} className="hover:bg-white dark:bg-gray-800/50 transition">
+                        <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-gray-400 dark:text-gray-500"/>{new Date(log.created_at).toLocaleString()}</td>
                         <td className="px-6 py-4 text-blue-400 font-medium">{log.action}</td>
                         <td className="px-6 py-4 font-mono text-xs">
-                          <div className="flex items-center gap-1 text-slate-300">
-                            <Globe className="w-3 h-3 text-slate-500" /> {log.ip_address}
+                          <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                            <Globe className="w-3 h-3 text-gray-400 dark:text-gray-500" /> {log.ip_address}
                           </div>
                           {log.location_data && (
-                            <div className="flex items-center gap-1 text-slate-400 mt-1">
+                            <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
                               <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
                             </div>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-xs text-slate-400">
-                          <div className="flex items-center gap-1 text-slate-300">
-                            <Laptop className="w-3 h-3 text-slate-500"/> {log.device_info}
+                        <td className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                            <Laptop className="w-3 h-3 text-gray-400 dark:text-gray-500"/> {log.device_info}
                           </div>
                           {log.location_data?.isp && (
-                            <div className="text-slate-500 mt-1 pl-4 truncate max-w-xs" title={log.location_data.org || log.location_data.isp}>
+                            <div className="text-gray-400 dark:text-gray-500 mt-1 pl-4 truncate max-w-xs" title={log.location_data.org || log.location_data.isp}>
                               ISP: {log.location_data.isp}
                             </div>
                           )}
@@ -428,11 +428,11 @@ function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
           )}
         </div>
 
-        <div className="p-4 border-t border-slate-700 flex justify-between items-center bg-slate-800">
-          <span className="text-sm text-slate-400">Page {page} of {Math.max(1, totalPages)}</span>
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
+          <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {Math.max(1, totalPages)}</span>
           <div className="flex gap-2">
-            <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 bg-slate-700 text-white rounded-lg disabled:opacity-50 hover:bg-slate-600 transition">Previous</button>
-            <button disabled={page === totalPages || totalPages === 0} onClick={() => setPage(p => p + 1)} className="px-4 py-2 bg-slate-700 text-white rounded-lg disabled:opacity-50 hover:bg-slate-600 transition">Next</button>
+            <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg disabled:opacity-50 hover:bg-slate-600 transition">Previous</button>
+            <button disabled={page === totalPages || totalPages === 0} onClick={() => setPage(p => p + 1)} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg disabled:opacity-50 hover:bg-slate-600 transition">Next</button>
           </div>
         </div>
       </div>

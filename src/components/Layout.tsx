@@ -1,5 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import {
   LayoutDashboard,
   Database,
@@ -9,6 +10,8 @@ import {
   X,
   RefreshCw,
   FileJson,
+  Moon,
+  Sun,
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -29,41 +32,50 @@ import { Users } from 'lucide-react';
 
 export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
   const { user, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-900 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-x-hidden transition-colors duration-200">
       {/* Mobile top navbar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 border-b border-slate-800 z-50 flex items-center px-4 justify-between">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-50 flex items-center px-4 justify-between transition-colors duration-200">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg shrink-0">
             <Database className="w-4 h-4 text-white" />
           </div>
-          <h1 className="text-base font-bold text-white">API Manager</h1>
+          <h1 className="text-base font-bold text-gray-900 dark:text-white">API Manager</h1>
         </div>
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 transition"
-        >
-          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg transition"
+          >
+            {theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+          </button>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+          >
+            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-16 bottom-0 lg:inset-y-0 left-0 z-40 w-64 bg-slate-800 border-r border-slate-700 transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed top-16 bottom-0 lg:inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transform transition-all duration-200 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="hidden lg:block p-6 border-b border-slate-700">
+          <div className="hidden lg:block p-6 border-b border-gray-200 dark:border-gray-800 transition-colors">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shrink-0">
                 <Database className="w-5 h-5 text-white" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg font-bold text-white truncate">API Manager</h1>
-                <p className="text-xs text-slate-400 truncate">Data Dashboard</p>
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">API Manager</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">Data Dashboard</p>
               </div>
             </div>
           </div>
@@ -76,9 +88,9 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                   onNavigate(item.id);
                   setSidebarOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${currentPage === item.id
-                  ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                  : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === item.id
+                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                   }`}
               >
                 <item.icon className="w-5 h-5" />
@@ -91,9 +103,9 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                   onNavigate('users');
                   setSidebarOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${currentPage === 'users'
-                  ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                  : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'users'
+                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                   }`}
               >
                 <Users className="w-5 h-5" />
@@ -103,28 +115,37 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
           </nav>
 
           {/* User info */}
-          <div className="p-4 border-t border-slate-700">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-slate-700 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-slate-300">
+                <div className="w-9 h-9 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     {user?.username?.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
                     {user?.username}
                   </p>
-                  <p className="text-xs text-slate-400 capitalize">{user?.role || 'viewer'}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role || 'viewer'}</p>
                 </div>
               </div>
-              <button
-                onClick={logout}
-                className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
-                title="Logout"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
+              <div className="flex items-center">
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="hidden lg:block p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg transition mr-1"
+                  title="Toggle Theme"
+                >
+                  {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
+                <button
+                  onClick={logout}
+                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
