@@ -67,10 +67,11 @@ router.post('/test', async (req, res) => {
     if (path_variables && path_variables.length > 0) {
       const db = require('../db.js').getDb();
       for (const pv of path_variables) {
-        if (pv.path_variable && pv.target_collection && pv.target_field) {
-          const sampleDoc = await db.collection(pv.target_collection).findOne({ [pv.target_field]: { $exists: true, $ne: null } });
-          const val = sampleDoc ? sampleDoc[pv.target_field] : '1';
-          finalUrl = finalUrl.replace(new RegExp(`{${pv.path_variable}}`, 'g'), val);
+        if (pv.variable && pv.source_collection && pv.source_field) {
+          const sampleDoc = await db.collection(pv.source_collection).findOne({ [pv.source_field]: { $exists: true, $ne: null } });
+          const val = sampleDoc ? sampleDoc[pv.source_field] : '1';
+          // pv.variable usually already contains the curly braces (e.g. "{id}")
+          finalUrl = finalUrl.replace(new RegExp(pv.variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), encodeURIComponent(String(val)));
         }
       }
     }
