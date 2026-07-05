@@ -7,6 +7,7 @@ import { EndpointsPage } from './components/EndpointsPage';
 import { FetchPage } from './components/FetchPage';
 import { DataBrowserPage } from './components/DataBrowserPage';
 import { LogsPage } from './components/LogsPage';
+import { UsersPage } from './components/UsersPage';
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
@@ -28,6 +29,8 @@ function AppContent() {
         return <DataBrowserPage />;
       case 'logs':
         return <LogsPage />;
+      case 'users':
+        return <UsersPage />;
       default:
         return <DashboardPage />;
     }

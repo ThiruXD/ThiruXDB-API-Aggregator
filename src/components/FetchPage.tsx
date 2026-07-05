@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ApiEndpoint, FetchLog } from '../types/database';
 import { api } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 import { useFetchStore } from '../store/fetchStore';
 import {
   RefreshCw, Play, CheckCircle, XCircle, Clock, AlertCircle, Loader2, Database,
@@ -14,6 +15,9 @@ export function FetchPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [globalSkip, setGlobalSkip] = useState<number>(0);
   const [skipOffsets, setSkipOffsets] = useState<Record<string, number>>({});
+  
+  const { user } = useAuth();
+  const isViewer = user?.role === 'viewer';
   
   const { fetchingIds, fetchProgress, startFetch, cancelFetch } = useFetchStore();
 
@@ -69,16 +73,18 @@ export function FetchPage() {
           <h1 className="text-2xl font-bold text-white">Fetch Data</h1>
           <p className="text-slate-400 mt-1">Pull data from configured API endpoints</p>
         </div>
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 shrink-0">
-            <span className="text-sm text-slate-400">Skip</span>
-            <input type="number" min="0" value={globalSkip} onChange={(e) => setGlobalSkip(parseInt(e.target.value) || 0)} className="w-16 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+        {!isViewer && (
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 shrink-0">
+              <span className="text-sm text-slate-400">Skip</span>
+              <input type="number" min="0" value={globalSkip} onChange={(e) => setGlobalSkip(parseInt(e.target.value) || 0)} className="w-16 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+            </div>
+            <button onClick={fetchSelectedEndpoints} disabled={fetchingAll || selectedIds.size === 0} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-lg shadow-green-500/20 disabled:opacity-50 shrink-0">
+              {fetchingAll ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
+              Fetch Selected ({selectedIds.size})
+            </button>
           </div>
-          <button onClick={fetchSelectedEndpoints} disabled={fetchingAll || selectedIds.size === 0} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-lg shadow-green-500/20 disabled:opacity-50 shrink-0">
-            {fetchingAll ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
-            Fetch Selected ({selectedIds.size})
-          </button>
-        </div>
+        )}
       </div>
 
       {endpoints.length === 0 ? (
@@ -89,17 +95,19 @@ export function FetchPage() {
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={endpoints.length > 0 && selectedIds.size === endpoints.length}
-                onChange={(e) => handleSelectAll(e.target.checked)}
-                className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500"
-              />
-              <span className="text-slate-300 font-medium">Select All</span>
-            </label>
-          </div>
+          {!isViewer && (
+            <div className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={endpoints.length > 0 && selectedIds.size === endpoints.length}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                  className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500"
+                />
+                <span className="text-slate-300 font-medium">Select All</span>
+              </label>
+            </div>
+          )}
           <div className="grid gap-4">
             {endpoints.map((endpoint) => {
               const isFetching = fetchingIds.has(endpoint.id);
@@ -138,14 +146,14 @@ export function FetchPage() {
                           )}
                           {!isFetching && endpoint.last_fetched_at && <span className="text-sm text-slate-500 flex items-center gap-1"><Clock className="w-4 h-4" />{new Date(endpoint.last_fetched_at).toLocaleString()}</span>}
                           
-                          {!isFetching && (
+                          {!isViewer && !isFetching && (
                             <div className="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1">
                               <span className="text-xs text-slate-400">Skip</span>
                               <input type="number" min="0" value={skipOffsets[endpoint.id] || 0} onChange={(e) => setSkipOffsets({ ...skipOffsets, [endpoint.id]: parseInt(e.target.value) || 0 })} className="w-14 bg-slate-700 border border-slate-600 rounded px-1.5 py-1 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500" />
                             </div>
                           )}
 
-                          {isFetching ? (
+                          {!isViewer && (isFetching ? (
                             <button onClick={() => handleCancelFetch(endpoint.id)} className="flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition shadow-lg shadow-red-500/20">
                               <XCircle className="w-5 h-5" />
                               Cancel
@@ -155,7 +163,7 @@ export function FetchPage() {
                               <Play className="w-5 h-5" />
                               Fetch
                             </button>
-                          )}
+                          ))}
                         </div>
                       </div>
                       

@@ -8,6 +8,9 @@ import type {
   DataRecord,
   FetchLog,
   EndpointFormData,
+  User,
+  UserFormData,
+  ActivityLog,
 } from '../types/database';
 
 const BASE = '/api';
@@ -16,8 +19,16 @@ async function request<T>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  
+  // Attach token if logged in
+  const token = localStorage.getItem('thiruxdb_jwt');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   const res = await fetch(BASE + url, {
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     ...options,
   });
   if (!res.ok) {
@@ -171,7 +182,31 @@ export const api = {
     };
     endpoints: ApiEndpoint[];
     recentRecords: DataRecord[];
-    recentLogs: (FetchLog & { endpoint_name: string })[];
     perEndpoint: Record<string, number>;
   }> => request('/dashboard'),
+
+  // Users (Admin only)
+  getUsers: (): Promise<User[]> =>
+    request('/users'),
+
+  createUser: (data: UserFormData): Promise<User> =>
+    request('/users', { method: 'POST', body: JSON.stringify(data) }),
+
+  updateUser: (id: string, data: Partial<UserFormData>): Promise<User> =>
+    request(`/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  deleteUser: (id: string): Promise<{ success: boolean }> =>
+    request(`/users/${id}`, { method: 'DELETE' }),
+
+  getActivityLogs: (params: { page?: number; limit?: number }): Promise<{
+    logs: ActivityLog[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> => {
+    const q = new URLSearchParams();
+    if (params.page) q.set('page', String(params.page));
+    if (params.limit) q.set('limit', String(params.limit));
+    return request(`/users/activity?${q.toString()}`);
+  },
 };

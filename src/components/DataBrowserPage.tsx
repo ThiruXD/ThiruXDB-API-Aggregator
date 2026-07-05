@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { DataRecord, ApiEndpoint } from '../types/database';
 import { api } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 import {
   Search, Filter, RefreshCw, ChevronLeft, ChevronRight, Eye, Trash2,
   Download, X, Database, FileJson, Table, Grid, Edit, Copy
@@ -29,6 +30,9 @@ export function DataBrowserPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const [activeCollection, setActiveCollection] = useState<string | null>(null);
+
+  const { user } = useAuth();
+  const isViewer = user?.role === 'viewer';
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -320,7 +324,9 @@ export function DataBrowserPage() {
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => setSelectedRecord(record)} className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition" title="View"><Eye className="w-4 h-4" /></button>
-                        <button onClick={() => handleDelete(record.id)} disabled={deletingId === record.id} className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition disabled:opacity-50" title="Delete">{deletingId === record.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}</button>
+                        {!isViewer && (
+                          <button onClick={() => handleDelete(record.id)} disabled={deletingId === record.id} className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition disabled:opacity-50" title="Delete">{deletingId === record.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}</button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -384,13 +390,13 @@ export function DataBrowserPage() {
       )}
 
       {selectedRecord && (
-        <RecordDetailModal record={selectedRecord} endpointName={getEndpointName(selectedRecord.endpoint_id)} onClose={() => setSelectedRecord(null)} onDeleted={() => { setSelectedRecord(null); loadRecords(); }} />
+        <RecordDetailModal record={selectedRecord} endpointName={getEndpointName(selectedRecord.endpoint_id)} onClose={() => setSelectedRecord(null)} onDeleted={() => { setSelectedRecord(null); loadRecords(); }} isViewer={isViewer} />
       )}
     </div>
   );
 }
 
-function RecordDetailModal({ record, endpointName, onClose, onDeleted }: { record: DataRecord; endpointName: string; onClose: () => void; onDeleted: () => void }) {
+function RecordDetailModal({ record, endpointName, onClose, onDeleted, isViewer }: { record: DataRecord; endpointName: string; onClose: () => void; onDeleted: () => void; isViewer?: boolean }) {
   const [view, setView] = useState<'mapped' | 'raw'>('raw');
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState(JSON.stringify(record.mapped_data, null, 2));
@@ -398,6 +404,7 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted }: { recor
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSave = async () => {
+    if (isViewer) return;
     setIsSaving(true);
     try {
       const parsed = JSON.parse(editedData);
@@ -481,9 +488,11 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted }: { recor
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between p-6 border-t border-slate-700">
-          <button onClick={handleDelete} disabled={isDeleting} className="flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"><Trash2 className="w-4 h-4" />{isDeleting ? 'Deleting...' : 'Delete'}</button>
+          {!isViewer && (
+            <button onClick={handleDelete} disabled={isDeleting} className="flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"><Trash2 className="w-4 h-4" />{isDeleting ? 'Deleting...' : 'Delete'}</button>
+          )}
           <div className="flex gap-2">
-            {view === 'mapped' && <button onClick={() => setIsEditing(!isEditing)} className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition"><Edit className="w-4 h-4" />Edit</button>}
+            {!isViewer && view === 'mapped' && <button onClick={() => setIsEditing(!isEditing)} className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition"><Edit className="w-4 h-4" />Edit</button>}
             <button onClick={onClose} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Close</button>
           </div>
         </div>

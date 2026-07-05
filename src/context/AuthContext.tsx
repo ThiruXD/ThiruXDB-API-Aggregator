@@ -1,72 +1,78 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { UserRole } from '../types/database';
 
 interface SessionUser {
+  id: string;
   username: string;
-  loginTime: number;
+  role: UserRole;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: SessionUser | null;
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const ADMIN_CREDENTIALS = {
-  username: import.meta.env.VITE_ADMIN_USERNAME,
-  password: import.meta.env.VITE_ADMIN_PASS,
-};
-
-const SESSION_KEY = 'thiruxdb_auth_session';
-const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+const TOKEN_KEY = 'thiruxdb_jwt';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem(SESSION_KEY);
-    if (stored) {
-      try {
-        const parsed: SessionUser = JSON.parse(stored);
-        if (Date.now() - parsed.loginTime < SESSION_DURATION) {
-          setUser(parsed);
-        } else {
-          localStorage.removeItem(SESSION_KEY);
+    const initAuth = async () => {
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (token) {
+        try {
+          const res = await fetch('/api/auth/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setUser({ id: data.id, username: data.username, role: data.role });
+          } else {
+            localStorage.removeItem(TOKEN_KEY);
+          }
+        } catch {
+          localStorage.removeItem(TOKEN_KEY);
         }
-      } catch {
-        localStorage.removeItem(SESSION_KEY);
       }
-    }
+      setIsLoading(false);
+    };
+    initAuth();
   }, []);
 
-  const login = (username: string, password: string): boolean => {
-    if (
-      username === ADMIN_CREDENTIALS.username &&
-      password === ADMIN_CREDENTIALS.password
-    ) {
-      const sessionUser: SessionUser = {
-        username,
-        loginTime: Date.now(),
-      };
-      setUser(sessionUser);
-      localStorage.setItem(SESSION_KEY, JSON.stringify(sessionUser));
-      return true;
+  const login = async (username: string, password: string): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem(TOKEN_KEY, data.token);
+        setUser({ id: data.user.id, username: data.user.username, role: data.user.role });
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(TOKEN_KEY);
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated: !!user, user, login, logout }}
-    >
-      {children}
+    <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout, isLoading }}>
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 }

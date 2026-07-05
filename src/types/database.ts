@@ -92,3 +92,33 @@ export interface EndpointFormData {
   path_variables: PathVariable[];
   is_active: boolean;
 }
+
+export type UserRole = 'admin' | 'editor' | 'viewer';
+
+export interface User {
+  id: string;
+  username: string;
+  role: UserRole;
+  is_active: boolean;
+  last_seen?: string;
+  last_ip?: string;
+  last_device?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface UserFormData {
+  username: string;
+  password?: string; // Optional on update
+  role: UserRole;
+  is_active: boolean;
+}
+
+export interface ActivityLog {
+  id: string;
+  username: string;
+  action: string;
+  ip_address: string | null;
+  device_info: string | null;
+  created_at: string;
+}

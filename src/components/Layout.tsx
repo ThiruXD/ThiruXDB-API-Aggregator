@@ -25,6 +25,8 @@ const navItems = [
   { id: 'logs', label: 'Fetch Logs', icon: FileJson },
 ];
 
+import { Users } from 'lucide-react';
+
 export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -66,7 +68,6 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
             </div>
           </div>
 
-          {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1">
             {navItems.map((item) => (
               <button
@@ -84,6 +85,21 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                 <span className="font-medium">{item.label}</span>
               </button>
             ))}
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => {
+                  onNavigate('users');
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${currentPage === 'users'
+                  ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                  : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
+                  }`}
+              >
+                <Users className="w-5 h-5" />
+                <span className="font-medium">Users & Activity</span>
+              </button>
+            )}
           </nav>
 
           {/* User info */}
@@ -99,7 +115,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                   <p className="text-sm font-medium text-white">
                     {user?.username}
                   </p>
-                  <p className="text-xs text-slate-400">Administrator</p>
+                  <p className="text-xs text-slate-400 capitalize">{user?.role || 'viewer'}</p>
                 </div>
               </div>
               <button

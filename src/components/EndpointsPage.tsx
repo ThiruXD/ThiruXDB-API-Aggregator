@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ApiEndpoint } from '../types/database';
 import { api } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 import { EndpointForm } from './EndpointForm';
 import {
   Plus,
@@ -23,6 +24,8 @@ export function EndpointsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const { user } = useAuth();
+  const isViewer = user?.role === 'viewer';
 
   useEffect(() => {
     fetchEndpoints();
@@ -117,16 +120,18 @@ export function EndpointsPage() {
             Configure and manage your data sources
           </p>
         </div>
-        <button
-          onClick={() => {
-            setEditingEndpoint(null);
-            setShowForm(true);
-          }}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/20"
-        >
-          <Plus className="w-5 h-5" />
-          Add Endpoint
-        </button>
+        {!isViewer && (
+          <button
+            onClick={() => {
+              setEditingEndpoint(null);
+              setShowForm(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/20"
+          >
+            <Plus className="w-5 h-5" />
+            Add Endpoint
+          </button>
+        )}
       </div>
 
       {endpoints.length === 0 ? (
@@ -150,15 +155,17 @@ export function EndpointsPage() {
       ) : (
         <>
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={endpoints.length > 0 && selectedIds.size === endpoints.length}
-                onChange={(e) => handleSelectAll(e.target.checked)}
-                className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500"
-              />
-              <span className="text-slate-300 font-medium">Select All</span>
-            </label>
+            {!isViewer && (
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={endpoints.length > 0 && selectedIds.size === endpoints.length}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                  className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500"
+                />
+                <span className="text-slate-300 font-medium">Select All</span>
+              </label>
+            )}
             
             {selectedIds.size > 0 && (
               <div className="flex items-center gap-3">
@@ -184,14 +191,16 @@ export function EndpointsPage() {
                     : 'border-slate-800 opacity-60'
                 }`}
               >
-                <div className="pt-1">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.has(endpoint.id)}
-                    onChange={(e) => handleSelectOne(endpoint.id, e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
-                  />
-                </div>
+                {!isViewer && (
+                  <div className="pt-1">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(endpoint.id)}
+                      onChange={(e) => handleSelectOne(endpoint.id, e.target.checked)}
+                      className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                    />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-3 mb-2">
                     <div
@@ -267,41 +276,43 @@ export function EndpointsPage() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 ml-4">
-                  <button
-                    onClick={() => handleToggleActive(endpoint)}
-                    className={`p-2 rounded-lg transition ${
-                      endpoint.is_active
-                        ? 'text-yellow-400 hover:bg-yellow-500/10'
-                        : 'text-green-400 hover:bg-green-500/10'
-                    }`}
-                    title={endpoint.is_active ? 'Deactivate' : 'Activate'}
-                  >
-                    <Power className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditingEndpoint(endpoint);
-                      setShowForm(true);
-                    }}
-                    className="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition"
-                    title="Edit"
-                  >
-                    <Edit className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(endpoint.id)}
-                    disabled={deletingId === endpoint.id}
-                    className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"
-                    title="Delete"
-                  >
-                    {deletingId === endpoint.id ? (
-                      <RefreshCw className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
+                {!isViewer && (
+                  <div className="flex items-center gap-2 ml-4">
+                    <button
+                      onClick={() => handleToggleActive(endpoint)}
+                      className={`p-2 rounded-lg transition ${
+                        endpoint.is_active
+                          ? 'text-yellow-400 hover:bg-yellow-500/10'
+                          : 'text-green-400 hover:bg-green-500/10'
+                      }`}
+                      title={endpoint.is_active ? 'Deactivate' : 'Activate'}
+                    >
+                      <Power className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditingEndpoint(endpoint);
+                        setShowForm(true);
+                      }}
+                      className="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition"
+                      title="Edit"
+                    >
+                      <Edit className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(endpoint.id)}
+                      disabled={deletingId === endpoint.id}
+                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition disabled:opacity-50"
+                      title="Delete"
+                    >
+                      {deletingId === endpoint.id ? (
+                        <RefreshCw className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

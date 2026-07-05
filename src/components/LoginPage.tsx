@@ -17,7 +17,7 @@ export function LoginPage() {
     // Simulate brief delay for UX
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const success = login(username, password);
+    const success = await login(username, password);
     if (!success) {
       setError('Invalid username or password');
     }

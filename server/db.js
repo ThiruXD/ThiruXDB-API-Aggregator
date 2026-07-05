@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb';
+import bcrypt from 'bcryptjs';
 
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB || 'thiruXDB';
@@ -47,4 +48,30 @@ async function ensureIndexes(db) {
   const logs = db.collection('fetch_logs');
   await logs.createIndex({ endpoint_id: 1, created_at: -1 });
   await logs.createIndex({ created_at: -1 });
+
+  // Users indexes
+  const users = db.collection('users');
+  await users.createIndex({ username: 1 }, { unique: true });
+  
+  // Activity logs indexes
+  const activityLogs = db.collection('user_activity_logs');
+  await activityLogs.createIndex({ user_id: 1, created_at: -1 });
+  await activityLogs.createIndex({ created_at: -1 });
+
+  // Initialize Default Admin if needed
+  const adminCount = await users.countDocuments();
+  if (adminCount === 0) {
+    const defaultUser = process.env.VITE_ADMIN_USERNAME || 'admin';
+    const defaultPass = process.env.VITE_ADMIN_PASS || 'admin';
+    const password_hash = await bcrypt.hash(defaultPass, 10);
+    
+    await users.insertOne({
+      username: defaultUser,
+      password_hash,
+      role: 'admin',
+      is_active: true,
+      created_at: new Date()
+    });
+    console.log(`Initialized default admin user: ${defaultUser}`);
+  }
 }
