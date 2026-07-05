@@ -129,13 +129,13 @@ export function FetchPage() {
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${endpoint.last_error ? 'bg-yellow-500/20' : endpoint.last_fetched_at ? 'bg-green-500/20' : 'bg-gray-100 dark:bg-gray-700'}`}>
                             {endpoint.last_error ? <AlertCircle className="w-5 h-5 text-yellow-400" /> : endpoint.last_fetched_at ? <CheckCircle className="w-5 h-5 text-green-400" /> : <Database className="w-5 h-5 text-gray-400 dark:text-gray-500" />}
                           </div>
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">{endpoint.name}</h3>
                             <p className="text-sm text-gray-400 dark:text-gray-500 font-mono truncate">{endpoint.base_url}</p>
                           </div>
                         </div>
                         
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 shrink-0">
+                        <div className="flex items-center justify-between sm:justify-end flex-wrap gap-4 w-full sm:w-auto shrink-0 border-t border-gray-100 dark:border-gray-700/50 sm:border-0 pt-3 sm:pt-0 mt-2 sm:mt-0">
                           {isFetching && progress && (
                             <div className="flex items-center gap-2 text-sm text-blue-400 font-medium">
                               <span>{progress.current} / {progress.total}</span>
@@ -159,7 +159,7 @@ export function FetchPage() {
                               Cancel
                             </button>
                           ) : (
-                            <button onClick={() => fetchFromEndpoint(endpoint)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-gray-900 dark:text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-sm shadow-blue-500/20">
+                            <button onClick={() => fetchFromEndpoint(endpoint)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-sm shadow-blue-500/20">
                               <Play className="w-5 h-5" />
                               Fetch
                             </button>

@@ -43,7 +43,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg shrink-0">
             <Database className="w-4 h-4 text-white" />
           </div>
-          <h1 className="text-base font-bold text-gray-900 dark:text-white">API Manager</h1>
+          <h1 className="text-base font-bold text-gray-900 dark:text-white">ThiruXDB</h1>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -74,8 +74,8 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                 <Database className="w-5 h-5 text-white" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">API Manager</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">Data Dashboard</p>
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">ThiruXDB</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">API Manager</p>
               </div>
             </div>
           </div>
@@ -148,7 +148,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
               </div>
             </div>
           </div>
-          
+
           {/* Copyright Strip */}
           <div className="p-4 border-t border-gray-200 dark:border-gray-800 text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400">
