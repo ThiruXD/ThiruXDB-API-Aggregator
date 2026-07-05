@@ -119,7 +119,12 @@ router.get('/activity', async (req, res) => {
     const limit = parseInt(req.query.limit) || 50;
     const skip = (page - 1) * limit;
 
-    const pipeline = [
+    const pipeline = [];
+    if (req.query.user_id) {
+      pipeline.push({ $match: { user_id: new ObjectId(req.query.user_id) } });
+    }
+    
+    pipeline.push(
       { $sort: { created_at: -1 } },
       { $skip: skip },
       { $limit: limit },
@@ -135,7 +140,8 @@ router.get('/activity', async (req, res) => {
     ];
 
     const logs = await db.collection('user_activity_logs').aggregate(pipeline).toArray();
-    const total = await db.collection('user_activity_logs').countDocuments();
+    const totalQuery = req.query.user_id ? { user_id: new ObjectId(req.query.user_id) } : {};
+    const total = await db.collection('user_activity_logs').countDocuments(totalQuery);
 
     res.json({
       logs: logs.map(l => ({
@@ -144,6 +150,7 @@ router.get('/activity', async (req, res) => {
         action: l.action,
         ip_address: l.ip_address,
         device_info: l.device_info,
+        location_data: l.location_data,
         created_at: l.created_at
       })),
       total,

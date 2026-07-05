@@ -13,7 +13,9 @@ import {
   Trash2,
   Edit,
   Save,
-  X
+  X,
+  Download,
+  MapPin
 } from 'lucide-react';
 
 export function UsersPage() {
@@ -25,6 +27,7 @@ export function UsersPage() {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [viewingLogsForUser, setViewingLogsForUser] = useState<User | null>(null);
   
   // Activity Logs State
   const [logs, setLogs] = useState<ActivityLog[]>([]);
@@ -177,10 +180,11 @@ export function UsersPage() {
                       <td className="px-6 py-4">
                         {u.last_seen ? new Date(u.last_seen).toLocaleString() : 'Never'}
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <button onClick={() => openForm(u)} className="p-2 text-slate-400 hover:text-blue-400 transition"><Edit className="w-4 h-4"/></button>
+                      <td className="px-6 py-4 text-right whitespace-nowrap">
+                        <button onClick={() => setViewingLogsForUser(u)} className="p-2 text-slate-400 hover:text-green-400 transition" title="View Logs"><Activity className="w-4 h-4"/></button>
+                        <button onClick={() => openForm(u)} className="p-2 text-slate-400 hover:text-blue-400 transition" title="Edit"><Edit className="w-4 h-4"/></button>
                         {u.id !== user?.id && (
-                          <button onClick={() => handleDelete(u.id)} className="p-2 text-slate-400 hover:text-red-400 transition"><Trash2 className="w-4 h-4"/></button>
+                          <button onClick={() => handleDelete(u.id)} className="p-2 text-slate-400 hover:text-red-400 transition" title="Delete"><Trash2 className="w-4 h-4"/></button>
                         )}
                       </td>
                     </tr>
@@ -212,8 +216,24 @@ export function UsersPage() {
                     <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-slate-500"/>{new Date(log.created_at).toLocaleString()}</td>
                     <td className="px-6 py-4 font-medium text-white">{log.username}</td>
                     <td className="px-6 py-4 text-blue-400">{log.action}</td>
-                    <td className="px-6 py-4 font-mono text-xs"><Globe className="w-3 h-3 inline mr-1 text-slate-500"/>{log.ip_address}</td>
-                    <td className="px-6 py-4 text-xs text-slate-400"><Laptop className="w-3 h-3 inline mr-1 text-slate-500"/>{log.device_info}</td>
+                    <td className="px-6 py-4 font-mono text-xs">
+                      <div className="flex items-center gap-1 text-slate-300">
+                        <Globe className="w-3 h-3 text-slate-500" /> {log.ip_address}
+                      </div>
+                      {log.location_data && (
+                        <div className="flex items-center gap-1 text-slate-400 mt-1">
+                          <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-xs text-slate-400">
+                      <div className="flex items-center gap-1 text-slate-300">
+                        <Laptop className="w-3 h-3 text-slate-500"/> {log.device_info}
+                      </div>
+                      {log.location_data?.isp && (
+                        <div className="text-slate-500 mt-1 pl-4">ISP: {log.location_data.isp}</div>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -271,6 +291,151 @@ export function UsersPage() {
           </div>
         </div>
       )}
+      {/* User Logs Modal */}
+      {viewingLogsForUser && (
+        <UserLogsModal user={viewingLogsForUser} onClose={() => setViewingLogsForUser(null)} />
+      )}
+    </div>
+  );
+}
+
+function UserLogsModal({ user, onClose }: { user: User; onClose: () => void }) {
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isExporting, setIsExporting] = useState(false);
+
+  useEffect(() => {
+    fetchLogs(page);
+  }, [page]);
+
+  const fetchLogs = async (p: number) => {
+    setIsLoading(true);
+    try {
+      const data = await api.getActivityLogs({ page: p, limit: 20, userId: user.id });
+      setLogs(data.logs);
+      setTotalPages(data.totalPages);
+    } catch (err) {
+      console.error(err);
+    }
+    setIsLoading(false);
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      // Fetch up to 10000 logs for export
+      const data = await api.getActivityLogs({ page: 1, limit: 10000, userId: user.id });
+      
+      const csvHeader = 'Time,Action,IP Address,City,Country,ISP,Device Info\n';
+      const csvRows = data.logs.map(log => {
+        return [
+          new Date(log.created_at).toISOString(),
+          log.action,
+          log.ip_address,
+          log.location_data?.city || '',
+          log.location_data?.country || '',
+          log.location_data?.isp || '',
+          `"${log.device_info}"`
+        ].join(',');
+      });
+      
+      const csvContent = csvHeader + csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `activity_logs_${user.username}_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      alert('Failed to export logs');
+    }
+    setIsExporting(false);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-slate-700 gap-4">
+          <div>
+            <h3 className="text-xl font-bold text-white flex items-center gap-2"><Activity className="w-5 h-5 text-blue-400" /> Activity Logs: {user.username}</h3>
+            <p className="text-sm text-slate-400 mt-1">Detailed history of this user's actions</p>
+          </div>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button 
+              onClick={handleExport}
+              disabled={isExporting}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+            >
+              {isExporting ? <span className="animate-spin">⌛</span> : <Download className="w-4 h-4" />}
+              Export CSV
+            </button>
+            <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-700 rounded-lg transition"><X className="w-5 h-5" /></button>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6">
+          {isLoading && logs.length === 0 ? (
+            <div className="text-center py-12 text-slate-400">Loading logs...</div>
+          ) : logs.length === 0 ? (
+            <div className="text-center py-12 text-slate-400">No activity logs found for this user.</div>
+          ) : (
+            <div className="bg-slate-900 border border-slate-700 rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-slate-300">
+                  <thead className="bg-slate-800 border-b border-slate-700 text-slate-400">
+                    <tr>
+                      <th className="px-6 py-4 font-medium">Time</th>
+                      <th className="px-6 py-4 font-medium">Action</th>
+                      <th className="px-6 py-4 font-medium">IP Address & Location</th>
+                      <th className="px-6 py-4 font-medium">Device & Network Info</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-700/50">
+                    {logs.map(log => (
+                      <tr key={log.id} className="hover:bg-slate-800/50 transition">
+                        <td className="px-6 py-4 whitespace-nowrap"><Clock className="w-3 h-3 inline mr-1 text-slate-500"/>{new Date(log.created_at).toLocaleString()}</td>
+                        <td className="px-6 py-4 text-blue-400 font-medium">{log.action}</td>
+                        <td className="px-6 py-4 font-mono text-xs">
+                          <div className="flex items-center gap-1 text-slate-300">
+                            <Globe className="w-3 h-3 text-slate-500" /> {log.ip_address}
+                          </div>
+                          {log.location_data && (
+                            <div className="flex items-center gap-1 text-slate-400 mt-1">
+                              <MapPin className="w-3 h-3" /> {log.location_data.city}, {log.location_data.country}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-xs text-slate-400">
+                          <div className="flex items-center gap-1 text-slate-300">
+                            <Laptop className="w-3 h-3 text-slate-500"/> {log.device_info}
+                          </div>
+                          {log.location_data?.isp && (
+                            <div className="text-slate-500 mt-1 pl-4 truncate max-w-xs" title={log.location_data.org || log.location_data.isp}>
+                              ISP: {log.location_data.isp}
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 border-t border-slate-700 flex justify-between items-center bg-slate-800">
+          <span className="text-sm text-slate-400">Page {page} of {Math.max(1, totalPages)}</span>
+          <div className="flex gap-2">
+            <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 bg-slate-700 text-white rounded-lg disabled:opacity-50 hover:bg-slate-600 transition">Previous</button>
+            <button disabled={page === totalPages || totalPages === 0} onClick={() => setPage(p => p + 1)} className="px-4 py-2 bg-slate-700 text-white rounded-lg disabled:opacity-50 hover:bg-slate-600 transition">Next</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

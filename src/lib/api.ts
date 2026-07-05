@@ -198,7 +198,7 @@ export const api = {
   deleteUser: (id: string): Promise<{ success: boolean }> =>
     request(`/users/${id}`, { method: 'DELETE' }),
 
-  getActivityLogs: (params: { page?: number; limit?: number }): Promise<{
+  getActivityLogs: (params: { page?: number; limit?: number; userId?: string }): Promise<{
     logs: ActivityLog[];
     total: number;
     page: number;
@@ -207,6 +207,7 @@ export const api = {
     const q = new URLSearchParams();
     if (params.page) q.set('page', String(params.page));
     if (params.limit) q.set('limit', String(params.limit));
+    if (params.userId) q.set('user_id', params.userId);
     return request(`/users/activity?${q.toString()}`);
   },
 };

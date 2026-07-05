@@ -118,7 +118,13 @@ export interface ActivityLog {
   id: string;
   username: string;
   action: string;
-  ip_address: string | null;
-  device_info: string | null;
-  created_at: string;
+  ip_address: string;
+  device_info: string;
+  location_data?: {
+    country?: string;
+    city?: string;
+    isp?: string;
+    org?: string;
+  };
+  created_at: Date | string;
 }

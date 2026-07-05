@@ -20,12 +20,32 @@ export async function logUserActivity(userId, action, req, extraData = {}) {
     const os = parser.getOS();
     const deviceName = `${browser.name || 'Unknown Browser'} on ${os.name || 'Unknown OS'}`;
 
+    let locationData = null;
+    try {
+      // Don't lookup localhost IPs
+      if (clientIp && clientIp !== '127.0.0.1' && clientIp !== '::1') {
+        const response = await fetch(`http://ip-api.com/json/${clientIp}`);
+        const data = await response.json();
+        if (data.status === 'success') {
+          locationData = {
+            country: data.country,
+            city: data.city,
+            isp: data.isp,
+            org: data.org
+          };
+        }
+      }
+    } catch (e) {
+      console.error('IP lookup failed', e.message);
+    }
+
     await db.collection('user_activity_logs').insertOne({
       user_id: userId,
       action,
       ip_address: clientIp,
       device_info: deviceName,
       user_agent: req.headers['user-agent'],
+      location_data: locationData,
       extra_data: extraData,
       created_at: new Date()
     });
