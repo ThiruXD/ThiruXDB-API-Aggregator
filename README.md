@@ -10,7 +10,7 @@ Check out the live deployment of ThiruXDB here:
 - **Username:** `demo`
 - **Password:** `demo@123`
 
-![Demo Login Flow](public/demo.webp)
+<video src="public/ThiruXDB-Screen-Recording.webm" controls="controls" muted="muted" playsinline="playsinline" style="max-width: 100%;"></video>
 
 ---
 
