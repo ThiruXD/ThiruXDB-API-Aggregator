@@ -10,6 +10,7 @@ interface SessionUser {
   id: string;
   username: string;
   role: UserRole;
+  restricted_pages?: string[];
 }
 
 interface AuthContextType {
@@ -38,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
           if (res.ok) {
             const data = await res.json();
-            setUser({ id: data.id, username: data.username, role: data.role });
+            setUser({ id: data.id, username: data.username, role: data.role, restricted_pages: data.restricted_pages });
           } else {
             localStorage.removeItem(TOKEN_KEY);
           }
@@ -61,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem(TOKEN_KEY, data.token);
-        setUser({ id: data.user.id, username: data.user.username, role: data.user.role });
+        setUser({ id: data.user.id, username: data.user.username, role: data.user.role, restricted_pages: data.user.restricted_pages });
         return true;
       }
       return false;

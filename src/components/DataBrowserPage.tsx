@@ -199,8 +199,12 @@ export function DataBrowserPage() {
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={loadRecords} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition" title="Refresh"><RefreshCw className="w-5 h-5" /></button>
             <button onClick={() => setViewMode(viewMode === 'table' ? 'grid' : 'table')} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-gray-700 rounded-lg transition">{viewMode === 'table' ? <Grid className="w-5 h-5" /> : <Table className="w-5 h-5" />}</button>
-            <button onClick={() => handleExport('csv')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"><Download className="w-4 h-4" />CSV</button>
-            <button onClick={() => handleExport('json')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"><FileJson className="w-4 h-4" />JSON</button>
+            {!(user?.restricted_pages || []).includes('export') && (
+              <>
+                <button onClick={() => handleExport('csv')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"><Download className="w-4 h-4" />CSV</button>
+                <button onClick={() => handleExport('json')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"><FileJson className="w-4 h-4" />JSON</button>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -525,12 +529,16 @@ function RecordDetailModal({ record, endpointName, onClose, onDeleted, isViewer 
               <button onClick={() => setView('raw')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'raw' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>Raw JSON</button>
             </div>
             <div className="flex gap-2">
-              <button onClick={handleCopyJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm">
-                <Copy className="w-4 h-4" /> Copy
-              </button>
-              <button onClick={handleDownloadJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm">
-                <Download className="w-4 h-4" /> Download
-              </button>
+              {!(user?.restricted_pages || []).includes('export') && (
+                <>
+                  <button onClick={handleCopyJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm">
+                    <Copy className="w-4 h-4" /> Copy
+                  </button>
+                  <button onClick={handleDownloadJSON} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm">
+                    <Download className="w-4 h-4" /> Download
+                  </button>
+                </>
+              )}
             </div>
           </div>
 

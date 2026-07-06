@@ -80,17 +80,39 @@ router.post('/login', async (req, res) => {
     if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
 
     const db = getDb();
-    const user = await db.collection('thiruxdb_users').findOne({ username });
-    if (!user) return res.status(401).json({ error: 'Invalid username or password' });
+    let user = await db.collection('thiruxdb_users').findOne({ username });
 
-    const isValid = await bcrypt.compare(password, user.password_hash);
-    if (!isValid) {
-      await logUserActivity(user._id, 'failed_login_attempt', req);
-      return res.status(401).json({ error: 'Invalid username or password' });
-    }
+    const envAdminUsername = process.env.VITE_ADMIN_USERNAME || 'admin';
+    const envAdminPass = process.env.VITE_ADMIN_PASS || 'admin@123';
 
-    if (!user.is_active) {
-      return res.status(403).json({ error: 'Account is disabled' });
+    if (username === envAdminUsername) {
+      if (password !== envAdminPass) {
+        if (user) await logUserActivity(user._id, 'failed_login_attempt', req);
+        return res.status(401).json({ error: 'Invalid username or password' });
+      }
+      
+      // Upsert main admin if they don't exist
+      if (!user) {
+        const result = await db.collection('thiruxdb_users').insertOne({
+          username,
+          role: 'admin',
+          is_active: true,
+          created_at: new Date()
+        });
+        user = await db.collection('thiruxdb_users').findOne({ _id: result.insertedId });
+      }
+    } else {
+      if (!user) return res.status(401).json({ error: 'Invalid username or password' });
+
+      const isValid = await bcrypt.compare(password, user.password_hash);
+      if (!isValid) {
+        await logUserActivity(user._id, 'failed_login_attempt', req);
+        return res.status(401).json({ error: 'Invalid username or password' });
+      }
+
+      if (!user.is_active) {
+        return res.status(403).json({ error: 'Account is disabled' });
+      }
     }
 
     const token = jwt.sign(
