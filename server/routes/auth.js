@@ -126,6 +126,7 @@ router.get('/me', authenticateToken, async (req, res) => {
       id: user._id.toString(),
       username: user.username,
       role: user.role,
+      restricted_pages: user.restricted_pages || [],
       last_seen: user.last_seen
     });
   } catch (err) {
