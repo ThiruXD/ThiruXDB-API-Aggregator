@@ -6,6 +6,7 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { getDb } from '../db.js';
+import { requireRole } from '../authMiddleware.js';
 
 const router = Router();
 
@@ -249,7 +250,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /api/records/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireRole(['admin', 'editor']), async (req, res) => {
   try {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
@@ -276,7 +277,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // POST /api/records/bulk-delete
-router.post('/bulk-delete', async (req, res) => {
+router.post('/bulk-delete', requireRole(['admin', 'editor']), async (req, res) => {
   try {
     const db = getDb();
     const ids = req.body.ids.map(id => new ObjectId(id));

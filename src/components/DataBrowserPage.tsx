@@ -293,7 +293,7 @@ export function DataBrowserPage() {
             )}
           </div>
 
-          {selectedIds.size > 0 && (
+          {!isViewer && selectedIds.size > 0 && (
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
               <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">{selectedIds.size} records selected</span>
               <button
@@ -352,14 +352,16 @@ export function DataBrowserPage() {
                 <table className="w-full">
                   <thead className="bg-gray-100 dark:bg-gray-700/50">
                     <tr>
-                      <th className="w-12 px-4 py-3 text-left">
-                        <input
-                          type="checkbox"
-                          checked={records.length > 0 && selectedIds.size === records.length}
-                          onChange={(e) => handleSelectAll(e.target.checked)}
-                          className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm"
-                        />
-                      </th>
+                      {!isViewer && (
+                        <th className="w-12 px-4 py-3 text-left">
+                          <input
+                            type="checkbox"
+                            checked={records.length > 0 && selectedIds.size === records.length}
+                            onChange={(e) => handleSelectAll(e.target.checked)}
+                            className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm"
+                          />
+                        </th>
+                      )}
                       <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Source</th>
                       <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">External ID</th>
                       {getColumns.map((col) => <th key={col} className="text-left px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">{col}</th>)}
@@ -370,14 +372,16 @@ export function DataBrowserPage() {
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                     {records.map((record) => (
                       <tr key={record.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/30 cursor-pointer transition ${isModified(record) ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`} onClick={() => setSelectedRecord(record)}>
-                        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                          <input
-                            type="checkbox"
-                            checked={selectedIds.has(record.id)}
-                            onChange={(e) => handleSelectOne(record.id, e.target.checked)}
-                            className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm"
-                          />
-                        </td>
+                        {!isViewer && (
+                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              type="checkbox"
+                              checked={selectedIds.has(record.id)}
+                              onChange={(e) => handleSelectOne(record.id, e.target.checked)}
+                              className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm"
+                            />
+                          </td>
+                        )}
                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
                           <div className="flex items-center gap-2">
                             {isModified(record) && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" title="Modified since creation" />}
@@ -403,28 +407,32 @@ export function DataBrowserPage() {
             </div>
           ) : (
             <>
-              <div className="flex items-center justify-between bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={records.length > 0 && selectedIds.size === records.length}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm"
-                  />
-                  <span className="text-gray-700 dark:text-gray-300 font-medium">Select All Current Page</span>
-                </label>
-              </div>
+              {!isViewer && (
+                <div className="flex items-center justify-between bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={records.length > 0 && selectedIds.size === records.length}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm"
+                    />
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">Select All Current Page</span>
+                  </label>
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {records.map((record) => (
                   <div key={record.id} onClick={() => setSelectedRecord(record)} className={`bg-white dark:bg-gray-800/50 border rounded-lg p-4 cursor-pointer transition relative ${isModified(record) ? 'border-blue-200 dark:border-blue-900/50 hover:border-blue-300 dark:hover:border-blue-700 shadow-[inset_4px_0_0_0_#3b82f6]' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
-                    <div className="absolute top-4 right-4 z-10" onClick={(e) => e.stopPropagation()}>
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.has(record.id)}
-                        onChange={(e) => handleSelectOne(record.id, e.target.checked)}
-                        className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm"
-                      />
-                    </div>
+                    {!isViewer && (
+                      <div className="absolute top-4 right-4 z-10" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.has(record.id)}
+                          onChange={(e) => handleSelectOne(record.id, e.target.checked)}
+                          className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm"
+                        />
+                      </div>
+                    )}
                     <div className="flex items-center justify-between mb-3 pr-8">
                       <span className="text-xs text-gray-400 dark:text-gray-500">{getEndpointName(record.endpoint_id)}</span>
                       <span className="text-xs text-gray-300 dark:text-gray-600">{new Date(record.fetched_at).toLocaleDateString()}</span>
