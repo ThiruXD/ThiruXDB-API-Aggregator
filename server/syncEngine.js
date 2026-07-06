@@ -4,6 +4,7 @@
  * Description: A self-hosted API data aggregation dashboard — configure external REST endpoints, fetch & store their data into MongoDB, browse and search records, all from a clean web UI.
  */
 import { ObjectId } from 'mongodb';
+import crypto from 'crypto';
 import { getDb } from './db.js';
 
 export async function runSyncJob(endpointIdStr, skipOffset) {
@@ -113,6 +114,10 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
       if (endpoint.id_field) externalId = item?.[endpoint.id_field]?.toString() || null;
       else externalId = item?.id?.toString() || item?._id?.toString() || null;
 
+      if (!externalId) {
+        externalId = crypto.createHash('md5').update(JSON.stringify(item || {})).digest('hex');
+      }
+
       let mappedData = {};
       for (const mapping of mappings) {
         const value = item?.[mapping.sourceField];
@@ -129,24 +134,16 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
       const now = new Date();
       const searchText = JSON.stringify(item);
 
-      if (externalId) {
-        return {
-          updateOne: {
-            filter: { endpoint_id: endpointIdStr, external_id: externalId },
-            update: {
-              $set: { raw_data: item, mapped_data: mappedData, _search_text: searchText, updated_at: now, fetched_at: now },
-              $setOnInsert: { created_at: now }
-            },
-            upsert: true
-          }
-        };
-      } else {
-        return {
-          insertOne: {
-            document: { endpoint_id: endpointIdStr, external_id: null, raw_data: item, mapped_data: mappedData, _search_text: searchText, fetched_at: now, created_at: now, updated_at: now }
-          }
-        };
-      }
+      return {
+        updateOne: {
+          filter: { endpoint_id: endpointIdStr, external_id: externalId },
+          update: {
+            $set: { raw_data: item, mapped_data: mappedData, _search_text: searchText, updated_at: now, fetched_at: now },
+            $setOnInsert: { created_at: now }
+          },
+          upsert: true
+        }
+      };
     }
 
     if (isMultiUrl) {
