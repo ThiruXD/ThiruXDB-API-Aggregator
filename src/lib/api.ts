@@ -184,6 +184,9 @@ export const api = {
   getLiveLogs: (id: string): Promise<any[]> =>
     request(`/endpoints/${id}/live-logs`),
 
+  clearLiveLogs: (id: string): Promise<{ success: boolean }> =>
+    request(`/endpoints/${id}/live-logs`, { method: 'DELETE' }),
+
   syncEndpointStats: (): Promise<{ message: string }> =>
     request('/endpoints/sync-stats', { method: 'POST' }),
 

@@ -25,6 +25,7 @@ Check out the live deployment of ThiruXDB here:
 - **Ultra-Fast Database Insertion** — Automatically batches operations into memory and leverages MongoDB's `bulkWrite` API to insert thousands of records simultaneously at absolute maximum wire speed.
 - **Data Browser** — Paginated table/grid view with date range filters, endpoint filtering, and full-text search.
 - **Fetch Logs** — Complete history of every fetch operation with status, record counts, duration, and errors. Includes granular deletion and "Clear All" features to manage history.
+- **Live Terminal Logs** — Real-time, streaming terminal view of your background Sync Engine operations, just like deployment logs, with auto-scrolling and log size monitoring.
 - **High-Performance Dashboard** — Live stats cached directly on endpoint documents for instantaneous rendering of total records, active endpoints, and distributions.
 - **Export** — Download current view as JSON or CSV
 - **Mobile Responsive** — Fully optimized UI with sidebar overlays and responsive grids for managing data on the go.
@@ -76,6 +77,7 @@ ThiruXDB/
 │       ├── FetchPage.tsx
 │       ├── DataBrowserPage.tsx
 │       ├── LogsPage.tsx
+│       ├── LiveLogsPage.tsx
 │       ├── LoginPage.tsx
 │       └── Layout.tsx
 ├── .env.example             # Environment variable template
@@ -226,6 +228,8 @@ All routes are prefixed with `/api`.
 | `DELETE` | `/api/records/:id` | Delete record |
 | `GET` | `/api/logs` | List fetch logs |
 | `POST` | `/api/logs` | Create fetch log entry |
+| `GET` | `/api/endpoints/:id/live-logs` | Stream live fetch logs for an endpoint |
+| `DELETE` | `/api/endpoints/:id/live-logs` | Clear live fetch logs for an endpoint |
 
 ---
 

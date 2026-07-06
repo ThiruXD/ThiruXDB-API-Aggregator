@@ -331,6 +331,16 @@ router.get('/:id/live-logs', async (req, res) => {
   }
 });
 
+router.delete('/:id/live-logs', async (req, res) => {
+  try {
+    const db = require('../db.js').getDb();
+    await db.collection('thiruxdb_live_logs').deleteMany({ endpoint_id: req.params.id });
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 router.post('/:id/cancel-sync', async (req, res) => {
   try {
     const db = require('../db.js').getDb();

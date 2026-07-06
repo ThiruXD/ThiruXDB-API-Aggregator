@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { api, ApiEndpoint } from '../lib/api';
-import { Terminal, Play, Square, Loader2, RefreshCw } from 'lucide-react';
+import { Terminal, Play, Square, Loader2, RefreshCw, Trash2 } from 'lucide-react';
+
+const formatBytes = (bytes: number, decimals = 2) => {
+  if (!+bytes) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+};
 
 export default function LiveLogsPage() {
   const [endpoints, setEndpoints] = useState<ApiEndpoint[]>([]);
@@ -57,6 +66,18 @@ export default function LiveLogsPage() {
     }
   };
 
+  const handleClearLogs = async () => {
+    if (!selectedEndpointId) return;
+    try {
+      await api.clearLiveLogs(selectedEndpointId);
+      setLogs([]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const logSize = formatBytes(JSON.stringify(logs).length);
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center gap-3 mb-8">
@@ -98,6 +119,15 @@ export default function LiveLogsPage() {
             <div className="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
             <span className="ml-3 text-sm font-medium text-gray-300">Auto-scroll</span>
           </label>
+          <div className="w-px h-6 bg-gray-700 mx-2"></div>
+          <span className="text-sm text-gray-400 font-mono w-20 text-right">{logSize}</span>
+          <button
+            onClick={handleClearLogs}
+            className="ml-2 flex items-center gap-2 px-3 py-1.5 rounded-lg font-medium transition bg-gray-700/50 text-gray-300 hover:bg-red-500/20 hover:text-red-400"
+            title="Clear logs"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
