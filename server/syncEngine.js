@@ -182,6 +182,12 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
       const CONCURRENCY = 5;
 
       for (let i = 0; i < urls.length; i += CONCURRENCY) {
+        // Quick synchronous check to see if user cancelled via another API route
+        const checkDb = await db.collection('thiruxdb_sync_jobs').findOne({ endpoint_id: endpointIdStr }, { projection: { cancelled: 1 } });
+        if (checkDb && checkDb.cancelled) {
+          jobState.cancelled = true;
+        }
+
         if (jobState.cancelled) {
           errorMessage = 'Cancelled by user';
           status = 'partial';

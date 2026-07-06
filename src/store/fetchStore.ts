@@ -41,6 +41,10 @@ class FetchStore {
 
   async cancelFetch(id: string) {
     try {
+      if (this.fetchProgress[id]) {
+        this.fetchProgress[id].status = 'cancelling';
+        this.notify();
+      }
       await api.cancelSync(id);
     } catch (err) {
       console.error('Failed to cancel fetch:', err);
@@ -87,14 +91,17 @@ class FetchStore {
         if (status.status === 'idle') {
           this.finishFetch(id, onComplete);
         } else if (status.status === 'running' || status.status === 'downloading') {
-          this.fetchProgress[id] = {
-            current: status.current,
-            total: status.total,
-            status: status.status,
-            download_loaded: status.download_loaded,
-            download_total: status.download_total,
-            download_speed: status.download_speed
-          };
+          // If we optimistically set it to cancelling, keep it that way until the backend catches up
+          if (this.fetchProgress[id]?.status !== 'cancelling') {
+            this.fetchProgress[id] = {
+              current: status.current,
+              total: status.total,
+              status: status.status,
+              download_loaded: status.download_loaded,
+              download_total: status.download_total,
+              download_speed: status.download_speed
+            };
+          }
           this.notify();
         } else if (status.status === 'completed' || status.status === 'partial' || status.status === 'error') {
           this.finishFetch(id, onComplete);
