@@ -63,6 +63,9 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
   await db.collection('thiruxdb_live_logs').deleteMany({ endpoint_id: endpointIdStr });
   pushLog(`Starting sync job for endpoint ID: ${endpointIdStr}`, 'system');
 
+  // Start a heartbeat to guarantee the job is never incorrectly marked as stale
+  const heartbeat = setInterval(() => flushState(true), 2000);
+
   const startTime = Date.now();
   let status = 'success';
   let errorMessage = null;
@@ -392,6 +395,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     status = errorMessage ? 'error' : 'completed';
   }
   jobState.status = status;
+  clearInterval(heartbeat);
   flushState(true);
   pushLog(`Job finished with status: ${status}. Fetched: ${recordsFetched}, Created: ${recordsCreated}, Updated: ${recordsUpdated}.`, 'system');
 
