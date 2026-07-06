@@ -76,6 +76,7 @@ export async function runSyncJob(endpointIdStr, skipOffset) {
     if (endpoint.path_variables && endpoint.path_variables.length > 0) {
       for (const pv of endpoint.path_variables) {
         if (!pv.variable || !pv.source_collection || !pv.source_field) continue;
+        const s = pv.source_field;
         let actualCollection = pv.source_collection;
         let queryFilter = {};
 
