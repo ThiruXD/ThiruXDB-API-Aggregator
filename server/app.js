@@ -5,6 +5,9 @@
  */
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
 import endpointsRouter from './routes/endpoints.js';
 import recordsRouter from './routes/records.js';
 import logsRouter from './routes/logs.js';
@@ -15,14 +18,39 @@ import { authenticateToken } from './authMiddleware.js';
 
 const app = express();
 
+// Security Headers
+app.use(helmet());
+
+// CORS
 app.use(cors());
+
+// Global Rate Limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 2000, // Limit each IP to 2000 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', apiLimiter);
+
+// Specific Rate Limiting for Auth
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 auth requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 app.use(express.json({ limit: '10mb' }));
+
+// Prevent NoSQL Injection
+app.use(mongoSanitize());
 
 // Mount routes
 // Note: We use /api prefix because Netlify redirects /api/* to the serverless function
 // but the function receives the path with /api intact.
 // Mount auth route without auth requirement
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authLimiter, authRouter);
 
 // Protect all other API routes
 app.use('/api/endpoints', authenticateToken, endpointsRouter);
