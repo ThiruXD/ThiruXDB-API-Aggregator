@@ -10,7 +10,20 @@ const PORT = process.env.PORT || 3001;
 
 // Start local server after connecting to DB
 connectDb()
-  .then(() => {
+  .then(async () => {
+    // Clean up zombie jobs from abrupt server restarts
+    try {
+      const { getDb } = await import('./db.js');
+      const db = getDb();
+      await db.collection('thiruxdb_sync_jobs').updateMany(
+        { status: { $in: ['running', 'downloading'] } },
+        { $set: { status: 'error', error: 'Server restarted unexpectedly during sync', updated_at: new Date() } }
+      );
+      console.log('Cleaned up any dangling sync jobs.');
+    } catch (e) {
+      console.error('Failed to cleanup dangling sync jobs:', e.message);
+    }
+
     app.listen(PORT, () => {
       console.log(`ThiruXDB API server running on http://localhost:${PORT}`);
     });
