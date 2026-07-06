@@ -105,6 +105,7 @@ export interface User {
   username: string;
   role: UserRole;
   is_active: boolean;
+  restricted_pages?: string[];
   last_seen?: string;
   last_ip?: string;
   last_device?: string;
@@ -117,6 +118,7 @@ export interface UserFormData {
   password?: string; // Optional on update
   role: UserRole;
   is_active: boolean;
+  restricted_pages?: string[];
 }
 
 export interface ActivityLog {

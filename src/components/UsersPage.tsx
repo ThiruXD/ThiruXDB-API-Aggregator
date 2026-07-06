@@ -49,7 +49,8 @@ export function UsersPage() {
     username: '',
     password: '',
     role: 'viewer',
-    is_active: true
+    is_active: true,
+    restricted_pages: []
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -141,10 +142,10 @@ export function UsersPage() {
   const openForm = (u?: User) => {
     if (u) {
       setEditingUser(u);
-      setFormData({ username: u.username, role: u.role, is_active: u.is_active });
+      setFormData({ username: u.username, role: u.role, is_active: u.is_active, restricted_pages: u.restricted_pages || [] });
     } else {
       setEditingUser(null);
-      setFormData({ username: '', password: '', role: 'viewer', is_active: true });
+      setFormData({ username: '', password: '', role: 'viewer', is_active: true, restricted_pages: [] });
     }
     setShowForm(true);
   };
@@ -345,6 +346,37 @@ export function UsersPage() {
                   <option value="viewer">Viewer (Read Only)</option>
                 </select>
               </div>
+              
+              <div className="pt-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Restricted Pages</label>
+                <div className="space-y-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                  {[
+                    { id: 'endpoints', label: 'API Endpoints' },
+                    { id: 'fetch', label: 'Fetch Data' },
+                    { id: 'data', label: 'Data Browser' },
+                  ].map((page) => (
+                    <div key={page.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id={`restrict-${page.id}`}
+                        checked={(formData.restricted_pages || []).includes(page.id)}
+                        onChange={e => {
+                          const current = formData.restricted_pages || [];
+                          const next = e.target.checked 
+                            ? [...current, page.id] 
+                            : current.filter(p => p !== page.id);
+                          setFormData({ ...formData, restricted_pages: next });
+                        }}
+                        className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 cursor-pointer transition shadow-sm"
+                      />
+                      <label htmlFor={`restrict-${page.id}`} className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                        Restrict <span className="font-semibold">{page.label}</span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {editingUser && editingUser.id !== user?.id && (
                 <div className="flex items-center gap-2 pt-2">
                   <input type="checkbox" id="active" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-0 focus:ring-offset-0 cursor-pointer transition shadow-sm" />

@@ -87,7 +87,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
           </div>
 
           <nav className="flex-1 p-4 space-y-1">
-            {navItems.map((item) => (
+            {navItems.filter(item => !(user?.restricted_pages || []).includes(item.id)).map((item) => (
               <button
                 key={item.id}
                 onClick={() => {

@@ -94,7 +94,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id.toString(), username: user.username, role: user.role },
+      { id: user._id.toString(), username: user.username, role: user.role, restricted_pages: user.restricted_pages || [] },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -106,7 +106,8 @@ router.post('/login', async (req, res) => {
       user: {
         id: user._id.toString(),
         username: user.username,
-        role: user.role
+        role: user.role,
+        restricted_pages: user.restricted_pages || []
       }
     });
   } catch (err) {

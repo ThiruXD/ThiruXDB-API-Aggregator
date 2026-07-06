@@ -48,10 +48,11 @@ router.post('/', async (req, res) => {
       password_hash,
       role,
       is_active: true,
+      restricted_pages: req.body.restricted_pages || [],
       created_at: new Date()
     });
 
-    res.json({ id: result.insertedId.toString(), username, role, is_active: true });
+    res.json({ id: result.insertedId.toString(), username, role, is_active: true, restricted_pages: req.body.restricted_pages || [] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -62,11 +63,12 @@ router.put('/:id', async (req, res) => {
   try {
     const db = getDb();
     const _id = new ObjectId(req.params.id);
-    const { role, is_active, password } = req.body;
+    const { role, is_active, password, restricted_pages } = req.body;
 
     const update = { $set: { updated_at: new Date() } };
     if (role) update.$set.role = role;
     if (is_active !== undefined) update.$set.is_active = is_active;
+    if (restricted_pages !== undefined) update.$set.restricted_pages = restricted_pages;
     if (password) update.$set.password_hash = await bcrypt.hash(password, 10);
 
     // Prevent removing last admin
