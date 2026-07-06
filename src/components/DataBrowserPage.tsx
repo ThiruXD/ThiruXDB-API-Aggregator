@@ -474,6 +474,7 @@ export function DataBrowserPage() {
 }
 
 function RecordDetailModal({ record, endpointName, onClose, onDeleted, isViewer }: { record: DataRecord; endpointName: string; onClose: () => void; onDeleted: () => void; isViewer?: boolean }) {
+  const { user } = useAuth();
   const [view, setView] = useState<'mapped' | 'raw'>('raw');
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState(JSON.stringify(record.mapped_data, null, 2));
