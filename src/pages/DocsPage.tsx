@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Database, Search, ChevronRight, Menu, X, Github, BookOpen, Key, Terminal, Shield, Moon, Sun, Code, Cpu } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
@@ -20,7 +20,35 @@ const DOCS_PAGES = [
 export function DocsPage() {
   const { theme, setTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const location = useLocation();
+
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    
+    const query = searchQuery.toLowerCase();
+    const results: { id: string; title: string; snippet: string }[] = [];
+
+    DOCS_PAGES.forEach(page => {
+      const content = markdownFiles[`../docs/${page.id}.md`] as string || '';
+      
+      if (page.title.toLowerCase().includes(query)) {
+        results.push({ id: page.id, title: page.title, snippet: 'Matches title' });
+        return;
+      }
+      
+      const index = content.toLowerCase().indexOf(query);
+      if (index !== -1) {
+        const start = Math.max(0, index - 30);
+        const end = Math.min(content.length, index + query.length + 30);
+        const snippet = content.substring(start, end).replace(/\n/g, ' ');
+        results.push({ id: page.id, title: page.title, snippet: `...${snippet}...` });
+      }
+    });
+    
+    return results;
+  }, [searchQuery]);
 
   const currentPath = location.pathname.split('/').pop() || 'getting-started';
   const validPath = DOCS_PAGES.find(p => p.id === currentPath) ? currentPath : 'getting-started';
@@ -53,9 +81,39 @@ export function DocsPage() {
               <Search className="w-4 h-4 text-gray-400 absolute left-3" />
               <input
                 type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 placeholder="Search documentation..."
                 className="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-md pl-9 pr-4 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-gray-300 dark:focus:ring-gray-700 transition-shadow"
               />
+              {isSearchFocused && searchQuery && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-md shadow-lg overflow-hidden z-50 max-h-96 overflow-y-auto">
+                  {searchResults.length > 0 ? (
+                    <div className="py-2">
+                      {searchResults.map(res => (
+                        <Link 
+                          key={res.id} 
+                          to={`/docs/${res.id}`}
+                          onClick={() => {
+                            setSearchQuery('');
+                            setIsSearchFocused(false);
+                          }}
+                          className="block px-4 py-2 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+                        >
+                          <div className="font-medium text-sm text-gray-900 dark:text-white">{res.title}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{res.snippet}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-sm text-gray-500 text-center">
+                      No results found for "{searchQuery}"
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-4 ml-auto">
               <Link to="/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition hidden sm:block">Live Demo</Link>
