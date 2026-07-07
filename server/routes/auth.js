@@ -38,15 +38,24 @@ export async function logUserActivity(userId, action, req, extraData = {}) {
     try {
       // Don't lookup localhost IPs
       if (clientIp && clientIp !== '127.0.0.1' && clientIp !== '::1') {
-        const response = await fetch(`http://ip-api.com/json/${clientIp}`);
-        const data = await response.json();
-        if (data.status === 'success') {
-          locationData = {
-            country: data.country,
-            city: data.city,
-            isp: data.isp,
-            org: data.org
-          };
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s timeout
+
+        const response = await fetch(`http://ip-api.com/json/${clientIp}`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status === 'success') {
+            locationData = {
+              country: data.country,
+              city: data.city,
+              isp: data.isp,
+              org: data.org
+            };
+          }
         }
       }
     } catch (e) {
