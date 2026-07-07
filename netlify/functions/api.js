@@ -18,7 +18,10 @@ const handler = serverless(app, {
     try {
       // Ensure DB connection is established before processing the route
       if (!dbPromise) {
-        dbPromise = connectDb();
+        dbPromise = connectDb().catch(err => {
+          dbPromise = null; // Reset so next invocation can try again
+          throw err;
+        });
       }
       await dbPromise;
       // Tell Netlify to wait for the event loop to empty before freezing the container

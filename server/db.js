@@ -17,7 +17,7 @@ export async function connectDb() {
   if (!uri) {
     throw new Error('MONGODB_URI environment variable is not set or not being loaded by the host platform');
   }
-  client = new MongoClient(uri);
+  client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 });
   await client.connect();
   db = client.db(dbName);
   await ensureIndexes(db);
