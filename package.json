@@ -10,7 +10,8 @@
     "build": "bunx vite build",
     "lint": "bunx eslint .",
     "preview": "bunx vite preview",
-    "typecheck": "bunx tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "bunx tsc --noEmit -p tsconfig.app.json",
+    "start": "node server/index.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
