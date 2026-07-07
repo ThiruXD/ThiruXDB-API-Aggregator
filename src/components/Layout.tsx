@@ -247,7 +247,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
                     }`}
                 >
                   <Users className="w-5 h-5" />
-                  <span className="font-medium">Users & Activity</span>
+                  <span className="font-medium">System Security</span>
                 </button>
               </>
             )}
