@@ -26,7 +26,7 @@ export async function getJwtSecret() {
 
   // If no key exists, generate a highly secure one dynamically
   console.log('[SECURITY] Generating new dynamic JWT secret via jose library...');
-  const newSecret = await jose.generateSecret('HS256');
+  const newSecret = await jose.generateSecret('HS256', { extractable: true });
   
   // Export it to a JWK (JSON Web Key) so it can be safely stored in MongoDB
   const jwk = await jose.exportJWK(newSecret);
