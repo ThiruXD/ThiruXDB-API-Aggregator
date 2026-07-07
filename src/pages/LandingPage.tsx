@@ -7,18 +7,15 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 font-sans selection:bg-indigo-500/30">
-      {/* Premium Gradient Background Blurs */}
-      <div className="absolute top-0 inset-x-0 h-[500px] overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-500/20 dark:bg-indigo-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-20 -right-40 w-96 h-96 bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-3xl" />
-      </div>
+      {/* Subtle Grid Background */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTU2LCAxNjMsIDE3NSwgMC4xNSkiLz48L3N2Zz4=')] [mask-image:linear-gradient(to_bottom,white,transparent)] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LCAyNTUsIDI1NSwgMC4wNSkiLz48L3N2Zz4=')] pointer-events-none" />
 
       {/* Navigation */}
       <nav className="relative z-10 border-b border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <Database className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded flex items-center justify-center shadow-sm">
+              <Database className="w-4 h-4 text-white dark:text-gray-900" />
             </div>
             <span className="font-bold text-lg text-gray-900 dark:text-white tracking-tight">ThiruXDB</span>
           </div>
@@ -27,7 +24,7 @@ export function LandingPage() {
             <a href="https://github.com/ThiruXD" target="_blank" rel="noreferrer" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">
               <Github className="w-5 h-5" />
             </a>
-            <Link to="/dashboard" className="text-sm font-medium px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-black rounded-full hover:scale-105 transition-transform shadow-sm">
+            <Link to="/dashboard" className="text-sm font-medium px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-md hover:bg-gray-800 dark:hover:bg-gray-100 transition shadow-sm">
               Dashboard
             </Link>
           </div>
@@ -36,14 +33,14 @@ export function LandingPage() {
 
       {/* Hero Section */}
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-20 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-8">
-          <Zap className="w-4 h-4" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium mb-8 shadow-sm">
+          <Zap className="w-3.5 h-3.5" />
           <span>v0.1.0 is now live</span>
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-8 leading-tight">
-          The Ultimate API <br className="hidden md:block" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+        <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white tracking-tight mb-8 leading-tight">
+          The Utilitarian API <br className="hidden md:block" />
+          <span className="text-gray-900 dark:text-white">
             Data Aggregation Hub
           </span>
         </h1>
@@ -53,38 +50,38 @@ export function LandingPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/dashboard" className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full font-medium text-lg flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:shadow-indigo-500/30">
-            Go to Dashboard <ArrowRight className="w-5 h-5" />
+          <Link to="/dashboard" className="w-full sm:w-auto px-6 py-3 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-lg font-medium flex items-center justify-center gap-2 transition shadow-sm">
+            Go to Dashboard <ArrowRight className="w-4 h-4" />
           </Link>
-          <Link to="/docs" className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-full font-medium text-lg flex items-center justify-center transition-all">
+          <Link to="/docs" className="w-full sm:w-auto px-6 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium flex items-center justify-center transition shadow-sm">
             Read Documentation
           </Link>
         </div>
 
         {/* Feature Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-32 text-left">
-          <div className="p-8 rounded-3xl bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-white/5 hover:border-indigo-500/30 transition-colors">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6">
-              <Server className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-32 text-left">
+          <div className="p-6 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors shadow-sm">
+            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-5 border border-gray-200 dark:border-gray-700">
+              <Server className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Automated Sync</h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">Automatically batch and insert thousands of records simultaneously from external APIs into your MongoDB database at maximum wire speed.</p>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Automated Sync</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Automatically batch and insert thousands of records simultaneously from external APIs into your MongoDB database at maximum wire speed.</p>
           </div>
           
-          <div className="p-8 rounded-3xl bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-white/5 hover:border-purple-500/30 transition-colors">
-            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6">
-              <Code className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <div className="p-6 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors shadow-sm">
+            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-5 border border-gray-200 dark:border-gray-700">
+              <Code className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Public Gateway</h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">Expose your aggregated data safely using dynamic API keys with strict short-term rate limits and persistent long-term quota enforcement.</p>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Public Gateway</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Expose your aggregated data safely using dynamic API keys with strict short-term rate limits and persistent long-term quota enforcement.</p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-white/5 hover:border-pink-500/30 transition-colors">
-            <div className="w-12 h-12 bg-pink-100 dark:bg-pink-500/10 rounded-2xl flex items-center justify-center mb-6">
-              <Shield className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+          <div className="p-6 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors shadow-sm">
+            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-5 border border-gray-200 dark:border-gray-700">
+              <Shield className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Robust Security</h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">Built-in Role-Based Access Control, session hijacking prevention, dynamic zero-config JWT management via Web Crypto, and granular permissions.</p>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Robust Security</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Built-in Role-Based Access Control, session hijacking prevention, dynamic zero-config JWT management via Web Crypto, and granular permissions.</p>
           </div>
         </div>
       </main>

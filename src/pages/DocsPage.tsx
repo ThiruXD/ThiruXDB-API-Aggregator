@@ -26,8 +26,8 @@ export function DocsPage() {
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           <div className="flex items-center gap-2 mr-6">
-            <div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
-              <Database className="w-3 h-3 text-white" />
+            <div className="w-6 h-6 bg-gray-900 dark:bg-white rounded flex items-center justify-center shadow-sm">
+              <Database className="w-3 h-3 text-white dark:text-gray-900" />
             </div>
             <span className="font-bold text-gray-900 dark:text-white">ThiruXDB</span>
             <span className="text-xs px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-medium ml-2 hidden sm:block">Docs</span>
@@ -39,7 +39,7 @@ export function DocsPage() {
               <input 
                 type="text" 
                 placeholder="Search documentation..." 
-                className="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-lg pl-9 pr-4 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 transition-shadow"
+                className="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-md pl-9 pr-4 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-gray-300 dark:focus:ring-gray-700 transition-shadow"
               />
             </div>
             <div className="flex items-center gap-4 ml-auto">
@@ -66,8 +66,8 @@ export function DocsPage() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-2 py-1.5 rounded-md text-sm transition-colors ${
                     isActive 
-                      ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-medium' 
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   <page.icon className="w-4 h-4" />
@@ -105,22 +105,22 @@ function GettingStartedContent() {
 
       <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mt-10 mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">Core Concepts</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-        <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-slate-50/50 dark:bg-zinc-900/50">
+        <div className="border border-slate-200 dark:border-slate-800 rounded-lg p-5 bg-white dark:bg-zinc-900 shadow-sm">
           <h3 className="font-semibold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-            <SettingsIcon className="w-4 h-4 text-indigo-500" /> Endpoints
+            <SettingsIcon className="w-4 h-4 text-slate-700 dark:text-slate-300" /> Endpoints
           </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400">Configure external APIs with custom headers, authentication, and field mappings.</p>
         </div>
-        <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-slate-50/50 dark:bg-zinc-900/50">
+        <div className="border border-slate-200 dark:border-slate-800 rounded-lg p-5 bg-white dark:bg-zinc-900 shadow-sm">
           <h3 className="font-semibold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-            <RefreshIcon className="w-4 h-4 text-emerald-500" /> Sync Engine
+            <RefreshIcon className="w-4 h-4 text-slate-700 dark:text-slate-300" /> Sync Engine
           </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400">Run manual or automated fetches to pull data from your endpoints and upsert into MongoDB.</p>
         </div>
       </div>
 
       <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mt-10 mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">Quick Setup</h2>
-      <pre className="bg-slate-900 text-slate-50 p-4 rounded-xl overflow-x-auto text-sm my-4 border border-slate-800">
+      <pre className="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50 p-4 rounded-lg overflow-x-auto text-sm my-4 border border-slate-200 dark:border-slate-800 shadow-sm">
         <code className="language-bash">
           # Clone the repository{'\n'}
           git clone https://github.com/ThiruXD/ThiruXDB.git{'\n'}
@@ -136,7 +136,7 @@ function GettingStartedContent() {
 
       <div className="mt-12 flex justify-between items-center pt-6 border-t border-slate-200 dark:border-slate-800">
         <div />
-        <Link to="/docs/api-gateway" className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium">
+        <Link to="/docs/api-gateway" className="flex items-center gap-2 text-slate-900 dark:text-white hover:text-slate-600 dark:hover:text-slate-300 font-medium border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-md transition-colors shadow-sm bg-white dark:bg-slate-900">
           Next: API Gateway <ChevronRight className="w-4 h-4" />
         </Link>
       </div>
@@ -164,15 +164,15 @@ function ApiGatewayContent() {
 
       <h2 className="text-xl font-semibold text-slate-900 dark:text-white mt-8 mb-4">Using the Gateway</h2>
       <p className="text-slate-600 dark:text-slate-400">Make a GET request to the gateway endpoint, passing your API key in the headers:</p>
-      <pre className="bg-slate-900 text-slate-50 p-4 rounded-xl overflow-x-auto text-sm my-4 border border-slate-800">
+      <pre className="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50 p-4 rounded-lg overflow-x-auto text-sm my-4 border border-slate-200 dark:border-slate-800 shadow-sm">
         <code>
           GET /api/v1/public/thiruxdb_data_records?_page=1&_limit=20{'\n'}
           Authorization: Bearer txdb_key_XXXXXXXXXXXXXXXXXXXX
         </code>
       </pre>
 
-      <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 my-6 rounded-r-lg">
-        <p className="text-sm text-blue-800 dark:text-blue-300 m-0"><strong>Pro Tip:</strong> You can pass dynamic MongoDB filters directly in the URL! For example, `?status=active&category=shoes` automatically translates to a MongoDB query.</p>
+      <div className="bg-slate-100 dark:bg-slate-800 border-l-4 border-slate-500 p-4 my-6 rounded-r-md">
+        <p className="text-sm text-slate-800 dark:text-slate-300 m-0"><strong>Pro Tip:</strong> You can pass dynamic MongoDB filters directly in the URL! For example, `?status=active&category=shoes` automatically translates to a MongoDB query.</p>
       </div>
     </article>
   );
