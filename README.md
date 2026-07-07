@@ -29,9 +29,11 @@ Check out the live deployment of ThiruXDB here:
 - **High-Performance Dashboard** — Live stats cached directly on endpoint documents for instantaneous rendering of total records, active endpoints, and distributions.
 - **Export** — Download current view as JSON or CSV
 - **Mobile Responsive** — Fully optimized UI with sidebar overlays and responsive grids for managing data on the go.
-- **Role-Based Access Control (RBAC)** — Three-tier permission system (`admin`, `editor`, `viewer`) utilizing JWTs and bcrypt password hashing. Includes granular, per-user page restrictions (e.g., blocking access to Endpoints, Fetch Data, Data Browser, or Fetch Logs).
+- **Role-Based Access Control (RBAC)** — Three-tier permission system (`admin`, `editor`, `viewer`) utilizing bcrypt password hashing. Includes granular, per-user page restrictions (e.g., blocking access to Endpoints, Fetch Data, Data Browser, or Fetch Logs).
+- **Zero-Config Dynamic JWT Manager** — The backend utilizes the `jose` library to automatically generate a secure cryptographic secret, export it as a JWK (JSON Web Key), and persist it securely in MongoDB. No need to manage or configure a `JWT_SECRET` environment variable!
+- **Session Hijacking Prevention** — JWT tokens are cryptographically fingerprinted using a hash of the user's IP Address and Browser User-Agent. Stolen or forged session tokens will instantly be invalidated if used on a different device or network.
 - **Anti-Export & Screenshot Security** — If a user is restricted from exporting, the UI activates robust deterrence: text selection and right-clicking are disabled, Developer Tools are trapped, keyboard shortcuts (Ctrl+C, F12, Snipping Tool) are blocked, and the screen aggressively blurs to 0% opacity if the window loses focus to deter screen recording software.
-- **Activity & IP Auditing** — Comprehensive user activity logs with automatic IP Geolocation (`ip-api.com`), tracking ISPs, Cities, and Device information.
+- **Activity & IP Auditing** — Comprehensive user activity logs with automatic IP Geolocation (`ip-api.com`), tracking ISPs, Cities, and Device information. All API requests to third-party IP services are strictly proxied through the Node.js backend to bypass aggressive browser CORS and CSP restrictions.
 - **Frappe UI "Espresso" Aesthetic** — Sleek, flat design layout natively built in React + Tailwind.
 - **Global Light/Dark Mode** — Fully responsive theme switching that persists in local storage.
 - **Local Auth & Root Admin Protection** — Simple session-based login (no external auth service required). The primary Admin account's credentials are strictly enforced via the `.env` file, meaning the root password bypasses the database and cannot be tampered with or locked out via the UI.
