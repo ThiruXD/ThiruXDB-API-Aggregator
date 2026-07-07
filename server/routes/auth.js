@@ -15,6 +15,15 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'thiruxdb_super_secret_key_change_me';
 const JWT_EXPIRES_IN = '24h';
 
+// Generate a security fingerprint for the session
+export function generateFingerprint(req) {
+  const ip = requestIp.getClientIp(req) || 'unknown';
+  const ua = req.headers['user-agent'] || 'unknown';
+  // We use a simple hash of IP + User-Agent. Even if token is stolen, 
+  // it can't be used from a different device/network.
+  return bcrypt.hashSync(`${ip}-${ua}`, 1); // Cost 1 is fast enough for fingerprinting
+}
+
 // Helper to log user activity
 export async function logUserActivity(userId, action, req, extraData = {}) {
   try {
@@ -115,8 +124,16 @@ router.post('/login', async (req, res) => {
       }
     }
 
+    const fingerprint = generateFingerprint(req);
+
     const token = jwt.sign(
-      { id: user._id.toString(), username: user.username, role: user.role, restricted_pages: user.restricted_pages || [] },
+      { 
+        id: user._id.toString(), 
+        username: user.username, 
+        role: user.role, 
+        restricted_pages: user.restricted_pages || [],
+        fingerprint // Embed the fingerprint into the token!
+      },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );

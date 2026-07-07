@@ -9,6 +9,17 @@ import { getDb } from './db.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'thiruxdb_super_secret_key_change_me';
 
+import requestIp from 'request-ip';
+import bcrypt from 'bcryptjs';
+
+// Verify the fingerprint matches the current request
+function verifyFingerprint(req, tokenFingerprint) {
+  if (!tokenFingerprint) return true; // Backwards compatibility for old tokens
+  const ip = requestIp.getClientIp(req) || 'unknown';
+  const ua = req.headers['user-agent'] || 'unknown';
+  return bcrypt.compareSync(`${ip}-${ua}`, tokenFingerprint);
+}
+
 export function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -17,6 +28,12 @@ export function authenticateToken(req, res, next) {
 
   jwt.verify(token, JWT_SECRET, async (err, decodedUser) => {
     if (err) return res.status(403).json({ error: 'Invalid or expired token.' });
+    
+    // Anti-Hijacking Check!
+    if (decodedUser.fingerprint && !verifyFingerprint(req, decodedUser.fingerprint)) {
+      console.warn(`[SECURITY] Session Hijacking Prevented for user: ${decodedUser.username}`);
+      return res.status(403).json({ error: 'Session hijacking detected. Token invalidated.' });
+    }
     
     const envAdminUsername = process.env.VITE_ADMIN_USERNAME;
     if (decodedUser.username === envAdminUsername) {
