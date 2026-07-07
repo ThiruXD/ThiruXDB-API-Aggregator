@@ -137,8 +137,8 @@ router.get('/:collection', async (req, res) => {
     }
 
     // Parse pagination parameters
-    const page = Math.max(1, parseInt(req.query._page as string || '1'));
-    const limit = Math.min(100, Math.max(1, parseInt(req.query._limit as string || '20'))); // Max 100 per request
+    const page = Math.max(1, parseInt(req.query._page || '1'));
+    const limit = Math.min(100, Math.max(1, parseInt(req.query._limit || '20'))); // Max 100 per request
     const skip = (page - 1) * limit;
 
     // Parse query filters
