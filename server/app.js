@@ -65,13 +65,22 @@ app.use('/api/users', usersRouter); // auth is applied inside the router
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
 // Serve frontend static files in production (Render/Railway/VPS)
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const distPath = path.join(__dirname, '../dist');
-app.use(express.static(distPath));
+// Skip this on Netlify because Netlify's CDN serves the static files directly.
+if (!process.env.NETLIFY) {
+  let dir = process.cwd();
+  try {
+    dir = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url || `file://${process.cwd()}/app.js`));
+  } catch (e) {
+    // Fallback to process.cwd() if path resolution fails in bundled environments
+  }
+  
+  const distPath = path.join(dir, '../dist');
+  app.use(express.static(distPath));
 
-// Fallback to index.html for React Router
-app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
-});
+  // Fallback to index.html for React Router
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 export default app;
