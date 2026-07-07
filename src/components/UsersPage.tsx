@@ -166,24 +166,24 @@ export function UsersPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-gray-200 dark:border-gray-700 pb-px">
+      <div className="flex overflow-x-auto hide-scrollbar gap-4 border-b border-gray-200 dark:border-gray-700 pb-px">
         <button
           onClick={() => setActiveTab('users')}
-          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${activeTab === 'users' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium whitespace-nowrap transition ${activeTab === 'users' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
             }`}
         >
           <Users className="w-4 h-4" /> Users
         </button>
         <button
           onClick={() => setActiveTab('activity')}
-          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${activeTab === 'activity' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium whitespace-nowrap transition ${activeTab === 'activity' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
             }`}
         >
           <Activity className="w-4 h-4" /> Activity Logs
         </button>
         <button
           onClick={() => setActiveTab('settings')}
-          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition ${activeTab === 'settings' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
+          className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium whitespace-nowrap transition ${activeTab === 'settings' ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
             }`}
         >
           <Shield className="w-4 h-4" /> Security Settings

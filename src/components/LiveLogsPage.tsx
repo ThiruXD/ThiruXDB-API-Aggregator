@@ -90,10 +90,10 @@ export default function LiveLogsPage() {
         </div>
       </div>
 
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
           <select
-            className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 min-w-[200px]"
+            className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 min-w-[200px] flex-1 sm:flex-none"
             value={selectedEndpointId}
             onChange={(e) => {
               setSelectedEndpointId(e.target.value);
@@ -107,23 +107,23 @@ export default function LiveLogsPage() {
           </select>
           <button
             onClick={handleTogglePolling}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${polling ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30'}`}
+            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition shrink-0 ${polling ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30'}`}
           >
             {polling ? <><Square className="w-4 h-4 fill-current" /> Stop Stream</> : <><Play className="w-4 h-4 fill-current" /> Stream Logs</>}
           </button>
-          {polling && <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />}
+          {polling && <Loader2 className="w-4 h-4 text-indigo-400 animate-spin hidden sm:block" />}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 w-full md:w-auto mt-2 md:mt-0 pt-2 md:pt-0 border-t border-gray-700 md:border-t-0">
           <label className="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" checked={autoScroll} onChange={(e) => setAutoScroll(e.target.checked)} className="sr-only peer" />
             <div className="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
             <span className="ml-3 text-sm font-medium text-gray-300">Auto-scroll</span>
           </label>
-          <div className="w-px h-6 bg-gray-700 mx-2"></div>
-          <span className="text-sm text-gray-400 font-mono w-20 text-right">{logSize}</span>
+          <div className="hidden sm:block w-px h-6 bg-gray-700 mx-2"></div>
+          <span className="text-sm text-gray-400 font-mono text-right">{logSize}</span>
           <button
             onClick={handleClearLogs}
-            className="ml-2 flex items-center gap-2 px-3 py-1.5 rounded-lg font-medium transition bg-gray-700/50 text-gray-300 hover:bg-red-500/20 hover:text-red-400"
+            className="ml-2 flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg font-medium transition bg-gray-700/50 text-gray-300 hover:bg-red-500/20 hover:text-red-400"
             title="Clear logs"
           >
             <Trash2 className="w-4 h-4" />
