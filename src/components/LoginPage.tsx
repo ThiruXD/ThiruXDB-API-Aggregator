@@ -6,9 +6,11 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Lock, User, AlertCircle, Database, Github } from 'lucide-react';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -25,9 +27,15 @@ export function LoginPage() {
     const res = await login(username, password);
     if (!res.success) {
       setError(res.error || 'Invalid username or password');
+    } else {
+      navigate('/dashboard');
     }
     setIsLoading(false);
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 flex items-center justify-center p-4">

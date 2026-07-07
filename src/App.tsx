@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './components/LoginPage';
 import { Layout } from './components/Layout';
 import { DashboardPage } from './components/DashboardPage';
@@ -15,13 +16,15 @@ import { DataBrowserPage } from './components/DataBrowserPage';
 import { LogsPage } from './components/LogsPage';
 import { UsersPage } from './components/UsersPage';
 import LiveLogsPage from './components/LiveLogsPage';
+import { LandingPage } from './pages/LandingPage';
+import { DocsPage } from './pages/DocsPage';
 
-function AppContent() {
+function DashboardWrapper() {
   const { isAuthenticated, user } = useAuth();
   const [currentPage, setCurrentPage] = useState('dashboard');
 
   if (!isAuthenticated) {
-    return <LoginPage />;
+    return <Navigate to="/login" replace />;
   }
 
   const renderPage = () => {
@@ -70,7 +73,15 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark">
       <AuthProvider>
-        <AppContent />
+        <Router>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/docs/*" element={<DocsPage />} />
+            <Route path="/dashboard" element={<DashboardWrapper />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
       </AuthProvider>
     </ThemeProvider>
   );
