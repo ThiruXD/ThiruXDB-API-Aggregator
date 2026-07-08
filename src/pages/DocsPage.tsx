@@ -236,6 +236,24 @@ export function DocsPage() {
                 </div>
               )}
             </nav>
+            
+            {/* Mobile GitHub Stats */}
+            <div className="mt-6 border-t border-gray-200 dark:border-zinc-800 pt-4 px-2 lg:hidden">
+              <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="flex items-center gap-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors">
+                <Github className="w-4 h-4" /> GitHub Repository
+              </a>
+              <div className="mt-4 flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-900 px-3 py-2.5 rounded-md border border-gray-200 dark:border-zinc-800">
+                <div className="flex items-center gap-1.5">
+                  <Star className="w-4 h-4 text-gray-600 dark:text-zinc-300" /> 
+                  <span className="text-gray-700 dark:text-zinc-200">{githubStats.stars}</span> Stars
+                </div>
+                <div className="w-px h-3 bg-gray-300 dark:bg-zinc-700"></div>
+                <div className="flex items-center gap-1.5">
+                  <GitFork className="w-4 h-4 text-gray-600 dark:text-zinc-300" /> 
+                  <span className="text-gray-700 dark:text-zinc-200">{githubStats.forks}</span> Forks
+                </div>
+              </div>
+            </div>
           </div>
         </aside>
 
