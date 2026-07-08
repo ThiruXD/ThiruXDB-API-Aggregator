@@ -19,8 +19,6 @@
     "express": "^4.19.2",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.5.2",
-    "fumadocs-core": "^16.11.1",
-    "fumadocs-ui": "^16.11.1",
     "github-slugger": "^2.0.0",
     "helmet": "^8.2.0",
     "jose": "^6.2.3",
