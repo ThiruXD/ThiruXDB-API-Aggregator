@@ -3,19 +3,38 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
-import { Menu, X, Sun, Moon, ArrowLeft, Github, Database, BookOpen, Layers, Network, RefreshCw, ShieldCheck, Code } from 'lucide-react';
+import rehypeHighlight from 'rehype-highlight';
+import { Menu, X, Sun, Moon, ArrowLeft, Github, Database, BookOpen, Layers, Network, RefreshCw, ShieldCheck, Code, Search } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import 'highlight.js/styles/atom-one-dark.css'; // Premium dark theme for syntax highlighting
 
 const markdownFiles = import.meta.glob('../docs/*.md', { query: '?raw', import: 'default', eager: true });
 
-const DOCS_PAGES = [
+type PageDef = { id: string; title: string; icon?: any; subPages?: PageDef[] };
+
+const DOCS_PAGES: PageDef[] = [
   { id: 'getting-started', title: 'Getting Started', icon: BookOpen },
   { id: 'architecture', title: 'Architecture & Stack', icon: Layers },
-  { id: 'api-gateway', title: 'API Gateway', icon: Network },
+  { 
+    id: 'api-gateway', 
+    title: 'API Gateway', 
+    icon: Network,
+    subPages: [
+      { id: 'rate-limiting', title: 'Rate Limiting' },
+      { id: 'authentication', title: 'Authentication' }
+    ]
+  },
   { id: 'sync-engine', title: 'Sync Engine', icon: RefreshCw },
   { id: 'security', title: 'Security', icon: ShieldCheck },
   { id: 'development', title: 'Development & Contributing', icon: Code },
 ];
+
+// Helper to flatten the DOCS_PAGES for routing and next/prev pagination
+const FLATTENED_PAGES = DOCS_PAGES.reduce((acc, page) => {
+  acc.push(page);
+  if (page.subPages) acc.push(...page.subPages);
+  return acc;
+}, [] as PageDef[]);
 
 export function DocsPage() {
   const location = useLocation();
@@ -23,14 +42,15 @@ export function DocsPage() {
   const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const currentPath = location.pathname.split('/').pop() || 'getting-started';
-  const page = DOCS_PAGES.find((p) => p.id === currentPath) || DOCS_PAGES[0];
+  const page = FLATTENED_PAGES.find((p) => p.id === currentPath) || FLATTENED_PAGES[0];
 
   const markdownContent =
     (markdownFiles[`../docs/${page.id}.md`] as string) || '# 404 Not Found\n\nThe requested documentation page could not be found.';
 
-  // Remove H1 since we render it separately
+  // Remove H1 since we render it separately as the page title
   const contentWithoutH1 = markdownContent.replace(/^#\s+.*$/m, '');
 
   const toc = useMemo(() => {
@@ -57,7 +77,7 @@ export function DocsPage() {
       let currentActiveId = '';
       for (const heading of headings) {
         const top = heading.getBoundingClientRect().top;
-        if (top < 150) { // Highlight when heading is near the top
+        if (top < 150) {
           currentActiveId = heading.id;
         }
       }
@@ -65,13 +85,33 @@ export function DocsPage() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial check
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [markdownContent]);
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
+
+  const filteredPages = useMemo(() => {
+    if (!searchQuery.trim()) return DOCS_PAGES;
+    const query = searchQuery.toLowerCase();
+    
+    return DOCS_PAGES.map(p => {
+      const pageMatch = p.title.toLowerCase().includes(query);
+      const subPagesMatch = p.subPages?.filter(sp => sp.title.toLowerCase().includes(query));
+      
+      if (pageMatch || (subPagesMatch && subPagesMatch.length > 0)) {
+        return {
+          ...p,
+          subPages: subPagesMatch || p.subPages
+        };
+      }
+      return null;
+    }).filter(Boolean) as PageDef[];
+  }, [searchQuery]);
+
+  const pageIndex = FLATTENED_PAGES.findIndex(p => p.id === page.id);
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 selection:bg-zinc-200 dark:selection:bg-zinc-800 flex flex-col font-sans">
@@ -111,35 +151,79 @@ export function DocsPage() {
         </div>
       </header>
 
-      <div className="pt-16 flex-1 flex container max-w-7xl mx-auto px-4 md:px-6 relative">
-        {/* Left Sidebar */}
+      {/* Main Layout Area */}
+      <div className="pt-16 flex-1 flex w-full relative">
+        
+        {/* Left Sidebar (Fixed Absolute) */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-64 pt-16 transform transition-transform duration-300 ease-in-out lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:pt-0 lg:translate-x-0 bg-white dark:bg-zinc-950 lg:bg-transparent border-r border-gray-200 dark:border-zinc-800 ${
+          className={`fixed inset-y-0 left-0 z-40 w-64 pt-16 transform transition-transform duration-300 ease-in-out lg:translate-x-0 bg-white dark:bg-zinc-950 lg:bg-transparent border-r border-gray-200 dark:border-zinc-800 flex flex-col ${
             isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <div className="h-full overflow-y-auto p-6">
-            <h4 className="font-semibold text-sm tracking-tight text-gray-900 dark:text-zinc-100 mb-4 px-2">
+          {/* Advanced Search */}
+          <div className="p-4 border-b border-gray-200 dark:border-zinc-800">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+              <input
+                type="search"
+                placeholder="Search docs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-gray-100 dark:bg-zinc-900 border border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-950 focus:ring-1 focus:ring-blue-500 rounded-md py-2 pl-9 pr-3 text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-500 dark:placeholder-gray-400 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4">
+            <h4 className="font-semibold text-xs uppercase tracking-wider text-gray-500 dark:text-zinc-500 mb-3 px-2">
               Documentation
             </h4>
             <nav className="flex flex-col space-y-1">
-              {DOCS_PAGES.map((navPage) => {
+              {filteredPages.map((navPage) => {
                 const isActive = page.id === navPage.id;
                 return (
-                  <Link
-                    key={navPage.id}
-                    to={`/docs/${navPage.id}`}
-                    className={`px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2.5 ${
-                      isActive
-                        ? 'bg-gray-100 dark:bg-zinc-800/60 font-medium text-gray-900 dark:text-zinc-100'
-                        : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-zinc-200'
-                    }`}
-                  >
-                    <navPage.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-zinc-500'}`} />
-                    {navPage.title}
-                  </Link>
+                  <div key={navPage.id}>
+                    <Link
+                      to={`/docs/${navPage.id}`}
+                      className={`px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2.5 ${
+                        isActive
+                          ? 'bg-gray-100 dark:bg-zinc-800/60 font-medium text-gray-900 dark:text-zinc-100'
+                          : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-zinc-200'
+                      }`}
+                    >
+                      {navPage.icon && <navPage.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-zinc-500'}`} />}
+                      {navPage.title}
+                    </Link>
+                    
+                    {/* Sub Pages */}
+                    {navPage.subPages && navPage.subPages.length > 0 && (
+                      <div className="mt-1 ml-6 flex flex-col space-y-1 border-l border-gray-200 dark:border-zinc-800 pl-2">
+                        {navPage.subPages.map((subPage) => {
+                          const isSubActive = page.id === subPage.id;
+                          return (
+                            <Link
+                              key={subPage.id}
+                              to={`/docs/${subPage.id}`}
+                              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                                isSubActive
+                                  ? 'bg-gray-100 dark:bg-zinc-800/60 font-medium text-gray-900 dark:text-zinc-100'
+                                  : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-zinc-200'
+                              }`}
+                            >
+                              {subPage.title}
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
+              {filteredPages.length === 0 && (
+                <div className="px-2 py-4 text-sm text-gray-500 dark:text-zinc-400">
+                  No results found for "{searchQuery}"
+                </div>
+              )}
             </nav>
           </div>
         </aside>
@@ -152,16 +236,22 @@ export function DocsPage() {
           />
         )}
 
-        {/* Main Content */}
-        <main className="flex-1 w-full min-w-0 py-8 lg:py-12 lg:px-12">
-          <div className="mx-auto max-w-3xl">
+        {/* Main Content Area (offset by sidebars on desktop) */}
+        <main className="flex-1 w-full lg:pl-64 xl:pr-64 min-w-0">
+          <div className="max-w-3xl mx-auto py-8 lg:py-12 px-4 md:px-8">
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-zinc-100 mb-8">
               {page.title}
             </h1>
-            <div className="prose prose-slate dark:prose-invert prose-headings:font-bold prose-a:text-blue-600 dark:prose-a:text-blue-400 hover:prose-a:text-blue-500 [&_:not(pre)>code]:bg-gray-100 dark:[&_:not(pre)>code]:bg-zinc-800/60 [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:rounded-md [&_:not(pre)>code]:font-medium [&_:not(pre)>code]:before:content-none [&_:not(pre)>code]:after:content-none max-w-none">
+            
+            {/* 
+              Tailwind Typography (prose) 
+              We remove bg-gray-100 styling from <pre> blocks by excluding them, 
+              allowing rehype-highlight to handle the code block styling!
+            */}
+            <div className="prose prose-slate dark:prose-invert prose-headings:font-bold prose-a:text-blue-600 dark:prose-a:text-blue-400 hover:prose-a:text-blue-500 [&_:not(pre)>code]:bg-gray-100 dark:[&_:not(pre)>code]:bg-zinc-800/60 [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:rounded-md [&_:not(pre)>code]:font-medium [&_:not(pre)>code]:before:content-none [&_:not(pre)>code]:after:content-none prose-pre:bg-[#282c34] prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-zinc-800 max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeSlug]}
+                rehypePlugins={[rehypeSlug, rehypeHighlight]}
               >
                 {contentWithoutH1}
               </ReactMarkdown>
@@ -169,26 +259,26 @@ export function DocsPage() {
             
             {/* Pagination / Next Steps */}
             <div className="mt-16 pt-8 border-t border-gray-200 dark:border-zinc-800 flex justify-between items-center">
-              {DOCS_PAGES.findIndex(p => p.id === page.id) > 0 ? (
+              {pageIndex > 0 ? (
                 <Link 
-                  to={`/docs/${DOCS_PAGES[DOCS_PAGES.findIndex(p => p.id === page.id) - 1].id}`}
+                  to={`/docs/${FLATTENED_PAGES[pageIndex - 1].id}`}
                   className="group flex flex-col items-start gap-1"
                 >
                   <span className="text-xs font-medium text-gray-500 dark:text-zinc-400">Previous</span>
                   <span className="text-sm font-medium text-gray-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    {DOCS_PAGES[DOCS_PAGES.findIndex(p => p.id === page.id) - 1].title}
+                    {FLATTENED_PAGES[pageIndex - 1].title}
                   </span>
                 </Link>
               ) : <div />}
               
-              {DOCS_PAGES.findIndex(p => p.id === page.id) < DOCS_PAGES.length - 1 ? (
+              {pageIndex < FLATTENED_PAGES.length - 1 ? (
                 <Link 
-                  to={`/docs/${DOCS_PAGES[DOCS_PAGES.findIndex(p => p.id === page.id) + 1].id}`}
+                  to={`/docs/${FLATTENED_PAGES[pageIndex + 1].id}`}
                   className="group flex flex-col items-end gap-1"
                 >
                   <span className="text-xs font-medium text-gray-500 dark:text-zinc-400">Next</span>
                   <span className="text-sm font-medium text-gray-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    {DOCS_PAGES[DOCS_PAGES.findIndex(p => p.id === page.id) + 1].title}
+                    {FLATTENED_PAGES[pageIndex + 1].title}
                   </span>
                 </Link>
               ) : <div />}
@@ -196,9 +286,9 @@ export function DocsPage() {
           </div>
         </main>
 
-        {/* Right Sidebar (TOC) */}
-        <aside className="hidden xl:block w-64 shrink-0 border-l border-gray-200 dark:border-zinc-800 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)]">
-          <div className="h-full overflow-y-auto py-8 pl-8">
+        {/* Right Sidebar (Fixed Absolute) */}
+        <aside className="fixed inset-y-0 right-0 z-40 w-64 pt-16 border-l border-gray-200 dark:border-zinc-800 hidden xl:block bg-white dark:bg-zinc-950 lg:bg-transparent pointer-events-none">
+          <div className="h-full overflow-y-auto py-8 pl-8 pr-4 pointer-events-auto">
             <h4 className="font-semibold text-sm tracking-tight text-gray-900 dark:text-zinc-100 mb-4">
               On this page
             </h4>
