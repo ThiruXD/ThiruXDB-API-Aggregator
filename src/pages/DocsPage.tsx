@@ -3,18 +3,18 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
-import { Menu, X, Sun, Moon, ArrowLeft, Github, Database } from 'lucide-react';
+import { Menu, X, Sun, Moon, ArrowLeft, Github, Database, BookOpen, Layers, Network, RefreshCw, ShieldCheck, Code } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const markdownFiles = import.meta.glob('../docs/*.md', { query: '?raw', import: 'default', eager: true });
 
 const DOCS_PAGES = [
-  { id: 'getting-started', title: 'Getting Started' },
-  { id: 'architecture', title: 'Architecture & Stack' },
-  { id: 'api-gateway', title: 'API Gateway' },
-  { id: 'sync-engine', title: 'Sync Engine' },
-  { id: 'security', title: 'Security' },
-  { id: 'development', title: 'Development & Contributing' },
+  { id: 'getting-started', title: 'Getting Started', icon: BookOpen },
+  { id: 'architecture', title: 'Architecture & Stack', icon: Layers },
+  { id: 'api-gateway', title: 'API Gateway', icon: Network },
+  { id: 'sync-engine', title: 'Sync Engine', icon: RefreshCw },
+  { id: 'security', title: 'Security', icon: ShieldCheck },
+  { id: 'development', title: 'Development & Contributing', icon: Code },
 ];
 
 export function DocsPage() {
@@ -22,6 +22,7 @@ export function DocsPage() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeHeadingId, setActiveHeadingId] = useState<string>('');
 
   const currentPath = location.pathname.split('/').pop() || 'getting-started';
   const page = DOCS_PAGES.find((p) => p.id === currentPath) || DOCS_PAGES[0];
@@ -46,6 +47,27 @@ export function DocsPage() {
     setIsMobileMenuOpen(false);
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  // ScrollSpy for TOC
+  useEffect(() => {
+    const handleScroll = () => {
+      const headings = Array.from(document.querySelectorAll('main h2, main h3'));
+      if (headings.length === 0) return;
+      
+      let currentActiveId = '';
+      for (const heading of headings) {
+        const top = heading.getBoundingClientRect().top;
+        if (top < 150) { // Highlight when heading is near the top
+          currentActiveId = heading.id;
+        }
+      }
+      setActiveHeadingId(currentActiveId);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [markdownContent]);
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -107,12 +129,13 @@ export function DocsPage() {
                   <Link
                     key={navPage.id}
                     to={`/docs/${navPage.id}`}
-                    className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                    className={`px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2.5 ${
                       isActive
                         ? 'bg-gray-100 dark:bg-zinc-800/60 font-medium text-gray-900 dark:text-zinc-100'
                         : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-zinc-200'
                     }`}
                   >
+                    <navPage.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-zinc-500'}`} />
                     {navPage.title}
                   </Link>
                 );
@@ -185,7 +208,11 @@ export function DocsPage() {
                   <li key={index} style={{ paddingLeft: `${(item.depth - 2) * 1}rem` }}>
                     <a
                       href={item.url}
-                      className="text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors line-clamp-2"
+                      className={`block border-l-2 py-1 pl-3 transition-all duration-200 ${
+                        activeHeadingId === item.url.slice(1)
+                          ? 'border-blue-500 text-blue-600 dark:text-blue-400 font-medium'
+                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-900 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100'
+                      }`}
                     >
                       {item.title}
                     </a>
