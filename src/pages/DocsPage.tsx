@@ -7,7 +7,7 @@ import { DocsPage as FumaDocsPage, DocsBody, DocsTitle } from 'fumadocs-ui/layou
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-
+import rehypeSlug from 'rehype-slug';
 const markdownFiles = import.meta.glob('../docs/*.md', { query: '?raw', import: 'default', eager: true });
 
 const DOCS_PAGES = [
@@ -38,6 +38,16 @@ export function DocsPage() {
 
   const contentWithoutH1 = markdownContent.replace(/^#\s+.*$/m, '');
 
+  const toc = useMemo(() => {
+    const matches = Array.from(contentWithoutH1.matchAll(/^(##|###)\s+(.+)$/gm));
+    return matches.map((match) => {
+      const depth = match[1].length;
+      const title = match[2].trim();
+      const url = '#' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      return { title, url, depth };
+    });
+  }, [contentWithoutH1]);
+
   const navigate = useNavigate();
   const params = useParams();
   
@@ -61,10 +71,14 @@ export function DocsPage() {
             url: '/',
           }}
         >
-          <FumaDocsPage toc={[]}>
+          <FumaDocsPage toc={toc}>
             <DocsTitle>{page.title}</DocsTitle>
             <DocsBody>
-              <ReactMarkdown remarkPlugins={[remarkGfm]} components={defaultMdxComponents as any}>
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]} 
+                rehypePlugins={[rehypeSlug]}
+                components={defaultMdxComponents as any}
+              >
                 {contentWithoutH1}
               </ReactMarkdown>
             </DocsBody>
