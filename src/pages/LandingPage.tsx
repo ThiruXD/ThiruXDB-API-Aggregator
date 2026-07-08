@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Database, ArrowRight, Server, Shield, Zap, Code, Github, Moon, Sun, Terminal, Key, DatabaseBackup, Users, Activity, RefreshCw, Webhook, Briefcase, Rocket, Laptop, Star, GitFork } from 'lucide-react';
+import { Database, ArrowRight, Server, Shield, Zap, Code, Github, Moon, Sun, Terminal, Key, DatabaseBackup, Users, Activity, RefreshCw, Webhook, Briefcase, Rocket, Laptop, Star, GitFork, Menu, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useGithubStats } from '../hooks/useGithubStats';
 
 export function LandingPage() {
   const { theme, setTheme } = useTheme();
   const githubStats = useGithubStats();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 font-sans selection:bg-gray-300 dark:selection:bg-gray-700 flex flex-col">
@@ -16,14 +17,29 @@ export function LandingPage() {
       {/* Navigation */}
       <nav className="fixed top-0 inset-x-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded flex items-center justify-center shadow-sm">
-              <Database className="w-4 h-4 text-white dark:text-gray-900" />
-            </div>
-            <span className="font-bold text-lg text-gray-900 dark:text-white tracking-tight">ThiruXDB</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded flex items-center justify-center shadow-sm">
+                <Database className="w-4 h-4 text-white dark:text-gray-900" />
+              </div>
+              <span className="font-bold text-lg text-gray-900 dark:text-white tracking-tight hidden sm:block">ThiruXDB</span>
+            </Link>
+          </div>
+
+          <div className="hidden md:flex items-center gap-6">
+            <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">Features</a>
+            <a href="#use-cases" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">Use Cases</a>
+            <a href="#audience" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">Audience</a>
+          </div>
+
           <div className="flex items-center gap-4 sm:gap-6">
-            <Link to="/docs" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition hidden sm:block">Documentation</Link>
+            <Link to="/docs" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition hidden md:block">Documentation</Link>
             <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-3 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-zinc-900 px-2 py-1 rounded-md border border-gray-200 dark:border-zinc-800">
                 <div className="flex items-center gap-1">
@@ -45,6 +61,16 @@ export function LandingPage() {
             </button>
           </div>
         </div>
+        
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-zinc-950 border-b border-gray-200 dark:border-gray-800 shadow-lg px-6 py-4 flex flex-col gap-4">
+            <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Features</a>
+            <a href="#use-cases" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Use Cases</a>
+            <a href="#audience" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Audience</a>
+            <Link to="/docs" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Documentation</Link>
+          </div>
+        )}
       </nav>
 
       <div className="flex-1 w-full max-w-7xl mx-auto px-6 relative z-10 flex flex-col pt-16">
@@ -77,7 +103,7 @@ export function LandingPage() {
         </main>
 
         {/* Feature Grid */}
-        <section className="py-16 border-t border-gray-200 dark:border-gray-800">
+        <section id="features" className="py-16 border-t border-gray-200 dark:border-gray-800 scroll-mt-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Core Features</h2>
             <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Everything you need to orchestrate data between your external providers and your internal applications.</p>
@@ -134,7 +160,7 @@ export function LandingPage() {
         </section>
 
         {/* Use Cases */}
-        <section className="py-16 border-t border-gray-200 dark:border-gray-800">
+        <section id="use-cases" className="py-16 border-t border-gray-200 dark:border-gray-800 scroll-mt-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Why Use ThiruXDB?</h2>
             <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">ThiruXDB is built to solve complex data aggregation workflows across modern applications.</p>
@@ -180,7 +206,7 @@ export function LandingPage() {
         </section>
 
         {/* Who is this for */}
-        <section className="py-16 border-t border-gray-200 dark:border-gray-800 bg-gray-100/50 dark:bg-gray-900/10 -mx-6 px-6">
+        <section id="audience" className="py-16 border-t border-gray-200 dark:border-gray-800 bg-gray-100/50 dark:bg-gray-900/10 -mx-6 px-6 scroll-mt-16">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Who is this for?</h2>
