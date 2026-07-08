@@ -182,7 +182,7 @@ export function DocsPage() {
             <Link to="/" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors hidden sm:flex items-center gap-1.5">
               <ArrowLeft className="w-4 h-4" /> Back to Home
             </Link>
-            <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3">
+            <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-3 text-xs font-medium text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-900 px-2 py-1 rounded-md border border-gray-200 dark:border-zinc-800">
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5" /> {githubStats.stars}
@@ -279,7 +279,7 @@ export function DocsPage() {
 
             {/* Mobile GitHub Stats */}
             <div className="mt-6 border-t border-gray-200 dark:border-zinc-800 pt-4 px-2 lg:hidden">
-              <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="flex items-center gap-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors">
+              <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noreferrer" className="flex items-center gap-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors">
                 <Github className="w-4 h-4" /> GitHub Repository
               </a>
               <div className="mt-4 flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-900 px-3 py-2.5 rounded-md border border-gray-200 dark:border-zinc-800">

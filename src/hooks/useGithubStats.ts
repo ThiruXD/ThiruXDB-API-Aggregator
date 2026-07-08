@@ -9,12 +9,12 @@ export function useGithubStats() {
 
   useEffect(() => {
     listeners.push(setStats);
-    
+
     if (!hasFetched) {
       hasFetched = true;
       const fetchStats = async () => {
         try {
-          const res = await fetch('https://api.github.com/repos/ThiruXD/ThiruXDB');
+          const res = await fetch('https://api.github.com/repos/ThiruXD/ThiruXDB-API-Aggregator');
           if (res.ok) {
             const data = await res.json();
             if (data.stargazers_count !== undefined) {
@@ -27,13 +27,13 @@ export function useGithubStats() {
           console.error("Failed to fetch Github stats:", e);
         }
       };
-      
+
       fetchStats();
-      
+
       // Sync automatically every 5 minutes
       setInterval(fetchStats, 5 * 60 * 1000);
     }
-    
+
     return () => {
       listeners = listeners.filter(l => l !== setStats);
     };

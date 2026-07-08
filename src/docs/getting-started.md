@@ -16,7 +16,7 @@ Modern applications frequently rely on third-party APIs (e.g., weather data, sto
 
 ```bash
 # Clone the repository
-git clone https://github.com/ThiruXD/ThiruXDB.git
+git clone https://github.com/ThiruXD/ThiruXDB-API-Aggregator.git
 cd ThiruXDB
 
 # Install dependencies using Bun

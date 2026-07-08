@@ -292,7 +292,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
           <div className="p-4 border-t border-gray-200 dark:border-gray-800 text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
               &copy; {new Date().getFullYear()}
-              <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1 ml-1">
+              <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1 ml-1">
                 <Github className="w-3.5 h-3.5" /> By ThiruXD
               </a>
             </p>
@@ -308,7 +308,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
         <div className="lg:hidden p-4 border-t border-gray-200 dark:border-gray-800 text-center mt-auto">
           <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
             &copy; {new Date().getFullYear()}
-            <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1 ml-1">
+            <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1 ml-1">
               <Github className="w-3.5 h-3.5" /> By ThiruXD
             </a>
           </p>

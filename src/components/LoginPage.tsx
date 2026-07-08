@@ -125,7 +125,7 @@ export function LoginPage() {
         {/* Copyright Strip */}
         <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400 flex flex-col items-center gap-2">
           <p>&copy; {new Date().getFullYear()} ThiruXD. All rights reserved.</p>
-          <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-white transition">
+          <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-white transition">
             <Github className="w-4 h-4" />
             <span>ThiruXDB on GitHub</span>
           </a>

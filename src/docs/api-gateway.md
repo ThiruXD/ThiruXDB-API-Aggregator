@@ -15,7 +15,7 @@ Navigate to the **System Security** tab in the Dashboard. Here you can generate 
 Make a GET request to the gateway endpoint, passing your API key in the headers:
 
 ```http
-GET /api/v1/public/thiruxdb_data_records?_page=1&_limit=20
+GET /api/v1/public/ThiruXDB_data_records?_page=1&_limit=20
 Authorization: Bearer txdb_key_XXXXXXXXXXXXXXXXXXXX
 ```
 

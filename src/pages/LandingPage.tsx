@@ -42,7 +42,7 @@ export function LandingPage() {
             <Link to="/docs" className="text-sm font-medium text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 px-3 py-1.5 rounded-md transition hidden md:flex items-center gap-1.5 shadow-sm">
               <BookOpen className="w-4 h-4" /> Documentation
             </Link>
-            <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="flex items-center gap-3">
+            <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noreferrer" className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-3 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-zinc-900 px-2 py-1 rounded-md border border-gray-200 dark:border-zinc-800">
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5" /> {githubStats.stars}
@@ -92,7 +92,7 @@ export function LandingPage() {
           </Link>
 
           <div className="mt-4 border-t border-gray-200 dark:border-zinc-800 pt-4 px-2">
-            <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="flex items-center gap-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors">
+            <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noreferrer" className="flex items-center gap-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors">
               <Github className="w-4 h-4" /> GitHub Repository
             </a>
             <div className="mt-4 flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-900 px-3 py-2.5 rounded-md border border-gray-200 dark:border-zinc-800">
@@ -293,7 +293,7 @@ export function LandingPage() {
             <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm leading-relaxed">
               ThiruXDB is an open-source project. We welcome contributions from the community! Whether it's reporting a bug, proposing a feature, or submitting a Pull Request, your input is highly valued.
             </p>
-            <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white hover:underline">
+            <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white hover:underline">
               <Github className="w-4 h-4" /> View Repository
             </a>
           </div>
@@ -319,7 +319,7 @@ export function LandingPage() {
           </p>
           <div className="flex items-center gap-4">
             <Link to="/docs" className="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">Docs</Link>
-            <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">GitHub</a>
+            <a href="https://github.com/ThiruXD/ThiruXDB-API-Aggregator" target="_blank" rel="noreferrer" className="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">GitHub</a>
           </div>
         </div>
       </footer>
