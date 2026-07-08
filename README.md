@@ -109,31 +109,34 @@ ThiruXDB/
 ```
 
 
-## Sync Engine Architecture & Deployment
+## Deployment
 
-ThiruXDB uses a highly optimized, state-persistent Sync Engine designed to handle massive data payloads. Because this engine relies on long-running background tasks and persistent database connections, **your choice of hosting platform is critical.**
+ThiruXDB can be easily deployed to modern serverless and PaaS platforms. Below are the recommended deployment strategies, ranging from Serverless functions to Persistent Docker environments.
 
-### ❌ Serverless Platforms (Not Recommended)
-Serverless platforms instantly "freeze" or kill execution environments as soon as an HTTP request finishes or times out (usually 10 seconds). Because ThiruXDB runs background data pipelines that can take several minutes to process thousands of records, **Serverless platforms will freeze the background job and sever database connections if you close your browser.**
+### Persistent Servers (Render, Railway, VPS) [Recommended]
 
-- **Netlify & Vercel:** You can deploy here, but **you must keep your browser tab open** while syncing so the UI's 1-second polling keeps the serverless function awake. If you close the tab, the sync will instantly freeze and fail.
-- **Cloudflare Pages / Workers (Not Supported):** The Express backend uses the native `mongodb` Node.js driver, which requires raw TCP socket access (`net` and `tls` modules). Cloudflare's V8 Isolates do not support these modules, meaning the backend will instantly crash.
+For production environments handling continuous background syncs, **Persistent Servers** are highly recommended. Unlike Serverless, persistent servers do not sleep between requests, allowing ThiruXDB's internal `setInterval` sync engine to run reliably.
 
-### ✅ Persistent Servers (Highly Recommended)
-To run infinite background syncs, you must deploy to a **Persistent Server** that runs 24/7. This allows you to click "Fetch", close your laptop, and let the server securely process 10,000+ records in the background!
+- **[Render.com](https://render.com/) / [Railway.app](https://railway.app/)**
+  - **Build Command:** `bun run build`
+  - **Start Command:** `bun run start` (or `node server/index.js`)
+  - *Note: ThiruXDB includes a built-in Anti-Sleep mechanism specifically designed for Render's Free Tier! It will automatically self-ping every 14 minutes to prevent your backend from sleeping during long background syncs.*
+- **VPS / Docker (DigitalOcean, AWS, Linode)**
+  - Run via `pm2 start server/index.js` or build the included Dockerfile.
 
-**Top Free Platforms:**
-1. **[Render.com](https://render.com/) (Web Service)**
-   - **Build Command:** `bun install && bun run build` (or `npm install && npm run build`)
-   - **Start Command:** `bun run start` (or `npm run start`)
-   - *Note: ThiruXDB includes a built-in Anti-Sleep mechanism specifically designed for Render's Free Tier! It will automatically self-ping every 14 minutes to prevent your backend from sleeping during long background syncs.*
-2. **[Railway.app](https://railway.app/)**
-   - Automatically detects `package.json` and runs the `start` script flawlessly.
-3. **VPS / Docker (DigitalOcean, Hetzner, AWS EC2)**
-   - Run via `pm2 start server/index.js` or deploy via Docker.
+### Vercel / Netlify (Serverless)
 
-> [!TIP]
-> Ensure you configure all Environment Variables (`MONGODB_URI`, `MONGODB_DB`, etc.) in your hosting provider's dashboard before deploying!
+ThiruXDB is natively configured to run on Serverless platforms like Vercel and Netlify out of the box! The repository includes a `vercel.json` config and an `api/index.js` serverless endpoint that perfectly bridges the Express backend with Vercel's Node.js runtime.
+
+1. Connect your GitHub repository to Vercel or Netlify.
+2. Set your **Environment Variables** (`MONGODB_URI`, `VITE_ADMIN_USERNAME`, `VITE_ADMIN_PASS`).
+3. Deploy! The platform will automatically build the React frontend and configure the Serverless API endpoints.
+
+> **Note on Serverless Syncing:** Because serverless functions spin down after responding to a request, ThiruXDB's internal background sync engine will only trigger when the API is actively receiving traffic. For strict cron-based syncing, a persistent server is required.
+
+### Why no Cloudflare Workers support?
+
+Currently, ThiruXDB cannot be deployed directly to Cloudflare Workers or Cloudflare Pages Functions. This limitation stems from the **MongoDB Node.js Driver** relying heavily on native Node.js core modules (such as `net`, `tls`, `dns`, and `crypto`) to establish binary TCP connections, which Cloudflare's V8 Isolates do not fully support.
 
 ---
 
