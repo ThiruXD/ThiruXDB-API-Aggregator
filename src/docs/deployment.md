@@ -2,7 +2,7 @@
 
 ThiruXDB can be easily deployed to modern serverless and PaaS platforms. Below are the recommended deployment strategies, ranging from Serverless functions to Persistent Docker environments.
 
-## Persistent Servers (Render, Railway, VPS)
+## Persistent Servers (Render, Railway, VPS)  [Recommended]
 
 For production environments handling continuous background syncs, **Persistent Servers** are highly recommended. Unlike Serverless, persistent servers do not sleep between requests, allowing ThiruXDB's internal `setInterval` sync engine to run reliably.
 
@@ -13,35 +13,15 @@ ThiruXDB is built to automatically serve the React frontend alongside the Expres
 1. Connect your GitHub repository to your Render or Railway dashboard.
 2. Set the build command to: `bun run build`
 3. Set the start command to: `bun run start` (or `node server/index.js`)
-4. Add your Environment Variables (`MONGODB_URI`, `JWT_SECRET`, etc.).
+4. Add your Environment Variables (`MONGODB_URI`, `VITE_ADMIN_USERNAME`, `VITE_ADMIN_PASS`, etc.).
 5. Deploy! ThiruXDB will start the API server and serve your frontend static files directly.
-
-### Docker (Self-Hosted VPS)
-
-You can easily package ThiruXDB inside a Docker container for VPS environments (DigitalOcean, AWS EC2, Linode).
-
-```dockerfile
-FROM oven/bun:1
-
-WORKDIR /app
-
-COPY package.json bun.lockb ./
-RUN bun install
-
-COPY . .
-RUN bun run build
-
-EXPOSE 3001
-
-CMD ["bun", "run", "start"]
-```
 
 ## Vercel / Netlify (Serverless)
 
 ThiruXDB is natively configured to run on Serverless platforms like Vercel and Netlify out of the box! The repository includes a `vercel.json` config and an `api/index.js` serverless endpoint that perfectly bridges the Express backend with Vercel's Node.js runtime.
 
 1. Connect your GitHub repository to Vercel or Netlify.
-2. Set your **Environment Variables** (`MONGODB_URI`, `JWT_SECRET`).
+2. Set your **Environment Variables** (`MONGODB_URI`, `VITE_ADMIN_USERNAME`, `VITE_ADMIN_PASS`).
 3. Deploy! The platform will automatically build the React frontend and configure the Serverless API endpoints.
 
 > **Note on Serverless Syncing:** Because serverless functions spin down after responding to a request, ThiruXDB's internal background sync engine will only trigger when the API is actively receiving traffic. For strict cron-based syncing, a persistent server is required.

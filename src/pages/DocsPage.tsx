@@ -24,7 +24,7 @@ const extractTextFromReactNode = (node: any): string => {
 const PreBlock = ({ children, className, ...props }: any) => {
   const [copied, setCopied] = useState(false);
   const textContent = extractTextFromReactNode(children);
-  
+
   const handleCopy = () => {
     navigator.clipboard.writeText(textContent);
     setCopied(true);
@@ -34,8 +34,8 @@ const PreBlock = ({ children, className, ...props }: any) => {
   return (
     <div className="relative group my-6">
       <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-        <button 
-          onClick={handleCopy} 
+        <button
+          onClick={handleCopy}
           className="p-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md transition-colors border border-zinc-700 shadow-sm"
           title="Copy code"
         >
@@ -56,10 +56,11 @@ type PageDef = { id: string; title: string; icon?: any; subPages?: PageDef[] };
 
 const DOCS_PAGES: PageDef[] = [
   { id: 'getting-started', title: 'Getting Started', icon: BookOpen },
+  { id: 'deployment', title: 'Deployment', icon: Rocket },
   { id: 'architecture', title: 'Architecture & Stack', icon: Layers },
-  { 
-    id: 'api-gateway', 
-    title: 'API Gateway', 
+  {
+    id: 'api-gateway',
+    title: 'API Gateway',
     icon: Network,
     subPages: [
       { id: 'rate-limiting', title: 'Rate Limiting' },
@@ -68,7 +69,6 @@ const DOCS_PAGES: PageDef[] = [
   },
   { id: 'sync-engine', title: 'Sync Engine', icon: RefreshCw },
   { id: 'security', title: 'Security', icon: ShieldCheck },
-  { id: 'deployment', title: 'Deployment', icon: Rocket },
   { id: 'development', title: 'Development & Contributing', icon: Code },
 ];
 
@@ -118,7 +118,7 @@ export function DocsPage() {
     const handleScroll = () => {
       const headings = Array.from(document.querySelectorAll('main h2, main h3'));
       if (headings.length === 0) return;
-      
+
       let currentActiveId = '';
       for (const heading of headings) {
         const top = heading.getBoundingClientRect().top;
@@ -141,11 +141,11 @@ export function DocsPage() {
   const filteredPages = useMemo(() => {
     if (!searchQuery.trim()) return DOCS_PAGES;
     const query = searchQuery.toLowerCase();
-    
+
     return DOCS_PAGES.map(p => {
       const pageMatch = p.title.toLowerCase().includes(query);
       const subPagesMatch = p.subPages?.filter(sp => sp.title.toLowerCase().includes(query));
-      
+
       if (pageMatch || (subPagesMatch && subPagesMatch.length > 0)) {
         return {
           ...p,
@@ -207,12 +207,11 @@ export function DocsPage() {
 
       {/* Main Layout Area */}
       <div className="pt-16 flex-1 flex w-full relative">
-        
+
         {/* Left Sidebar (Fixed Absolute) */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-64 pt-16 transform transition-transform duration-300 ease-in-out lg:translate-x-0 bg-white dark:bg-zinc-950 lg:bg-transparent border-r border-gray-200 dark:border-zinc-800 flex flex-col ${
-            isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
+          className={`fixed inset-y-0 left-0 z-40 w-64 pt-16 transform transition-transform duration-300 ease-in-out lg:translate-x-0 bg-white dark:bg-zinc-950 lg:bg-transparent border-r border-gray-200 dark:border-zinc-800 flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
         >
           {/* Advanced Search */}
           <div className="p-4 border-b border-gray-200 dark:border-zinc-800">
@@ -239,16 +238,15 @@ export function DocsPage() {
                   <div key={navPage.id}>
                     <Link
                       to={`/docs/${navPage.id}`}
-                      className={`px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2.5 ${
-                        isActive
-                          ? 'bg-gray-100 dark:bg-zinc-800/60 font-medium text-gray-900 dark:text-zinc-100'
-                          : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-zinc-200'
-                      }`}
+                      className={`px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2.5 ${isActive
+                        ? 'bg-gray-100 dark:bg-zinc-800/60 font-medium text-gray-900 dark:text-zinc-100'
+                        : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-zinc-200'
+                        }`}
                     >
                       {navPage.icon && <navPage.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-zinc-500'}`} />}
                       {navPage.title}
                     </Link>
-                    
+
                     {/* Sub Pages */}
                     {navPage.subPages && navPage.subPages.length > 0 && (
                       <div className="mt-1 ml-6 flex flex-col space-y-1 border-l border-gray-200 dark:border-zinc-800 pl-2">
@@ -258,11 +256,10 @@ export function DocsPage() {
                             <Link
                               key={subPage.id}
                               to={`/docs/${subPage.id}`}
-                              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                                isSubActive
-                                  ? 'bg-gray-100 dark:bg-zinc-800/60 font-medium text-gray-900 dark:text-zinc-100'
-                                  : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-zinc-200'
-                              }`}
+                              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${isSubActive
+                                ? 'bg-gray-100 dark:bg-zinc-800/60 font-medium text-gray-900 dark:text-zinc-100'
+                                : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-900/50 hover:text-gray-900 dark:hover:text-zinc-200'
+                                }`}
                             >
                               {subPage.title}
                             </Link>
@@ -279,7 +276,7 @@ export function DocsPage() {
                 </div>
               )}
             </nav>
-            
+
             {/* Mobile GitHub Stats */}
             <div className="mt-6 border-t border-gray-200 dark:border-zinc-800 pt-4 px-2 lg:hidden">
               <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="flex items-center gap-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors">
@@ -287,12 +284,12 @@ export function DocsPage() {
               </a>
               <div className="mt-4 flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-900 px-3 py-2.5 rounded-md border border-gray-200 dark:border-zinc-800">
                 <div className="flex items-center gap-1.5">
-                  <Star className="w-4 h-4 text-gray-600 dark:text-zinc-300" /> 
+                  <Star className="w-4 h-4 text-gray-600 dark:text-zinc-300" />
                   <span className="text-gray-700 dark:text-zinc-200">{githubStats.stars}</span> Stars
                 </div>
                 <div className="w-px h-3 bg-gray-300 dark:bg-zinc-700"></div>
                 <div className="flex items-center gap-1.5">
-                  <GitFork className="w-4 h-4 text-gray-600 dark:text-zinc-300" /> 
+                  <GitFork className="w-4 h-4 text-gray-600 dark:text-zinc-300" />
                   <span className="text-gray-700 dark:text-zinc-200">{githubStats.forks}</span> Forks
                 </div>
               </div>
@@ -302,7 +299,7 @@ export function DocsPage() {
 
         {/* Mobile Sidebar Overlay */}
         {isMobileMenuOpen && (
-          <div 
+          <div
             className="fixed inset-0 z-30 bg-black/20 dark:bg-black/40 backdrop-blur-sm lg:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
           />
@@ -314,7 +311,7 @@ export function DocsPage() {
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-zinc-100 mb-8">
               {page.title}
             </h1>
-            
+
             {/* 
               Tailwind Typography (prose) 
               We remove bg-gray-100 styling from <pre> blocks by excluding them, 
@@ -331,11 +328,11 @@ export function DocsPage() {
                 {contentWithoutH1}
               </ReactMarkdown>
             </div>
-            
+
             {/* Pagination / Next Steps */}
             <div className="mt-16 pt-8 border-t border-gray-200 dark:border-zinc-800 flex flex-col sm:flex-row gap-4 justify-between items-stretch">
               {pageIndex > 0 ? (
-                <Link 
+                <Link
                   to={`/docs/${FLATTENED_PAGES[pageIndex - 1].id}`}
                   className="group flex flex-col items-start gap-1.5 border border-gray-200 dark:border-zinc-800 rounded-xl p-5 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-md dark:hover:shadow-blue-900/20 flex-1 bg-white dark:bg-zinc-900/30"
                 >
@@ -347,9 +344,9 @@ export function DocsPage() {
                   </span>
                 </Link>
               ) : <div className="flex-1" />}
-              
+
               {pageIndex < FLATTENED_PAGES.length - 1 ? (
-                <Link 
+                <Link
                   to={`/docs/${FLATTENED_PAGES[pageIndex + 1].id}`}
                   className="group flex flex-col items-end gap-1.5 border border-gray-200 dark:border-zinc-800 rounded-xl p-5 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-md dark:hover:shadow-blue-900/20 flex-1 text-right bg-white dark:bg-zinc-900/30"
                 >
@@ -386,11 +383,10 @@ export function DocsPage() {
                           window.history.pushState(null, '', item.url);
                         }
                       }}
-                      className={`block border-l-2 py-1 pl-3 transition-all duration-200 ${
-                        activeHeadingId === item.url.slice(1)
-                          ? 'border-blue-500 text-blue-600 dark:text-blue-400 font-medium'
-                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-900 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100'
-                      }`}
+                      className={`block border-l-2 py-1 pl-3 transition-all duration-200 ${activeHeadingId === item.url.slice(1)
+                        ? 'border-blue-500 text-blue-600 dark:text-blue-400 font-medium'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-900 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100'
+                        }`}
                     >
                       {item.title}
                     </a>
