@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeHighlight from 'rehype-highlight';
-import { Menu, X, Sun, Moon, ArrowLeft, Github, Database, BookOpen, Layers, Network, RefreshCw, ShieldCheck, Code, Search } from 'lucide-react';
+import { Menu, X, Sun, Moon, ArrowLeft, Github, Database, BookOpen, Layers, Network, RefreshCw, ShieldCheck, Code, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import 'highlight.js/styles/atom-one-dark.css'; // Premium dark theme for syntax highlighting
 
@@ -258,30 +258,34 @@ export function DocsPage() {
             </div>
             
             {/* Pagination / Next Steps */}
-            <div className="mt-16 pt-8 border-t border-gray-200 dark:border-zinc-800 flex justify-between items-center">
+            <div className="mt-16 pt-8 border-t border-gray-200 dark:border-zinc-800 flex flex-col sm:flex-row gap-4 justify-between items-stretch">
               {pageIndex > 0 ? (
                 <Link 
                   to={`/docs/${FLATTENED_PAGES[pageIndex - 1].id}`}
-                  className="group flex flex-col items-start gap-1"
+                  className="group flex flex-col items-start gap-1.5 border border-gray-200 dark:border-zinc-800 rounded-xl p-5 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-md dark:hover:shadow-blue-900/20 flex-1 bg-white dark:bg-zinc-900/30"
                 >
-                  <span className="text-xs font-medium text-gray-500 dark:text-zinc-400">Previous</span>
-                  <span className="text-sm font-medium text-gray-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <span className="text-xs font-medium text-gray-500 dark:text-zinc-400 flex items-center gap-1 transition-colors group-hover:text-blue-500">
+                    <ChevronLeft className="w-3.5 h-3.5" /> Previous
+                  </span>
+                  <span className="text-sm sm:text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {FLATTENED_PAGES[pageIndex - 1].title}
                   </span>
                 </Link>
-              ) : <div />}
+              ) : <div className="flex-1" />}
               
               {pageIndex < FLATTENED_PAGES.length - 1 ? (
                 <Link 
                   to={`/docs/${FLATTENED_PAGES[pageIndex + 1].id}`}
-                  className="group flex flex-col items-end gap-1"
+                  className="group flex flex-col items-end gap-1.5 border border-gray-200 dark:border-zinc-800 rounded-xl p-5 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-md dark:hover:shadow-blue-900/20 flex-1 text-right bg-white dark:bg-zinc-900/30"
                 >
-                  <span className="text-xs font-medium text-gray-500 dark:text-zinc-400">Next</span>
-                  <span className="text-sm font-medium text-gray-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <span className="text-xs font-medium text-gray-500 dark:text-zinc-400 flex items-center gap-1 justify-end transition-colors group-hover:text-blue-500">
+                    Next <ChevronRight className="w-3.5 h-3.5" />
+                  </span>
+                  <span className="text-sm sm:text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {FLATTENED_PAGES[pageIndex + 1].title}
                   </span>
                 </Link>
-              ) : <div />}
+              ) : <div className="flex-1" />}
             </div>
           </div>
         </main>
