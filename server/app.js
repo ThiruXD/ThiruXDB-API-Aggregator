@@ -83,8 +83,8 @@ app.use('/api/v1/public', gatewayRouter);
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
 // Serve frontend static files in production (Render/Railway/VPS)
-// Skip this on Netlify because Netlify's CDN serves the static files directly.
-if (!process.env.NETLIFY) {
+// Skip this on Netlify/Vercel because their CDNs serve the static files directly.
+if (!process.env.NETLIFY && !process.env.VERCEL) {
   let dir = process.cwd();
   try {
     dir = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url || `file://${process.cwd()}/app.js`));
