@@ -70,13 +70,15 @@ function DashboardWrapper() {
 
 
 function App() {
+  const isDemoSite = import.meta.env.VITE_DEMO_SITE === 'true';
+
   return (
     <ThemeProvider defaultTheme="dark">
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/docs/*" element={<DocsPage />} />
+            <Route path="/" element={isDemoSite ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
+            <Route path="/docs/*" element={isDemoSite ? <DocsPage /> : <Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardWrapper />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

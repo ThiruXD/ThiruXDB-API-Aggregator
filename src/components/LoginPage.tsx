@@ -37,12 +37,16 @@ export function LoginPage() {
     return <Navigate to="/dashboard" replace />;
   }
 
+  const isDemoSite = import.meta.env.VITE_DEMO_SITE === 'true';
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md relative">
-        <Link to="/" className="absolute -top-12 left-0 flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition text-sm font-medium">
-          <ArrowLeft className="w-4 h-4" /> Back to Home
-        </Link>
+        {isDemoSite && (
+          <Link to="/" className="absolute -top-12 left-0 flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition text-sm font-medium">
+            <ArrowLeft className="w-4 h-4" /> Back to Home
+          </Link>
+        )}
         <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-gray-200 dark:border-zinc-800 p-8">
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm shadow-gray-900/10 dark:shadow-white/10">
@@ -103,11 +107,13 @@ export function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-lg text-sm text-blue-800 dark:text-blue-300">
-            <p className="font-semibold mb-1">Live Demo Access:</p>
-            <p>Username: <code className="bg-white dark:bg-zinc-900 px-1 rounded font-mono">demo</code></p>
-            <p>Password: <code className="bg-white dark:bg-zinc-900 px-1 rounded font-mono">demo@123</code></p>
-          </div>
+          {isDemoSite && (
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-lg text-sm text-blue-800 dark:text-blue-300">
+              <p className="font-semibold mb-1">Live Demo Access:</p>
+              <p>Username: <code className="bg-white dark:bg-zinc-900 px-1 rounded font-mono">demo</code></p>
+              <p>Password: <code className="bg-white dark:bg-zinc-900 px-1 rounded font-mono">demo@123</code></p>
+            </div>
+          )}
 
           <p className="text-center text-gray-400 dark:text-gray-500 text-xs mt-6">
             lets make fun with ThiruXDB!
