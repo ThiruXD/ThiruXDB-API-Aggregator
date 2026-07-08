@@ -28,7 +28,7 @@ export function LandingPage() {
               <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded flex items-center justify-center shadow-sm">
                 <Database className="w-4 h-4 text-white dark:text-gray-900" />
               </div>
-              <span className="font-bold text-lg text-gray-900 dark:text-white tracking-tight hidden sm:block">ThiruXDB</span>
+              <span className="font-bold text-lg text-gray-900 dark:text-white tracking-tight">ThiruXDB</span>
             </Link>
           </div>
 
@@ -118,7 +118,7 @@ export function LandingPage() {
             <span>v0.1.0 is now live</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white tracking-tight mb-8 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-gray-900 dark:text-white tracking-tight mb-8 leading-tight">
             The Utilitarian API <br className="hidden md:block" />
             <span className="text-gray-900 dark:text-white">
               Data Aggregation Hub

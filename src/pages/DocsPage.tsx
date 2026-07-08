@@ -131,7 +131,7 @@ export function DocsPage() {
               <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
                 <Database className="w-4 h-4 text-white dark:text-gray-900" />
               </div>
-              <span className="font-bold text-lg hidden sm:inline-block">ThiruXDB Docs</span>
+              <span className="font-bold text-lg">ThiruXDB Docs</span>
             </Link>
           </div>
           <div className="flex-1" />
