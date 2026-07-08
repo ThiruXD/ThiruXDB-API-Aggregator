@@ -53,8 +53,8 @@ export function DocsPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 selection:bg-zinc-200 dark:selection:bg-zinc-800 flex flex-col font-sans">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl transition-colors">
+      {/* Fixed Header */}
+      <header className="fixed top-0 inset-x-0 z-50 h-16 border-b border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl transition-colors">
         <div className="flex h-16 items-center px-4 md:px-6">
           <div className="flex items-center gap-4">
             <button
@@ -89,14 +89,14 @@ export function DocsPage() {
         </div>
       </header>
 
-      <div className="flex-1 flex container max-w-7xl mx-auto px-4 md:px-6 relative">
+      <div className="pt-16 flex-1 flex container max-w-7xl mx-auto px-4 md:px-6 relative">
         {/* Left Sidebar */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-64 pt-16 transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 bg-white dark:bg-zinc-950 lg:bg-transparent border-r border-gray-200 dark:border-zinc-800 ${
+          className={`fixed inset-y-0 left-0 z-40 w-64 pt-16 transform transition-transform duration-300 ease-in-out lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:pt-0 lg:translate-x-0 bg-white dark:bg-zinc-950 lg:bg-transparent border-r border-gray-200 dark:border-zinc-800 ${
             isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <div className="h-[calc(100vh-4rem)] overflow-y-auto p-6">
+          <div className="h-full overflow-y-auto p-6">
             <h4 className="font-semibold text-sm tracking-tight text-gray-900 dark:text-zinc-100 mb-4 px-2">
               Documentation
             </h4>
@@ -135,7 +135,7 @@ export function DocsPage() {
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-zinc-100 mb-8">
               {page.title}
             </h1>
-            <div className="prose prose-slate dark:prose-invert prose-headings:font-bold prose-a:text-blue-600 dark:prose-a:text-blue-400 hover:prose-a:text-blue-500 prose-code:before:content-none prose-code:after:content-none prose-code:bg-gray-100 dark:prose-code:bg-zinc-800/60 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:font-medium max-w-none">
+            <div className="prose prose-slate dark:prose-invert prose-headings:font-bold prose-a:text-blue-600 dark:prose-a:text-blue-400 hover:prose-a:text-blue-500 [&_:not(pre)>code]:bg-gray-100 dark:[&_:not(pre)>code]:bg-zinc-800/60 [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:rounded-md [&_:not(pre)>code]:font-medium [&_:not(pre)>code]:before:content-none [&_:not(pre)>code]:after:content-none max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug]}
@@ -174,8 +174,8 @@ export function DocsPage() {
         </main>
 
         {/* Right Sidebar (TOC) */}
-        <aside className="hidden xl:block w-64 shrink-0 border-l border-gray-200 dark:border-zinc-800 pt-12 pb-8 pl-8">
-          <div className="sticky top-24">
+        <aside className="hidden xl:block w-64 shrink-0 border-l border-gray-200 dark:border-zinc-800 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)]">
+          <div className="h-full overflow-y-auto py-8 pl-8">
             <h4 className="font-semibold text-sm tracking-tight text-gray-900 dark:text-zinc-100 mb-4">
               On this page
             </h4>
