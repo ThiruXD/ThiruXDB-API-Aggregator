@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Database, ArrowRight, Server, Shield, Zap, Code, Github, Moon, Sun, Terminal, Key, DatabaseBackup, Users, Activity, RefreshCw, Webhook, Briefcase, Rocket, Laptop, Star, GitFork, Menu, X } from 'lucide-react';
+import { Database, ArrowRight, Server, Shield, Zap, Code, Github, Moon, Sun, Terminal, Key, DatabaseBackup, Users, Activity, RefreshCw, Webhook, Briefcase, Rocket, Laptop, Star, GitFork, Menu, X, BookOpen } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useGithubStats } from '../hooks/useGithubStats';
 
@@ -33,13 +33,13 @@ export function LandingPage() {
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">Features</a>
-            <a href="#use-cases" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">Use Cases</a>
-            <a href="#audience" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition">Audience</a>
+            <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition flex items-center gap-1.5"><Zap className="w-4 h-4" /> Features</a>
+            <a href="#use-cases" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition flex items-center gap-1.5"><Briefcase className="w-4 h-4" /> Use Cases</a>
+            <a href="#audience" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition flex items-center gap-1.5"><Users className="w-4 h-4" /> Audience</a>
           </div>
 
           <div className="flex items-center gap-4 sm:gap-6">
-            <Link to="/docs" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition hidden md:block">Documentation</Link>
+            <Link to="/docs" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition hidden md:flex items-center gap-1.5"><BookOpen className="w-4 h-4" /> Documentation</Link>
             <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-3 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-zinc-900 px-2 py-1 rounded-md border border-gray-200 dark:border-zinc-800">
                 <div className="flex items-center gap-1">
@@ -61,17 +61,49 @@ export function LandingPage() {
             </button>
           </div>
         </div>
-        
-        {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-zinc-950 border-b border-gray-200 dark:border-gray-800 shadow-lg px-6 py-4 flex flex-col gap-4">
-            <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Features</a>
-            <a href="#use-cases" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Use Cases</a>
-            <a href="#audience" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Audience</a>
-            <Link to="/docs" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Documentation</Link>
-          </div>
-        )}
       </nav>
+
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/20 dark:bg-black/40 backdrop-blur-sm md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 pt-16 transform transition-transform duration-300 ease-in-out md:hidden bg-white dark:bg-zinc-950 border-r border-gray-200 dark:border-zinc-800 flex flex-col ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-1">
+          <h4 className="font-semibold text-xs uppercase tracking-wider text-gray-500 dark:text-zinc-500 mb-2 px-2 mt-2">
+            Navigation
+          </h4>
+          <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-800/60 rounded-md transition-colors"><Zap className="w-4 h-4" /> Features</a>
+          <a href="#use-cases" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-800/60 rounded-md transition-colors"><Briefcase className="w-4 h-4" /> Use Cases</a>
+          <a href="#audience" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-800/60 rounded-md transition-colors"><Users className="w-4 h-4" /> Audience</a>
+          <Link to="/docs" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-800/60 rounded-md transition-colors"><BookOpen className="w-4 h-4" /> Documentation</Link>
+          
+          <div className="mt-4 border-t border-gray-200 dark:border-zinc-800 pt-4 px-2">
+            <a href="https://github.com/ThiruXD/ThiruXDB" target="_blank" rel="noreferrer" className="flex items-center gap-3 py-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors">
+              <Github className="w-4 h-4" /> GitHub Repository
+            </a>
+            <div className="mt-4 flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-900 px-3 py-2.5 rounded-md border border-gray-200 dark:border-zinc-800">
+              <div className="flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-gray-600 dark:text-zinc-300" /> 
+                <span className="text-gray-700 dark:text-zinc-200">{githubStats.stars}</span> Stars
+              </div>
+              <div className="w-px h-3 bg-gray-300 dark:bg-zinc-700"></div>
+              <div className="flex items-center gap-1.5">
+                <GitFork className="w-4 h-4 text-gray-600 dark:text-zinc-300" /> 
+                <span className="text-gray-700 dark:text-zinc-200">{githubStats.forks}</span> Forks
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
 
       <div className="flex-1 w-full max-w-7xl mx-auto px-6 relative z-10 flex flex-col pt-16">
         {/* Hero Section */}
