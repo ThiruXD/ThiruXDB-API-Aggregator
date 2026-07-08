@@ -4,10 +4,50 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeHighlight from 'rehype-highlight';
-import { Menu, X, Sun, Moon, ArrowLeft, Github, Database, BookOpen, Layers, Network, RefreshCw, ShieldCheck, Code, Search, ChevronLeft, ChevronRight, Star, GitFork } from 'lucide-react';
+import { Menu, X, Sun, Moon, ArrowLeft, Github, Database, BookOpen, Layers, Network, RefreshCw, ShieldCheck, Code, Search, ChevronLeft, ChevronRight, Star, GitFork, Check, Copy } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useGithubStats } from '../hooks/useGithubStats';
 import 'highlight.js/styles/atom-one-dark.css'; // Premium dark theme for syntax highlighting
+
+const extractTextFromReactNode = (node: any): string => {
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (!node) return '';
+  if (Array.isArray(node)) return node.map(extractTextFromReactNode).join('');
+  if (node.props && node.props.children) {
+    return extractTextFromReactNode(node.props.children);
+  }
+  return '';
+};
+
+const PreBlock = ({ children, className, ...props }: any) => {
+  const [copied, setCopied] = useState(false);
+  const textContent = extractTextFromReactNode(children);
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(textContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="relative group my-6">
+      <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <button 
+          onClick={handleCopy} 
+          className="p-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md transition-colors border border-zinc-700 shadow-sm"
+          title="Copy code"
+        >
+          {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+        </button>
+      </div>
+      <pre {...props} className={className}>
+        {children}
+      </pre>
+    </div>
+  );
+};
+
 
 const markdownFiles = import.meta.glob('../docs/*.md', { query: '?raw', import: 'default', eager: true });
 
@@ -281,6 +321,9 @@ export function DocsPage() {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeHighlight]}
+                components={{
+                  pre: PreBlock
+                }}
               >
                 {contentWithoutH1}
               </ReactMarkdown>
