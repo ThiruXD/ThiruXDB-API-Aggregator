@@ -6,7 +6,7 @@
 
 ## Live Demo
 Check out the live deployment of ThiruXDB here:
-- **URL:** [https://demo-thiruxdb.netlify.app/](https://demo-thiruxdb.netlify.app/)
+- **URL:** [thiruxdb.indevs.in](https://thiruxdb.indevs.in)
 - **Username:** `demo`
 - **Password:** `demo@123`
 
